@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import router from "@/router";
+import { doc, setDoc, getFirestore } from "firebase/firestore"; 
+
 
 
 export const useUserStore = defineStore('userStore',{
@@ -18,6 +20,7 @@ export const useUserStore = defineStore('userStore',{
             createUserWithEmailAndPassword(auth, email, password)
               .then((userCredential) => {
                 // Signed up 
+                this.createUserData(userCredential.user.uid)
                 const user = userCredential.user;
                 console.log(user)
                 router.push({ name: 'HomeView' }) 
@@ -78,7 +81,20 @@ export const useUserStore = defineStore('userStore',{
             }
           });
           
-        }
+        },
+         async createUserData(uid : string){
+          const db = getFirestore()
+          try {
+            const docRef = await setDoc(doc(db, "users", uid), {
+              firstName: "",
+              lastName: "",
+              born: ""
+            });
+            console.log("Document written with ID: ", );
+          } catch (e) {
+            console.error("Error adding document: ", e);
+          }
+         }
     }
 })
 

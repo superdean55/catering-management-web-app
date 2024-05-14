@@ -48,7 +48,7 @@
 
 <template>
     <form @submit.prevent >
-        <RoundedCard class="shadow-2xl">
+        <RoundedCard>
             <InputLabel :value="email" name="Email:" type="email" :error="emailErrorMessage" @input="onEmailInput"/>
             <InputLabel :value="password" name="Password:" type="password" :error="passwordErrorMessage" @input="onPasswordInput"/>
             <div class="flex justify-center my-5">

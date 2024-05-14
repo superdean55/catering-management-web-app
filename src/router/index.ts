@@ -27,6 +27,12 @@ const router = createRouter({
       name: 'SignUpView',
       component: () => import('../views/SignUpView.vue'),
       meta: { requiresNoAuth: true }
+    },
+    {
+      path: '/user_account',
+      name: 'UserAccount',
+      component: () => import('../views/UserAccount.vue'),
+      meta: { requiresAuth: true }
     }
   ]
 })
@@ -45,20 +51,16 @@ router.beforeEach(async (to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
 
     if (currentUser) {
-      console.log(`router reqAuth current user: ${currentUser}`)
       next();
     } else {
-      console.log(`router reqAuth current user: ${currentUser} else`)
       next({ name: 'HomeView', query: { redirect: to.fullPath } });
     }
 
   } else if(to.matched.some(record => record.meta.requiresNoAuth)){
 
     if (currentUser) {
-      console.log(`router reqNOAuth current user: ${currentUser}`)
       next({ name: 'HomeView', query: { redirect: to.fullPath } });
     } else {
-      console.log(`router reqNOAuth current user: ${currentUser}`)
       next();
     }
 

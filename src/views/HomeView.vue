@@ -16,7 +16,6 @@ const activateImageUpload = () => {
   <main class="w-full h-screen bg-slate-300 p-0">
     <div class="h-10"></div>
     <h1>Home</h1>
-    <button @click="userStore.signOut">Log out</button>
     <input type="file" accept="image/*" id="imageUpload" name="imageUpload" style="display: none;">
     <button @click="activateImageUpload">Odaberi sliku</button>
   </main>

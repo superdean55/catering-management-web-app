@@ -4,8 +4,12 @@ import HomeView from './views/HomeView.vue';
 import AboutView from './views/AboutView.vue';
 import SignInView from './views/SignInView.vue';
 import { useUserStore } from '@/stores/UserStore'
+import router from "@/router";
 
 const userStore = useUserStore()
+const toUserAccount = () => {
+  router.push({ name: 'UserAccount'})
+}
 userStore.authState()
 
 
@@ -25,7 +29,7 @@ userStore.authState()
         <RouterLink :to="{ name: 'SignInView'}">Sign In</RouterLink>
       </div>
       <div v-if="userStore.loggedInVisibility" class="flex items-center h-full ">
-        <img src="./assets/blank_profile_picture.jpg" class="rounded-full h-8">
+        <img @click="toUserAccount" src="./assets/blank_profile_picture.jpg" class="rounded-full h-8">
         
       </div>
       

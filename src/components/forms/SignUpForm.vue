@@ -75,7 +75,7 @@
 
 <template>
     <form @submit.prevent >
-        <RoundedCard class="shadow-2xl">
+        <RoundedCard>
             <InputLabel :value="password" name="Lozinka:" type="password" :error="passwordErrorMessage" @input="onPasswordInput"/>
             <InputLabel :value="repeatedPassword" name="Ponovite Lozinku:" type="password" :error="repeatedPasswordErrorMessage" @input="onRepeatedPasswordInput"/>
             <InputLabel :value="email" name="Email:" type="email" :error="emailErrorMessage" @input="onEmailInput"/>
