@@ -18,5 +18,6 @@ const activateImageUpload = () => {
     <h1>Home</h1>
     <input type="file" accept="image/*" id="imageUpload" name="imageUpload" style="display: none;">
     <button @click="activateImageUpload">Odaberi sliku</button>
+    
   </main>
 </template>

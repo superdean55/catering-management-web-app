@@ -6,9 +6,9 @@ defineProps<{
 
 <template>
     <div  @click="$emit('confirm')" 
-    class="inline-block bg-orange-700 rounded-sm hover:bg-orange-800 text-white p-2 cursor-pointer">
+    class="inline-block text-orange-700 hover:text-orange-900  p-2 cursor-pointer">
         <div class="flex flex-row">
-            <p>{{ label }}</p>
+            <p class="font-bold">{{ label }}</p>
             <slot></slot>
         </div>
     </div>

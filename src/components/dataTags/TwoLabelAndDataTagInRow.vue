@@ -15,9 +15,9 @@
 <script setup lang="ts">
 import LabelAndDataTag from '@/components/dataTags/LabelAndDataTag.vue'
 defineProps<{
-    firstLabel: string,
-    firstData: string,
-    secondLabel: string,
-    secondData: string
+    firstLabel: string | null,
+    firstData: string | null,
+    secondLabel: string | null,
+    secondData: string | null
 }>()
 </script>

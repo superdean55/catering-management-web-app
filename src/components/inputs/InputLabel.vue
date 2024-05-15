@@ -1,7 +1,7 @@
 <template>
-    <div class="w-full bg-white">
+    <div class="felx bg-white">
         <label class="inline-block uppercase my-2 text-xs text-gray-600">{{ name }}</label>
-        <input  
+        <input  v-if="type"
         class="block w-full py-1 px-2 box-border border-b border-slate-300"
         :type="type"
         :value="value"
@@ -17,10 +17,10 @@
 import { onUpdated, ref, defineProps } from "vue";
 
 defineProps<{
-  value: string,
-  name: string,
-  type: string,
-  error?: string
+  value: string | null | undefined,
+  name: string | null,
+  type: string | null,
+  error?: string | null
 }>();
 defineEmits(["update:value"]);
 
