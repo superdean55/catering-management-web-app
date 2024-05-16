@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import { getAuth } from 'firebase/auth';
+import AddArticle from '../components/werehouseComponents/AddArticleView.vue'
 
 
 const router = createRouter({
@@ -39,6 +40,26 @@ const router = createRouter({
       name: 'EditUserView',
       component: () => import('../views/EditUserView.vue'),
       meta: { requiresAuth: true }
+    },
+    {
+      path: '/werehouse',
+      name: 'WerehouseView',
+      component: () => import('../views/WerehouseView.vue'),
+      meta: { requiresAuth: true },
+      children: [
+        {
+          path: 'add-article',
+          components: {
+            werehouse: AddArticle
+          }
+        },
+        {
+          path: 'add-category',
+          components: {
+            werehouse:  () => import('../components/werehouseComponents/AddCategoryView.vue')
+          }
+        }
+      ]
     }
   ]
 })
