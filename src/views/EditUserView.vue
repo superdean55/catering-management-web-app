@@ -2,7 +2,7 @@
     <main class="w-full h-screen bg-slate-300 p-0">
         <div class="h-10"></div>
         <div class="mx-auto max-w-xl mt-10">
-            <RoundedCard v-if="user">
+            <RoundedCard v-if="userStore.user">
                 <div class="flex justify-center">
                     <img ref="myImage" @click="selectPicture" class="rounded-lg h-40" src="@/assets/blank_profile_picture.jpg">
                     <input @change="handleFileUpload" type="file" accept="image/*" id="userImage" name="userImageUpload" style="display: none;">
@@ -18,7 +18,9 @@
                     </div>
                 </div>
                 <div class="flex justify-center">
-                    <button @click="updateUser">Update user</button>
+                    <ConfirmButton @confirm="updateUser" label="Upload">
+                        <span class="material-symbols-outlined">upload</span>
+                    </ConfirmButton>
                 </div>
             </RoundedCard>
         </div>
@@ -28,30 +30,38 @@
 <script setup lang="ts">
 import RoundedCard from '@/components/cards/RoundedCard.vue';
 import InputLabel from '@/components/inputs/InputLabel.vue';
+import ConfirmButton from '@/components/buttons/ConfirmButton.vue';
 import { storageDateToInputString, inputDateToString} from '@/helpers/dateFormatterFun';
 import { useUserStore } from '@/stores/UserStore';
-import { watch } from 'vue';
+import { onMounted, watch } from 'vue';
 
 import { ref } from 'vue';
 
 const userStore = useUserStore()
-const user = ref(userStore.user)
-
 const firstName = ref(userStore.user?.firstName)
 const lastName = ref(userStore.user?.lastName)
 const born = ref(storageDateToInputString(userStore.user?.born as string))
 const phoneNumber = ref(userStore.user?.phoneNumber)
+const user = ref(userStore.user)
 
-
-const myImage = ref<HTMLImageElement | null>(null);
+const myImage = ref<HTMLImageElement | null>(null)
 const selectedImageUrl = ref<string | null>(null)
-console.log(`selected file initial: ${selectedImageUrl.value}`)
 
 watch(myImage, (newValue, oldValue) => {
+    console.log('watch')
   if (newValue !== null && userStore.user && userStore.user.imageUrl && userStore.user.imageUrl !== '') {
+    console.log('watch in if')
     newValue.src = userStore.user.imageUrl;
   }
+  if(newValue !== null && userStore.user){
+    console.log('watch in if 2')
+    firstName.value = userStore.user.firstName
+    lastName.value = userStore.user.lastName
+    born.value = storageDateToInputString(userStore.user.born as string)
+    phoneNumber.value = userStore.user.phoneNumber
+  }
 });
+
 
 const selectPicture = () => {
     const inputElement = document.getElementById('userImage');
@@ -70,6 +80,13 @@ const handleFileUpload = (event: any) =>{
 }
 
 const updateUser = () => {
+    console.log(`userstore:${userStore.user}\nfirstName:${firstName.value}\nlastName: ${lastName.value}\nlastName:${userStore.user?.lastName}`)
+    if(userStore.user){
+        console.log(`is userstore user`)
+    }
+    if(firstName.value){
+        console.log('is frist name value')
+    }
     var date: string = ''
     if(born.value){
         date = inputDateToString(born.value)
@@ -93,6 +110,26 @@ const updateUser = () => {
             born: date,
             phoneNumber: phoneNumber.value,
         })
+    }else if(
+        userStore.user &&
+        firstName.value &&
+        lastName.value &&
+        born.value &&
+        phoneNumber.value
+    ){
+        console.log('update User Data call')
+        userStore.updateUserData(
+            {
+            uid: userStore.user.uid,
+            email: userStore.user.email,
+            firstName: firstName.value,
+            lastName: lastName.value,
+            imageUrl: userStore.user.imageUrl,
+            imageName: userStore.user.imageName,
+            born: date,
+            phoneNumber: phoneNumber.value,
+            }
+        )
     }
 }
 </script>

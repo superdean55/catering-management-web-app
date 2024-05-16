@@ -45,7 +45,7 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const auth = getAuth();
-
+  console.log('router')
   await new Promise((resolve) => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       unsubscribe();

@@ -58,9 +58,10 @@ watch(userAccountImage, (newValue, oldValue) => {
 
 const signOut = () => {
     userStore.signOut()
-    router.push({ name: 'HomeView'})
+    
 }
 const toEditUser = () => {
+    console.log('toEditUSer')
     router.push({name: 'EditUserView'})
 }
 </script>

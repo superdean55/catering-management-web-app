@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import router from "@/router";
 import { doc, setDoc, collection, query, where, onSnapshot } from "firebase/firestore"; 
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { storage } from "@/firebase/firebaseConfig";
 import { db } from "@/firebase/firebaseConfig";
 import type { UserData } from "@/types/UserData";
@@ -68,6 +68,7 @@ export const useUserStore = defineStore('userStore',{
           }).catch((error) => {
             console.log("sign out error")
           });
+          router.push({ name: 'HomeView'})
         },
 
         async authState(){
@@ -116,6 +117,7 @@ export const useUserStore = defineStore('userStore',{
                 imageName: user.imageName,
                 imageUrl: user.imageUrl
               });
+              router.push({ name: 'UserAccount'})
             }
             console.log("Document written with ID: ", );
           } catch (e) {
@@ -126,7 +128,7 @@ export const useUserStore = defineStore('userStore',{
 
         async uploadUserImage(imageUrl: string, user: UserData){
           const fileName = this.generateImageName()
-          const storageRef = ref(storage, 'images/' + fileName);
+          const storageRef = ref(storage, 'users-images/' + fileName);
             const img = new Image();
 
             img.onload = () => {
@@ -160,6 +162,7 @@ export const useUserStore = defineStore('userStore',{
                 uploadBytes(storageRef, blob).then((snapshot) => {
                   getDownloadURL(snapshot.ref).then((url) => {
                     if(this.user){
+                      this.deleteUserImage(this.user.imageName)
                       user.imageUrl = url
                       user.imageName = fileName
                       user.uid = this.user.uid
@@ -180,7 +183,19 @@ export const useUserStore = defineStore('userStore',{
             img.src = imageUrl;
         },
 
-        
+        async deleteUserImage(imageName: string | null){
+          console.log('inside delete image func')
+          if(imageName && imageName !== ''){
+            console.log('deleting image condition is true')
+            const desertRef = ref(storage, 'users-images/' + imageName);
+
+            deleteObject(desertRef).then(() => {
+              console.log(`deleting user image success`)
+            }).catch((error) => {
+              console.log(`deleting user image error: ${error.message}`)
+            });
+          }
+        },
 
         async getUserData(uid: string){
 

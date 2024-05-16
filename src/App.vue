@@ -5,13 +5,23 @@ import AboutView from './views/AboutView.vue';
 import SignInView from './views/SignInView.vue';
 import { useUserStore } from '@/stores/UserStore'
 import router from "@/router";
+import { ref, watch } from 'vue';
+import { storeToRefs } from 'pinia';
 
 const userStore = useUserStore()
+userStore.authState()
+const { user } = storeToRefs(userStore)
+const userImage = ref<HTMLImageElement | null>(null)
+
+watch(user,() =>{
+  if(userImage.value != null && user.value && user.value.imageUrl && user.value.imageUrl != ''){
+    userImage.value.src = user.value.imageUrl
+  }
+})
+
 const toUserAccount = () => {
   router.push({ name: 'UserAccount'})
 }
-userStore.authState()
-
 
 </script>
 
@@ -29,8 +39,7 @@ userStore.authState()
         <RouterLink :to="{ name: 'SignInView'}">Sign In</RouterLink>
       </div>
       <div v-if="userStore.loggedInVisibility" class="flex items-center h-full ">
-        <img @click="toUserAccount" src="./assets/blank_profile_picture.jpg" class="rounded-full h-8">
-        
+        <img ref="userImage" @click="toUserAccount" src="@/assets/blank_profile_picture.jpg" class="rounded-full h-8">  
       </div>
       
     </nav>
