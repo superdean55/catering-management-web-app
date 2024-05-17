@@ -10,6 +10,9 @@
                 </option>
             </select>
         </div>
+        <div v-if="error?.length">
+            <p class="text-red-600">{{ error }}</p>
+        </div>
         
     </div>
 </template>
@@ -21,6 +24,7 @@ import { ref } from 'vue'
 
 defineProps<{
   label: string,
+  error?: string
 }>();
 
 const level = ref<string>(CategoryLevel.levelZero)

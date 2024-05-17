@@ -29,4 +29,8 @@
 
 <script setup lang="ts">
 import RoundedCard from '@/components/cards/RoundedCard.vue';
+import { useArticleStore } from '@/stores/ArticleStor';
+
+const articleStore = useArticleStore()
+articleStore.getCategorys()
 </script>

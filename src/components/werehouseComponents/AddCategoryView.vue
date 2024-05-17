@@ -4,21 +4,20 @@
             <AddAndEditCategory 
                 title="Dodaj Kategoriju" 
                 second-button-label="Dodaj"
-                @catergory="onCategoryName"
-                @level="onLevel"
                 @delete="onDeleteCategory"
-                @confirm="onConfirmCategory"
+                @confirm="onAddCategory"
             >
                 <template v-slot:secondButtonIcon><span class="material-symbols-outlined">add</span></template>
             </AddAndEditCategory>
-            <CategoryPreview></CategoryPreview>
+            <CategoryPreview title="Pregled Kategorije" category-name="ime" level="level" image-url=""></CategoryPreview>
             <AddAndEditCategory title="Izmjena Kategorije" first-button-label="Obriši" second-button-label="Ažuriraj">
                 <template v-slot:firstButtonIcon><span class="material-symbols-outlined">delete</span></template>
                 <template v-slot:secondButtonIcon><span class="material-symbols-outlined">upgrade</span></template>
             </AddAndEditCategory>
         </div>
         <div class="col-span-1">
-            <RoundedCard><p>Category List</p></RoundedCard>
+            
+            <CategoryList></CategoryList>
         </div>
     </div> 
 </template>
@@ -27,23 +26,24 @@
 import RoundedCard from '../cards/RoundedCard.vue'
 import CategoryPreview from './categoryComponents/CategoryPreview.vue'
 import AddAndEditCategory from './categoryComponents/AddAndEditCategory.vue'
-import { ref } from 'vue'
+import CategoryList from './categoryComponents/CategoryList.vue';
+import { useArticleStore } from '@/stores/ArticleStor';
 
-const addCategoryName = ref('')
-const addLevel = ref('')
-const onCategoryName = (value: string) => {
-    addCategoryName.value = value
-    console.log(`cat: ${addCategoryName.value}`)
-}
-const onLevel = (value: string) => {
-    addLevel.value = value
-    console.log(`level: ${addLevel.value}`)
-}
+const articleStore = useArticleStore()
+const categorys = articleStore.categorys
+
 const onDeleteCategory = () => {
     console.log('deleting category')
 }
-const onConfirmCategory = () => {
-    console.log('confirmCategory')
+const onAddCategory = (imageUrl: string | null, categoryName: string, selectedCategoryLevel: string) => {
+    console.log('Add Category')
+    console.log(imageUrl)
+    console.log(categoryName)
+    console.log(selectedCategoryLevel)
+    if(imageUrl && categoryName.length && selectedCategoryLevel.length){
+        articleStore.addCategory(imageUrl, categoryName, selectedCategoryLevel)
+    }
+    
 }
 </script>
 

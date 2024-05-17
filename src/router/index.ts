@@ -58,6 +58,14 @@ const router = createRouter({
           components: {
             werehouse:  () => import('../components/werehouseComponents/AddCategoryView.vue')
           }
+        },
+        {
+          path: 'add-category/:id',
+          name: 'CategoryPreview',
+          components: {
+            werehouse:  () => import('../components/werehouseComponents/AddCategoryView.vue'),
+            categoryPreview:  () => import('../components/werehouseComponents/categoryComponents/CategoryPreview.vue')
+          }
         }
       ]
     }
