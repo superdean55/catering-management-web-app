@@ -54,19 +54,28 @@ const router = createRouter({
           }
         },
         {
-          path: 'add-category',
+          path: 'categorys',
           components: {
             werehouse:  () => import('../components/werehouseComponents/AddCategoryView.vue')
-          }
+          },
+          children:[
+            {
+              path: 'add',
+              components:{
+                interface: () => import('../components/werehouseComponents/categoryComponents/AddCategory.vue'),
+                categoryList: () => import('../components/werehouseComponents/categoryComponents/CategoryList.vue')
+              }
+            },
+            {
+              path: 'preview/:id',
+              name: 'CategoryPreview',
+              components:{
+                interface: () => import('../components/werehouseComponents/categoryComponents/CategoryPreview.vue'),
+                categoryList: () => import('../components/werehouseComponents/categoryComponents/CategoryList.vue')
+              }
+            }
+          ]
         },
-        {
-          path: 'add-category/:id',
-          name: 'CategoryPreview',
-          components: {
-            werehouse:  () => import('../components/werehouseComponents/AddCategoryView.vue'),
-            categoryPreview:  () => import('../components/werehouseComponents/categoryComponents/CategoryPreview.vue')
-          }
-        }
       ]
     }
   ]

@@ -24,11 +24,17 @@ import OneLabelAndDataTagInRow from '@/components/dataTags/OneLabelAndDataTagInR
 import RoundedCard from '@/components/cards/RoundedCard.vue';
 import { useRoute } from 'vue-router';
 import { useArticleStore } from '@/stores/ArticleStor';
+import { watch, ref } from 'vue';
 const route = useRoute();
-const id = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id
+var id = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id
 const articleStore = useArticleStore();
-
+const category = ref(articleStore.getCategoryById(id))
 // Dohvatite kategoriju na temelju userId
-const category = articleStore.getCategoryById(id);
+
+watch(() => route.params.id, (newId, oldId) => {
+  id = Array.isArray(newId) ? newId[0] : newId;
+  console.log(`id:${id}`)
+  category.value = articleStore.getCategoryById(id);
+});
 
 </script>

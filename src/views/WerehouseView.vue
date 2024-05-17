@@ -12,7 +12,7 @@
                         </li>
                         <li class="h-px w-full bg-slate-600"></li>
                         <li class="bg-orange-700 hover:bg-orange-800 text-white">
-                            <RouterLink :to="{ path: '/werehouse/add-category' }" class="flex items-center justify-center h-10 w-full">Dodaj Kategoriju</RouterLink>
+                            <RouterLink :to="{ path: '/werehouse/categorys/add' }" class="flex items-center justify-center h-10 w-full">Dodaj Kategoriju</RouterLink>
                         </li>
                     </ul>
                 </nav>
