@@ -3,14 +3,12 @@
         <div class="col-span-2 flex flex-col gap-2">
             <RouterView name="interface"></RouterView>
         </div>
-        <div class="col-span-1">
-            
-            <RouterView name="categoryList"></RouterView>
+        <div class="col-span-1 mr-2">
+            <RouterView name="articleList"></RouterView>
         </div>
     </div> 
 </template>
 
-<script setup lang="ts">
+<script setup>
 
 </script>
-

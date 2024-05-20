@@ -20,11 +20,8 @@ import { computed } from 'vue';
 
 const articleStore = useArticleStore()
 const levelZeroCategories = computed(() => articleStore.levelZeroCategories);
-console.log('levelZero')
-console.log(levelZeroCategories.value)
 const levelOneCategories = computed(() => articleStore.levelOneCategories);
 const levelTwoCategories = computed(() => articleStore.levelTwoCategories);
 const levelThreeCategories = computed(() => articleStore.levelThreeCategories);
 const levelFourCategories = computed(() => articleStore.levelFourCategories);
-const categorys = articleStore.categorys
 </script>

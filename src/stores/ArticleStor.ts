@@ -5,46 +5,63 @@ import { storage } from "@/firebase/firebaseConfig";
 import { db } from "@/firebase/firebaseConfig";
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { generateImageName } from "@/helpers/generateImageName";
-import { collection, doc, setDoc, onSnapshot } from "firebase/firestore";
+import { collection, doc, setDoc, onSnapshot, updateDoc, deleteDoc } from "firebase/firestore";
 import { CategoryLevel } from "@/types/CategoryLevel";
+import router from "@/router";
 
 export const useArticleStore = defineStore('articleStore',{
     state: () => ({
         categorys:[] as Category[],
     }),
     getters: {
-        levelZeroCategories: (state) => {
-            const categoryZero =  state.categorys.filter(category => category.level === CategoryLevel.levelZero);
-            console.log(categoryZero)
-            return categoryZero
-          },
+        levelZeroCategories: (state) => state.categorys.filter(category => category.level === CategoryLevel.levelZero),
         levelOneCategories: (state) => state.categorys.filter(category => category.level === CategoryLevel.levelOne),
         levelTwoCategories: (state) => state.categorys.filter(category => category.level === CategoryLevel.levelTwo),
         levelThreeCategories: (state) => state.categorys.filter(category => category.level === CategoryLevel.levelThree),
         levelFourCategories: (state) => state.categorys.filter(category => category.level === CategoryLevel.levelFour),
+        firstCategoryId: (state) => {
+            if (state.categorys.length > 0) {
+              return state.categorys[0].id;
+            }
+            return '';
+          }
     },
     actions:{
         getCategoryById(id: string) {
             return this.categorys.find(category => category.id === id)
         },
-        async addCategory(imageUrl:string, categoryName: string, categoryLevel: string){
+        async manageCategory(imageUrl:string | null, categoryName: string, categoryLevel: string, oldCategoryData: Category){
             try {
-                const imageBlob = await imageUrlToBlob(imageUrl)
-                console.log('Image Blob:', imageBlob);
-                if(imageBlob.size > 0){
-                    this.addImageAndData('category-images', imageBlob, '', categoryName, categoryLevel)
+                if(imageUrl){
+                    console.log(`TEST: image exists:`)
+                    const imageBlob = await imageUrlToBlob(imageUrl)
+                    console.log('Image Blob:', imageBlob);
+                    if(imageBlob.size > 0){
+                        this.addImageAndData('category-images', imageBlob, categoryName, categoryLevel, oldCategoryData)
+                    }
+                }else{
+                    if(oldCategoryData){
+                        console.log(`TEST: no image:`)
+                        this.updateData(oldCategoryData.id, categoryName, categoryLevel, oldCategoryData.imageName, oldCategoryData.imageUrl)
+                    }
                 }
             } catch (error) {
                 console.error('Error:', error);
             }
         },
-        async addImageAndData(storageName: string, blob: Blob, oldImageName: string, categoryName: string, level: string){
+        async addImageAndData(storageName: string, blob: Blob, categoryName: string, level: string, oldCategoryData: Category){
             const imageName = generateImageName(storageName);
             const storageRef = ref(storage, storageName + '/' + imageName);
             uploadBytes(storageRef, blob).then((snapshot) => {
                 getDownloadURL(snapshot.ref).then((url) => {
-                    this.deleteImage(storageName, oldImageName)
-                    this.addData('categorys', categoryName, imageName, level, url)
+                    if(oldCategoryData){
+                        console.log('Old data exists:')
+                        this.deleteImage(storageName, oldCategoryData.imageName)
+                        this.updateData(oldCategoryData.id, categoryName, level, imageName, url)
+                    }else{
+                        console.log('Old data dont exists:')
+                        this.addData('categorys', categoryName, imageName, level, url)
+                    }
                 }).catch((error) => {
                   console.error('Došlo je do greške prilikom dobivanja URL-a slike:', error);
                 });
@@ -74,10 +91,24 @@ export const useArticleStore = defineStore('articleStore',{
                     imageName: imageName,
                     imageUrl: imageUrl
                 } as Category );
-                console.log("Document written with ID: ", );
+                console.log("Adding new data ID: ", );
               } catch (e) {
                 console.error("Error adding document: ", e);
               }
+        },
+        async updateData(categoryId: string, categoryName: string, level: string, imageName: string, imageUrl: string){
+            try {
+                const updateRef = doc(db, 'categorys', categoryId);
+                await updateDoc(updateRef, {
+                    name: categoryName,
+                    level: level,
+                    imageName: imageName,
+                    imageUrl: imageUrl
+                });  
+                console.log('updating old data') 
+            } catch (e) {
+            console.error("Error Update category: ", e);
+          }
         },
         async getCategorys(){
             const collectionRef = collection(db, "categorys");
@@ -86,24 +117,54 @@ export const useArticleStore = defineStore('articleStore',{
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
                         const data = change.doc.data()
-                        
-                        this.categorys.push({
-                            id: data.id,
-                            name: data.name,
-                            level: data.level,
-                            imageName: data.imageName,
-                            imageUrl: data.imageUrl
-                        })
-                        console.log("add: ", change.doc.data());
+                        const category = this.categorys.find(it => it.id === data.id)
+                        if(!category){
+                            this.categorys.push({
+                                id: data.id,
+                                name: data.name,
+                                level: data.level,
+                                imageName: data.imageName,
+                                imageUrl: data.imageUrl
+                            })
+                        }
+                        //console.log("add: ", change.doc.data())
                     }
                     if (change.type === "modified") {
-                        console.log("modified: ", change.doc.data());
+                        //console.log("modified: ", change.doc.data())
+                        const data = change.doc.data()
+                        const index = this.categorys.findIndex(it => it.id === data.id)
+                        if (index !== -1) {
+                            this.categorys[index] = {
+                                id: data.id,
+                                name: data.name,
+                                level: data.level,
+                                imageName: data.imageName,
+                                imageUrl: data.imageUrl
+                            }
+                        }
                     }
                     if (change.type === "removed") {
-                        console.log("removed: ", change.doc.data());
+                        //console.log("removed: ", change.doc.data());
+                        const data = change.doc.data()
+                        const index = this.categorys.findIndex(it => it.id === data.id);
+                        if (index !== -1) {
+                            this.categorys.splice(index, 1);
+                        }
                     }
                 });
             });
+        },
+        async deleteCategory(categoryId: string){
+            const oldCategory = this.categorys.find(it => it.id === categoryId)
+            if(oldCategory){
+                try{
+                    this.deleteImage('category-images', oldCategory.imageName)
+                    await deleteDoc(doc(db, "categorys", categoryId))
+                } catch (e) {
+                    console.log("Deleting Category error: " + e)
+                }
+            }
+            router.push({ name: 'AddCategory'})
         }
     }
 })

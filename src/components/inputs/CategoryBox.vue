@@ -5,8 +5,8 @@
         </div>
         <div>
             <select v-model="option" @change="$emit('selectedValue', option)" class="iniline-block bg-inherit border-b border-slate-400">
-                <option v-for="value in Object.values(object)" :key="value" :value="value">
-                    {{ value }}
+                <option v-for="value in Object.values(object)" :key="value.id" :value="value.id" >
+                    {{ value.name }}
                 </option>
             </select>
         </div>

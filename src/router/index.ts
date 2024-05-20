@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import { getAuth } from 'firebase/auth';
-import AddArticle from '../components/werehouseComponents/AddArticleView.vue'
+import { getAuth } from 'firebase/auth'
 
 
 const router = createRouter({
@@ -48,19 +47,31 @@ const router = createRouter({
       meta: { requiresAuth: true },
       children: [
         {
-          path: 'add-article',
+          path: 'articles',
+          name: 'ArticleView',
           components: {
-            werehouse: AddArticle
-          }
+            werehouse:  () => import('../views/werehouseViews/ArticleView.vue')
+          },children:[
+            {
+              path: 'add',
+              name: 'AddArticle',
+              components:{
+                interface: () => import('../components/werehouseComponents/articleComponents/AddAndEditAtricle.vue'),
+                articleList: () => import('../components/werehouseComponents/articleComponents/ArticleList.vue')
+              }
+            }
+          ]
         },
         {
           path: 'categorys',
+          name: 'CategoryView',
           components: {
-            werehouse:  () => import('../components/werehouseComponents/AddCategoryView.vue')
+            werehouse:  () => import('../views/werehouseViews/CategoryView.vue')
           },
           children:[
             {
               path: 'add',
+              name: 'AddCategory',
               components:{
                 interface: () => import('../components/werehouseComponents/categoryComponents/AddCategory.vue'),
                 categoryList: () => import('../components/werehouseComponents/categoryComponents/CategoryList.vue')
@@ -71,6 +82,14 @@ const router = createRouter({
               name: 'CategoryPreview',
               components:{
                 interface: () => import('../components/werehouseComponents/categoryComponents/CategoryPreview.vue'),
+                categoryList: () => import('../components/werehouseComponents/categoryComponents/CategoryList.vue')
+              }
+            },
+            {
+              path: 'edit/:id',
+              name: 'EditCategory',
+              components:{
+                interface: () => import('../components/werehouseComponents/categoryComponents/EditCategory.vue'),
                 categoryList: () => import('../components/werehouseComponents/categoryComponents/CategoryList.vue')
               }
             }
