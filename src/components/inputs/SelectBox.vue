@@ -1,7 +1,7 @@
 <template>
     <div class="felx flex-col w-full">
         <div>
-            <label class="uppercase my-2 text-xs text-gray-600">{{ label }}</label>
+            <label class=" my-2 text-xs text-gray-600">{{ label }}</label>
         </div>
         <div>
             <select v-model="option" @change="$emit('selectedValue', option)" class="iniline-block bg-inherit border-b border-slate-400">

@@ -1,4 +1,6 @@
 export enum ArticleUnit{
     piece = 'komad',
-    liter = 'litra'
+    liter = 'litra',
+    koligram = 'kg',
+    gram = 'g'
 }

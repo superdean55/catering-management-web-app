@@ -62,6 +62,7 @@ const router = createRouter({
             }
           ]
         },
+        
         {
           path: 'categorys',
           name: 'CategoryView',
@@ -91,6 +92,23 @@ const router = createRouter({
               components:{
                 interface: () => import('../components/werehouseComponents/categoryComponents/EditCategory.vue'),
                 categoryList: () => import('../components/werehouseComponents/categoryComponents/CategoryList.vue')
+              }
+            }
+          ]
+        },
+        {
+          path: 'raw-materials',
+          name: 'RawMaterialsView',
+          components:{
+            werehouse: () => import('../views/werehouseViews/RawMaterialView.vue')
+          },
+          children:[
+            {
+              path: 'add',
+              name: 'AddRawMaterial',
+              components:{
+                interface: () => import('../components/werehouseComponents/RawMaterialComponents/AddRawMaterial.vue'),
+                list: () => import('../components/werehouseComponents/RawMaterialComponents/RawMaterialsList.vue')
               }
             }
           ]

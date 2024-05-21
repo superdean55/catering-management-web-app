@@ -49,10 +49,8 @@ import SelectBox from '@/components/inputs/SelectBox.vue';
 import ConfirmButton from '@/components/buttons/ConfirmButton.vue';
 import { ref } from 'vue';
 import { CategoryLevel } from '@/types/CategoryLevel';
-import { validateInputString } from '@/helpers/validateCategory';
-import { Category } from '@/types/Category';
-import router from '@/router';
-
+import { validateInputString } from '@/helpers/validateInputString';
+import type { Category } from '@/types/Category';
 
 const props = defineProps<{
     title: string,
