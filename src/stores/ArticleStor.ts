@@ -8,10 +8,12 @@ import { generateImageName } from "@/helpers/generateImageName";
 import { collection, doc, setDoc, onSnapshot, updateDoc, deleteDoc } from "firebase/firestore";
 import { CategoryLevel } from "@/types/CategoryLevel";
 import router from "@/router";
+import type { RawMaterial } from "@/types/RawMaterial";
 
 export const useArticleStore = defineStore('articleStore',{
     state: () => ({
         categorys:[] as Category[],
+        rawMaterials:[] as RawMaterial[]
     }),
     getters: {
         levelZeroCategories: (state) => state.categorys.filter(category => category.level === CategoryLevel.levelZero),
@@ -165,6 +167,97 @@ export const useArticleStore = defineStore('articleStore',{
                 }
             }
             router.push({ name: 'AddCategory'})
-        }
+        },
+        manageRawMaterial(name: string, unit: string, quantity: string, oldRawMaterial: RawMaterial | undefined){
+            if(oldRawMaterial){
+                this.updateRawMaterial(name, unit, quantity, oldRawMaterial.id)
+            }else{
+                this.addRawMaterial(name, unit, quantity)
+            }
+        },
+        async addRawMaterial(name: string, unit: string, quantity: string){
+            try {
+                const addRef = doc(collection(db, 'raw-materials'))
+                const id = addRef.id
+                await setDoc(addRef, {
+                    id: id,
+                    name: name,
+                    unit: unit,
+                    quantity: Number(quantity)
+                } as RawMaterial )
+                console.log('raw material added')
+              } catch (e) {
+                console.error("adding raw material error ", e);
+              }
+        },
+        async updateRawMaterial(name: string, unit: string, quantity: string, id: string){
+            try {
+                const updateRef = doc(db, 'raw-materials', id);
+                await updateDoc(updateRef, {
+                    name: name,
+                    unit: unit,
+                    quantity: Number(quantity)
+                });  
+                console.log('raw material updated') 
+            } catch (e) {
+            console.error("updating raw material error", e);
+          }
+        },
+        async getRawMaterials(){
+            const collectionRef = collection(db, 'raw-materials');
+
+            const unsubscribe = onSnapshot(collectionRef, (snapshot) => {
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        const data = change.doc.data()
+                        const rawMaterial = this.rawMaterials.find(it => it.id === data.id)
+                        if(!rawMaterial){
+                            this.rawMaterials.push({
+                                id: data.id,
+                                name: data.name,
+                                unit: data.unit,
+                                quantity: data.quantity
+                            }as RawMaterial)
+                        }
+                        console.log("raw add: ", change.doc.data())
+                    }
+                    if (change.type === "modified") {
+                        console.log("raw modified: ", change.doc.data())
+                        const data = change.doc.data()
+                        const index = this.rawMaterials.findIndex(it => it.id === data.id)
+                        if (index !== -1) {
+                            this.rawMaterials[index] = {
+                                id: data.id,
+                                name: data.name,
+                                unit: data.unit,
+                                quantity: data.quantity
+                            }as RawMaterial
+                        }
+                    }
+                    if (change.type === "removed") {
+                        console.log("raw removed: ", change.doc.data());
+                        const data = change.doc.data()
+                        const index = this.rawMaterials.findIndex(it => it.id === data.id);
+                        if (index !== -1) {
+                            this.rawMaterials.splice(index, 1);
+                        }
+                    }
+                });
+            });
+        },
+        getRawMaterialById(id: string) {
+            return this.rawMaterials.find(it => it.id === id)
+        },
+        async deleteRawMaterial(id: string){
+            const rawMaterial = this.rawMaterials.find(it => it.id === id)
+            if(rawMaterial){
+                try{
+                    await deleteDoc(doc(db, "raw-materials", id))
+                } catch (e) {
+                    console.log("Deleting raw material error: " + e)
+                }
+            }
+            router.push({ name: 'AddRawMaterial'})
+        },
     }
 })

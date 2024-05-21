@@ -18,8 +18,8 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from "vue";
-import { ref } from 'vue'
+
+import { ref, watch, defineProps } from 'vue'
 
 const props = defineProps<{
   label: string,
@@ -27,6 +27,12 @@ const props = defineProps<{
   option: string
   object: Object
 }>();
+
 const option = ref<string>('')
 option.value = props.option
+
+watch(() => props.option, (newOption, oldOption) => {
+  option.value = newOption
+});
+
 </script>

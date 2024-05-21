@@ -110,6 +110,14 @@ const router = createRouter({
                 interface: () => import('../components/werehouseComponents/RawMaterialComponents/AddRawMaterial.vue'),
                 list: () => import('../components/werehouseComponents/RawMaterialComponents/RawMaterialsList.vue')
               }
+            },
+            {
+              path: 'edit/:id',
+              name: 'EditRawMaterial',
+              components:{
+                interface: () => import('../components/werehouseComponents/RawMaterialComponents/EditRawMaterial.vue'),
+                list: () => import('../components/werehouseComponents/RawMaterialComponents/RawMaterialsList.vue')
+              }
             }
           ]
         },

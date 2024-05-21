@@ -30,4 +30,5 @@ import { useArticleStore } from '@/stores/ArticleStor';
 
 const articleStore = useArticleStore()
 articleStore.getCategorys()
+articleStore.getRawMaterials()
 </script>
