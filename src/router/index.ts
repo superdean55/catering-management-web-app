@@ -121,6 +121,22 @@ const router = createRouter({
             }
           ]
         },
+        {
+          path: 'receipt',
+          name: 'ReceiptView',
+          components: {
+            werehouse: () => import('../views/werehouseViews/ReceiptView.vue')
+          },
+          children:[
+            {
+              path: 'add',
+              name: 'AddReceipt',
+              components:{
+                receipt: () => import('../components/werehouseComponents/receiptComponents/ReceiptInterface.vue')
+              }
+            }
+          ]
+        }
       ]
     }
   ]

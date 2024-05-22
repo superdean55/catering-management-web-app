@@ -17,6 +17,10 @@
                         <li class="bg-orange-700 hover:bg-orange-800 text-white">
                             <RouterLink :to="{ name: 'AddRawMaterial' }" class="flex items-center justify-center h-10 w-full">Sirovine</RouterLink>
                         </li>
+                        <li class="h-px w-full bg-slate-600"></li>
+                        <li class="bg-orange-700 hover:bg-orange-800 text-white">
+                            <RouterLink :to="{ name: 'AddReceipt' }" class="flex items-center justify-center h-10 w-full">Primka</RouterLink>
+                        </li>
                     </ul>
                 </nav>
             </div>
