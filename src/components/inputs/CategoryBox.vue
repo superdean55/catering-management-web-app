@@ -4,8 +4,8 @@
             <label class="uppercase my-2 text-xs text-gray-600">{{ label }}</label>
         </div>
         <div>
-            <select v-model="option" @change="$emit('selectedValue', option)" class="iniline-block bg-inherit border-b border-slate-400">
-                <option v-for="value in Object.values(object)" :key="value.id" :value="value.id" >
+            <select :disabled="disabled" v-model="option" @change="$emit('selectedValue', option)" class="iniline-block bg-inherit border-b border-slate-400 truncate">
+                <option v-for="value in Object.values(object)" :key="value.id" :value="value.id" class="truncate" >
                     {{ value.name }}
                 </option>
             </select>
@@ -18,15 +18,19 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from "vue";
-import { ref } from 'vue'
+import { ref,defineProps, watch } from 'vue'
 
 const props = defineProps<{
   label: string,
   error?: string,
-  option: string
-  object: Object
-}>();
+  option: string,
+  object: Object,
+  disabled?: boolean
+}>()
 const option = ref<string>('')
 option.value = props.option
+
+watch(() => props.option, (newOption, oldOption) => {
+  option.value = newOption
+})
 </script>

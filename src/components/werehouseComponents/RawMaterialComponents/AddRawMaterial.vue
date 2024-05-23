@@ -17,8 +17,8 @@ import RawMaterialInterface from './RawMaterialInterface.vue'
 import { useArticleStore } from '@/stores/ArticleStor';
 
 const articleStore = useArticleStore()
-const onConfirm = (name: string, unit: string, quantity: string, oldRawMaterial: RawMaterial | undefined) => {
-    console.log(`recieved\nname: ${name}\nunit: ${unit}\nquantity: ${quantity}`)
-    articleStore.manageRawMaterial(name, unit, quantity, oldRawMaterial)
+const onConfirm = (name: string, unit: string, code: string, oldRawMaterial: RawMaterial | undefined) => {
+    console.log(`recieved\nname: ${name}\nunit: ${unit}\ncode: ${code}`)
+    articleStore.manageRawMaterial(name, unit, code, oldRawMaterial)
 }
 </script>

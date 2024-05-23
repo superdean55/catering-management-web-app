@@ -1,5 +1,5 @@
 <template>
-    <div class="felx">
+    <div class="w-full">
         <label class="inline-block my-1 text-xs text-gray-600">{{ label }}</label>
         <input  
             v-if="type"
@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { onUpdated, ref, defineProps } from "vue";
+import { defineProps } from "vue";
 
 const emit = defineEmits(['update'])
 defineProps<{

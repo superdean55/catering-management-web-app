@@ -33,9 +33,9 @@ watch(() => route.params.id, (newId, oldId) => {
   rawMaterial.value = articleStore.getRawMaterialById(id);
 });
 
-const onConfirm = (name: string, unit: string, quantity: string, oldRawMaterial: RawMaterial | undefined) => {
-    console.log(`recieved\nname: ${name}\nunit: ${unit}\nquantity: ${quantity}`)
-    articleStore.manageRawMaterial(name, unit, quantity, oldRawMaterial)
+const onConfirm = (name: string, unit: string, code: string, oldRawMaterial: RawMaterial | undefined) => {
+    console.log(`recieved\nname: ${name}\nunit: ${unit}\ncode: ${code}`)
+    articleStore.manageRawMaterial(name, unit, code, oldRawMaterial)
     router.push({ name: 'AddRawMaterial'})
 }
 const onDelete = (oldRawMaterial: RawMaterial | undefined) => {

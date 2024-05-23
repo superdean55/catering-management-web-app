@@ -4,5 +4,6 @@ export interface RawMaterial{
     id: string,
     name: string,
     unit: ArticleUnit,
+    code: string,
     quantity: number
 }

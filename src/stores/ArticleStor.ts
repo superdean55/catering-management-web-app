@@ -168,14 +168,14 @@ export const useArticleStore = defineStore('articleStore',{
             }
             router.push({ name: 'AddCategory'})
         },
-        manageRawMaterial(name: string, unit: string, quantity: string, oldRawMaterial: RawMaterial | undefined){
+        manageRawMaterial(name: string, unit: string, code: string, oldRawMaterial: RawMaterial | undefined){
             if(oldRawMaterial){
-                this.updateRawMaterial(name, unit, quantity, oldRawMaterial.id)
+                this.updateRawMaterial(name, unit, code, oldRawMaterial)
             }else{
-                this.addRawMaterial(name, unit, quantity)
+                this.addRawMaterial(name, unit, code)
             }
         },
-        async addRawMaterial(name: string, unit: string, quantity: string){
+        async addRawMaterial(name: string, unit: string, code: string){
             try {
                 const addRef = doc(collection(db, 'raw-materials'))
                 const id = addRef.id
@@ -183,20 +183,22 @@ export const useArticleStore = defineStore('articleStore',{
                     id: id,
                     name: name,
                     unit: unit,
-                    quantity: Number(quantity)
+                    code: code,
+                    quantity: 0
                 } as RawMaterial )
                 console.log('raw material added')
               } catch (e) {
                 console.error("adding raw material error ", e);
               }
         },
-        async updateRawMaterial(name: string, unit: string, quantity: string, id: string){
+        async updateRawMaterial(name: string, unit: string, code: string, oldRawMaterial: RawMaterial){
             try {
-                const updateRef = doc(db, 'raw-materials', id);
+                const updateRef = doc(db, 'raw-materials', oldRawMaterial.id);
                 await updateDoc(updateRef, {
                     name: name,
                     unit: unit,
-                    quantity: Number(quantity)
+                    code: code,
+                    quantity: oldRawMaterial.quantity
                 });  
                 console.log('raw material updated') 
             } catch (e) {
@@ -216,6 +218,7 @@ export const useArticleStore = defineStore('articleStore',{
                                 id: data.id,
                                 name: data.name,
                                 unit: data.unit,
+                                code: data.code,
                                 quantity: data.quantity
                             }as RawMaterial)
                         }
@@ -230,6 +233,7 @@ export const useArticleStore = defineStore('articleStore',{
                                 id: data.id,
                                 name: data.name,
                                 unit: data.unit,
+                                code: data.code,
                                 quantity: data.quantity
                             }as RawMaterial
                         }

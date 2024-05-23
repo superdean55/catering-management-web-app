@@ -1,5 +1,5 @@
 <template>
-    <div class="max-w-3xl">
+    <div class="max-w-4xl">
         <RoundedCard>
             <div class="grid grid-cols-1">
                 <div class="flex flex-row justify-center mb-4 mt-2">
@@ -52,6 +52,15 @@
                     <div class="h-2 col-span-4"></div>
                     <div class="col-span-4 h-px bg-black"></div>
                 </div>
+                <div class="flex flex-row justify-center w-full">
+                    <div class="inline-block">
+                        <div class="flex flex-row justify-start">
+                            <p>Sirovine:</p>
+                        </div>
+                        <ReceiptItemLabels class="inline-block"></ReceiptItemLabels>
+                    </div>
+                    
+                </div>
                 <div class="flex felx-row justify-end">
                     <ConfirmButton
                         label="Spremi"
@@ -69,10 +78,12 @@
 import RoundedCard from '@/components/cards/RoundedCard.vue';
 import InputLabelV2 from '@/components/inputs/InputLabelV2.vue';
 import ConfirmButton from '@/components/buttons/ConfirmButton.vue';
-import OneLabelAndDataTagInRow from '@/components/dataTags/OneLabelAndDataTagInRow.vue';
+import ReceiptItemLabels from './ReceiptItemLabels.vue'
+import ReceiptItemInput from './ReceiptItemInput.vue'
 import { ref } from 'vue';
 import { validateInputString } from '@/helpers/validateInputString';
 import { isValidOib } from '@/helpers/isValidOib';
+import ReceiptItemInputVue from './ReceiptItemInput.vue';
 
 const name = ref<string>('')
 const nameErrorMessage = ref<string>('')
