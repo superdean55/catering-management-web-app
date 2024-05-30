@@ -31,8 +31,11 @@
 
 <script setup lang="ts">
 import { useArticleStore } from '@/stores/ArticleStor';
+import { useReceiptStore } from '@/stores/ReceiptStore';
 
 const articleStore = useArticleStore()
+const receiptStore = useReceiptStore()
 articleStore.getCategorys()
 articleStore.getRawMaterials()
+receiptStore.getReceipts()
 </script>

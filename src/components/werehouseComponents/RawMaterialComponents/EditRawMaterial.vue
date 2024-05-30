@@ -23,14 +23,14 @@ import { watch, ref } from 'vue';
 import router from '@/router';
 
 const articleStore = useArticleStore()
-const route = useRoute();
+const route = useRoute()
 
 const id = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id
 const rawMaterial = ref(articleStore.getRawMaterialById(id))
 
 watch(() => route.params.id, (newId, oldId) => {
-  const id = Array.isArray(newId) ? newId[0] : newId;
-  rawMaterial.value = articleStore.getRawMaterialById(id);
+  const id = Array.isArray(newId) ? newId[0] : newId
+  rawMaterial.value = articleStore.getRawMaterialById(id)
 });
 
 const onConfirm = (name: string, unit: string, code: string, oldRawMaterial: RawMaterial | undefined) => {

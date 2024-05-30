@@ -1,6 +1,6 @@
 <template>
     <div class="max-w-4xl">
-        <RoundedCard>
+        <RoundedCard class="bg-gray-100">
             <div class="grid grid-cols-1">
                 <div class="flex flex-row justify-center mb-4 mt-2">
                     <p class="font-bold text-2xl">Primka</p>
@@ -52,15 +52,30 @@
                     <div class="h-2 col-span-4"></div>
                     <div class="col-span-4 h-px bg-black"></div>
                 </div>
-                <div class="flex flex-row justify-center w-full">
+                <div class="flex flex-col justify-center items-center w-full">
                     <div class="inline-block">
-                        <div class="flex flex-row justify-start">
-                            <p>Sirovine:</p>
+                        <div class="h-10">
+                            
                         </div>
-                        <ReceiptItemLabels class="inline-block"></ReceiptItemLabels>
+                        <ReceiptItemInterface 
+                            class="inline-block" 
+                            @confirm="onAddNewReceiptItem"
+                            :oldReceiptItem="oldReceiptItem"
+                        >
+                        </ReceiptItemInterface>
                     </div>
-                    
+                    <div class="h-10"></div>
+                    <div class="flex flex-row w-full">
+                        <ReceiptItemsList 
+                            :receiptItems="receiptItems"
+                            @remove="onRemoveReceiptItem"
+                            @update="onUpdateReceiptItem"
+                        >
+                        </ReceiptItemsList>
+                    </div>
+                    <p class="text-red-600">{{ listErrorMessage }}</p>
                 </div>
+                <div class="h-10"></div>
                 <div class="flex felx-row justify-end">
                     <ConfirmButton
                         label="Spremi"
@@ -78,21 +93,28 @@
 import RoundedCard from '@/components/cards/RoundedCard.vue';
 import InputLabelV2 from '@/components/inputs/InputLabelV2.vue';
 import ConfirmButton from '@/components/buttons/ConfirmButton.vue';
-import ReceiptItemLabels from './ReceiptItemLabels.vue'
-import ReceiptItemInput from './ReceiptItemInput.vue'
+import ReceiptItemInterface from './ReceiptItemInterface.vue'
 import { ref } from 'vue';
 import { validateInputString } from '@/helpers/validateInputString';
 import { isValidOib } from '@/helpers/isValidOib';
-import ReceiptItemInputVue from './ReceiptItemInput.vue';
+import ReceiptItemsList from './ReceiptItemsList.vue';
+import { ReceiptItem } from '@/types/ReceiptItem';
+import { generateId } from '@/helpers/generateId';
+import type { Receipt } from '@/types/Receipt';
+import { useReceiptStore } from '@/stores/ReceiptStore'
+
+const receiptStore = useReceiptStore()
 
 const name = ref<string>('')
 const nameErrorMessage = ref<string>('')
 const oib = ref<string>('')
 const oibErrorMessage = ref<string>('')
-const receiptNumber = ref<string>('0')
+const receiptNumber = ref<string>(receiptStore.receipts.length.toString())
 const documentName = ref<string>('')
 const documentNameErrorMessage = ref<string>('')
-
+const receiptItems = ref<ReceiptItem[]>([])
+const oldReceiptItem = ref<ReceiptItem | null>(null)
+const listErrorMessage = ref<string>('')
 const formatDate = (): string => {
     const date = new Date()
     return date.toISOString().split('T')[0];
@@ -133,6 +155,38 @@ const isOlderThanSevenDays = () => {
       sevenDaysAgo.setDate(new Date().getDate() - 7);
       return input < sevenDaysAgo;
 }
+
+const onAddNewReceiptItem = (rawMaterialId: string, quantity: string, pricePerUnit: string, amount: string, update: boolean) => {
+    console.log(`update: ${update}`)
+    listErrorMessage.value = ''
+    const index = receiptItems.value.findIndex( it => it.rawMaterialId === rawMaterialId)
+    console.log(`index: ${index}`)
+    if(update && index >= 0){
+        receiptItems.value[index] = {
+            id: receiptItems.value[index].id,
+            rawMaterialId: rawMaterialId,
+            quantity: quantity,
+            pricePerUnit: pricePerUnit,
+            amount: amount
+        } as ReceiptItem
+        oldReceiptItem.value = null
+    }else{
+        receiptItems.value.push({
+            id: generateId(),
+            rawMaterialId: rawMaterialId,
+            quantity: quantity,
+            pricePerUnit: pricePerUnit,
+            amount: amount,
+        }as ReceiptItem)
+    }
+}
+const onRemoveReceiptItem = (index: number) => {
+    receiptItems.value.splice(index, 1)
+}
+const onUpdateReceiptItem = (index: number) => {
+    console.log('update is clicked')
+    oldReceiptItem.value = receiptItems.value[index]
+}
 const onConfirm = () => {
     var isValid = true
     if(!validateInputString(name.value)){
@@ -155,7 +209,24 @@ const onConfirm = () => {
         documentNameErrorMessage.value = 'minimalno 2 slova'
         isValid = false
     }
+    if(!receiptItems.value.length){
+        listErrorMessage.value = 'lista mora sadržavati barem jednu sirovinu'
+        isValid = false
+    }
     if(isValid){
+        const newReceipt: Receipt = {
+            id: '',
+            supplierName: name.value,
+            supplierOib: oib.value,
+            documentDate: date.value,
+            receiptNumber: receiptNumber.value,
+            documentIdentifier: documentName.value,
+            receiptItems: receiptItems.value,
+            uploadDate: formatDate()
+            }as Receipt
+
+        console.log(newReceipt)
+        receiptStore.addReceipt(newReceipt)
         console.log('podaci ispravni')
     }
 }

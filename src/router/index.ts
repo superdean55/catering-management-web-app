@@ -134,6 +134,20 @@ const router = createRouter({
               components:{
                 receipt: () => import('../components/werehouseComponents/receiptComponents/ReceiptInterface.vue')
               }
+            },
+            {
+              path: 'list',
+              name: 'ReceiptList',
+              components:{
+                receipt: () => import('../components/werehouseComponents/receiptComponents/ReceiptsList.vue')
+              }
+            },
+            {
+              path: 'preview/:id',
+              name: 'ReceiptPreview',
+              components:{
+                receipt: () => import('../components/werehouseComponents/receiptComponents/ReceiptPreview.vue')
+              }
             }
           ]
         }
