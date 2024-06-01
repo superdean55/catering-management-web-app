@@ -1,7 +1,10 @@
 <template>
-    <RoundedCard class="border border-gray-500">
-        <div class="inline-block">
-            <div class="flex flex-col ">
+    <RoundedCard >
+        <div>
+            <div class="grid grid-cols-1 gap-2">
+                <div class="">
+                        <p class="font-bold">Uvoz sirovina</p>
+                </div>
                 <div class="flex flex-row gap-2">
                     <InputLabelV2
                         class=""
@@ -74,7 +77,7 @@
                         <div class="h-px"></div>
                     </div>
                 </div>
-                
+                <div class="w-full h-2"></div>
                 <div class="flex felx-row justify-center">
                     <ConfirmButton
                         v-if="oldReceiptItem"

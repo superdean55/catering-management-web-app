@@ -11,17 +11,19 @@ export const useSuppliesStore = defineStore('suppliesStore',{
         supplies:[] as Supply[]
     }),
     getters: {
-        
+        lastSupply: (state) => {
+            return state.supplies.length > 0 ? state.supplies[state.supplies.length - 1] : null;
+        }
     },
     actions:{
-        async updateSuppliesByReceipt(uid: string, updateCausedByDocumentName: string, receiptItems: ReceiptItem[]){
-            const date = new Date().toDateString()
+        async updateSuppliesByReceipt(email: string, updateCausedByDocumentName: string, receiptItems: ReceiptItem[]){
+            const date = new Date().toLocaleString()
             console.log(`supplies length: ${this.supplies.length}`)
             
             const supply = {
                 id: '',
                 updateCausedByDocumentName: updateCausedByDocumentName,
-                uid: uid,
+                email: email,
                 updateDate: date,
                 timestamp: serverTimestamp(),
                 supplyItems: []
@@ -102,8 +104,8 @@ export const useSuppliesStore = defineStore('suppliesStore',{
                             this.supplies.push({
                                 id: data.id,
                                 updateCausedByDocumentName: data.updateCausedByDocumentName,
-                                uid: data.uid,
-                                updateDate: data.updateData,
+                                email: data.email,
+                                updateDate: data.updateDate,
                                 timestamp: data.timestamp,
                                 supplyItems: data.supplyItems
                             }as Supply)
@@ -118,8 +120,8 @@ export const useSuppliesStore = defineStore('suppliesStore',{
                             this.supplies[index] = {
                                 id: data.id,
                                 updateCausedByDocumentName: data.updateCausedByDocumentName,
-                                uid: data.uid,
-                                updateDate: data.updateData,
+                                email: data.email,
+                                updateDate: data.updateDate,
                                 timestamp: data.timestamp,
                                 supplyItems: data.supplyItems
                             }as Supply

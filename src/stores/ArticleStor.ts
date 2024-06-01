@@ -250,7 +250,7 @@ export const useArticleStore = defineStore('articleStore',{
             });
         },
         getRawMaterialById(id: string) {
-            return this.rawMaterials.find(it => it.id === id)
+            return this.rawMaterials.find(it => it.id === id) || null
         },
         async deleteRawMaterial(id: string){
             const rawMaterial = this.rawMaterials.find(it => it.id === id)

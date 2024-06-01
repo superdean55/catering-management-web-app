@@ -150,6 +150,29 @@ const router = createRouter({
               }
             }
           ]
+        },
+        {
+          path: 'supplies',
+          name: 'SuppliesView',
+          components: {
+            werehouse: () => import('../views/werehouseViews/SuppliesView.vue')
+          },
+          children:[
+            {
+              path: 'preview',
+              name: 'SuppliesPreview',
+              components:{
+                supplies: () => import('../components/werehouseComponents/suppliesComponents/CurrentSupplies.vue')
+              }
+            },
+            {
+              path: 'list',
+              name: 'SuppliesList',
+              components:{
+                supplies: () => import('../components/werehouseComponents/suppliesComponents/SuppliesList.vue')
+              }
+            }
+          ]
         }
       ]
     }

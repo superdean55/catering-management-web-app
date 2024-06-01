@@ -34,9 +34,7 @@
                 <div class="w-full h-4"></div>
                 <div class="w-full h-px bg-gray-400"></div>
                 <div class="w-full h-4"></div>
-                <div class="flex flex-row justify-center items-center h-10">
-                    <p class="font-bold text-xl">Lista sirovina:</p>
-                </div>
+                
                 <ReceiptItemsList
                     v-if="receipt"
                     :receiptItems="receipt.receiptItems"

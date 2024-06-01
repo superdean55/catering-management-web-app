@@ -3,7 +3,7 @@ import type { SupplyItem } from "./SupplyItem"
 
 export interface Supply{
     id: string,
-    uid: string,
+    email: string,
     updateDate: string,
     timestamp: FieldValue,
     updateCausedByDocumentName: string,

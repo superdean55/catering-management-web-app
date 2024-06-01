@@ -1,17 +1,13 @@
 <template>
     <div class="max-w-4xl">
-        <RoundedCard class="bg-gray-100">
-            <div class="grid grid-cols-1">
-                <div class="flex flex-row justify-center mb-4 mt-2">
-                    <p class="font-bold text-2xl">Primka</p>
-                </div>
+        <div class="w-full grid grid-cols-2 gap-2">
+            <RoundedCard>
                 <div class="grid grid-cols-4 gap-2">
-                    <div class="col-span-4 h-px bg-black"></div>
                     <div class="col-span-4">
-                        <p>Osnovne Informacije:</p>
+                        <p class="font-bold">Primka: osnovne Informacije</p>
                     </div>
                     <InputLabelV2
-                        class="col-span-2"
+                        class="col-span-4"
                         type="text"
                         label="ime Dobavljača:"
                         :value="name"
@@ -19,7 +15,7 @@
                         :error="nameErrorMessage"
                     ></InputLabelV2>
                     <InputLabelV2
-                        class="col-span-2"
+                        class="col-span-3"
                         type="number"
                         label="oib Dobavljača:"
                         :value="oib"
@@ -27,7 +23,7 @@
                         :error="oibErrorMessage"
                     ></InputLabelV2>
                     <InputLabelV2
-                        class="col-span-1"
+                        class="col-span-2"
                         type="date"
                         label="Datum:"
                         :value="date"
@@ -35,14 +31,14 @@
                         :error="dateErrorMessage"
                     ></InputLabelV2>
                     <InputLabelV2
-                        class="col-start-3"
+                        class="col-span-2"
                         type="number"
                         label="Broj primke:"
                         :value="receiptNumber"
                         :disabled="true"
                     ></InputLabelV2>
                     <InputLabelV2
-                        class="col-span-3"
+                        class="col-span-4"
                         type="text"
                         label="Oznaka dokumenta:"
                         :value="documentName"
@@ -50,42 +46,37 @@
                         :error="documentNameErrorMessage"
                     ></InputLabelV2>
                     <div class="h-2 col-span-4"></div>
-                    <div class="col-span-4 h-px bg-black"></div>
+                    
                 </div>
-                <div class="flex flex-col justify-center items-center w-full">
-                    <div class="inline-block">
-                        <div class="h-10">
-                            
-                        </div>
-                        <ReceiptItemInterface 
-                            class="inline-block" 
-                            @confirm="onAddNewReceiptItem"
-                            :oldReceiptItem="oldReceiptItem"
-                        >
-                        </ReceiptItemInterface>
-                    </div>
-                    <div class="h-10"></div>
-                    <div class="flex flex-row w-full">
-                        <ReceiptItemsList 
-                            :receiptItems="receiptItems"
-                            @remove="onRemoveReceiptItem"
-                            @update="onUpdateReceiptItem"
-                        >
-                        </ReceiptItemsList>
-                    </div>
-                    <p class="text-red-600">{{ listErrorMessage }}</p>
-                </div>
-                <div class="h-10"></div>
-                <div class="flex felx-row justify-end">
-                    <ConfirmButton
-                        label="Spremi"
-                        @confirm="onConfirm"
+            </RoundedCard>
+            <ReceiptItemInterface    
+                @confirm="onAddNewReceiptItem"
+                :oldReceiptItem="oldReceiptItem"
+            >
+            </ReceiptItemInterface>
+            <RoundedCard class="col-span-2">
+                <div class="flex flex-col w-full">
+                    <ReceiptItemsList 
+                        :receiptItems="receiptItems"
+                        @remove="onRemoveReceiptItem"
+                        @update="onUpdateReceiptItem"
                     >
-                    <span class="material-symbols-outlined">save</span>
+                    </ReceiptItemsList>
+                    <div class="flex flex-row justify-center">
+                        <p class="text-red-600">{{ listErrorMessage }}</p>
+                    </div>
+                    <div class="flex felx-row justify-end">
+                        <ConfirmButton
+                            label="Spremi"
+                            @confirm="onConfirm"
+                        >
+                        <span class="material-symbols-outlined">save</span>
                     </ConfirmButton>
                 </div>
-            </div>
-        </RoundedCard>
+                </div>
+            </RoundedCard>
+        </div>
+        
     </div>
 </template>
 
