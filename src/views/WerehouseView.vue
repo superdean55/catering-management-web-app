@@ -32,10 +32,13 @@
 <script setup lang="ts">
 import { useArticleStore } from '@/stores/ArticleStor';
 import { useReceiptStore } from '@/stores/ReceiptStore';
+import { useSuppliesStore } from '@/stores/SuppliesStore';
 
 const articleStore = useArticleStore()
 const receiptStore = useReceiptStore()
+const suppliesStore = useSuppliesStore()
 articleStore.getCategorys()
 articleStore.getRawMaterials()
 receiptStore.getReceipts()
+suppliesStore.getSupplies()
 </script>

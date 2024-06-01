@@ -1,6 +1,7 @@
 <template>
     <div class="max-w-4xl">
         <div class="grid grid-cols-2 gap-2">
+            <div class="col-span-2 flex flex-row justify-center"><p>Ne postoji niti jedna primka</p></div>
             <div v-for="receipt in receiptStore.receipts" :key="receipt.id" class="col-span-1">
                 <RouterLink :to="{ name: 'ReceiptPreview', params: { id: receipt.id }}">
                     <RoundedCard class="bg-gray-200 hover:bg-gray-400">

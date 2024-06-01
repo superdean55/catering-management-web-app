@@ -2,6 +2,11 @@ import type { Receipt } from "@/types/Receipt";
 import { defineStore } from "pinia";
 import { db } from "@/firebase/firebaseConfig";
 import { doc, collection, setDoc, onSnapshot } from "firebase/firestore";
+import { useSuppliesStore } from "./SuppliesStore";
+import { useUserStore } from "./UserStore";
+
+const suppliesStore = useSuppliesStore()
+const userStore = useUserStore()
 
 export const useReceiptStore = defineStore('receiptStore',{
     state: () => ({
@@ -21,8 +26,10 @@ export const useReceiptStore = defineStore('receiptStore',{
                 receipt.id = addRef.id
                 await setDoc(addRef, receipt as Receipt )
                     console.log("Adding new data ID: ")
-                
-                
+                if(userStore.user && userStore.user.uid){
+                    const updateCausedByDocumentName = `receipt numb. ${receipt.receiptNumber}`
+                    await suppliesStore.updateSuppliesByReceipt(userStore.user.uid, updateCausedByDocumentName, receipt.receiptItems)
+                }
               } catch (e) {
                 console.error("Error adding document: ", e)
               }
