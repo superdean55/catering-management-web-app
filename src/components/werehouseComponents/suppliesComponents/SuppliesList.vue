@@ -4,7 +4,7 @@
         <div v-if="reversedSupplies">
             <div class="flex flex-col gap-2">
                 <div v-for="(supply, index) in reversedSupplies" :key="supply.id" class="flex flex-col gap-2">
-                    <SuppliesPreview :class="index === 0 ? 'bg-green-200' : 'bg-red-200'"
+                    <SuppliesPreview :class="index === 0 ? 'bg-green-300' : 'bg-red-300'"
                         v-bind="index === 0 ? { title: 'Zalihe - trenutno stanje' } : {}"
                         :supply="supply"
                     >

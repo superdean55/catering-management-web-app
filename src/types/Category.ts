@@ -1,9 +1,13 @@
-import type { CategoryLevel } from "./CategoryLevel";
+import type { FieldValue } from "firebase/firestore"
+import type { CategoryItem } from "./CategoryItem"
+
 
 export interface Category{
     id: string,
     name: string,
-    level: CategoryLevel,
     imageName: string,
-    imageUrl: string
+    imageUrl: string,
+    creationDate: string,
+    timestamp: FieldValue,
+    items: CategoryItem[]
 }

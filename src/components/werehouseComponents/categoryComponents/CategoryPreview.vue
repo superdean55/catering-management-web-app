@@ -1,9 +1,4 @@
 <template>
-    <div>
-        <RouterLink :to="{ name: 'AddCategory' }" class="inline-block px-2 py-1 rounded-2xl bg-gray-600 hover:bg-gray-800 text-white">
-            <p >Dodaj Kategoriju</p>
-        </RouterLink>
-    </div>
     <RoundedCard v-if="category">
         <div  class="w-full flex flex-row">
             <div v-if="category.imageUrl.length" class="flex items-center ">
@@ -43,7 +38,7 @@ const route = useRoute();
 var id = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id
 const articleStore = useArticleStore();
 const category = ref(articleStore.getCategoryById(id))
-// Dohvatite kategoriju na temelju userId
+
 
 watch(() => route.params.id, (newId, oldId) => {
   id = Array.isArray(newId) ? newId[0] : newId;

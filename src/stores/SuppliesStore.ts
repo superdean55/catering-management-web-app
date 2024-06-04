@@ -42,30 +42,18 @@ export const useSuppliesStore = defineStore('suppliesStore',{
                 this.addReceipt(supply)
                 return
             }
-            console.log(`supplies lenght: ${this.supplies.length}`)
-            console.log(`supplies: ${this.supplies}`)
+            
             const lastSupplyState = this.supplies[this.supplies.length - 1]
-            console.log(`lastSupplyState: ${lastSupplyState}`)
-            console.log(`lastSupplyState.supplyItems: ${lastSupplyState.supplyItems}`)
-        
+            
             if (lastSupplyState && Array.isArray(lastSupplyState.supplyItems)) {
-                
                 supply.supplyItems = lastSupplyState.supplyItems.map(item => ({ ...item }));
-
-                console.log('old supplies items');
-                supply.supplyItems.forEach(element => {
-                    console.log(`id: ${element.rawMaterialId} quantity: ${element.quantity}`);
-                });
             } 
             receiptItems.forEach(element => {
                 const supplyItemIndex = supply.supplyItems.findIndex(it => it.rawMaterialId === element.rawMaterialId)
                 console.log('index:' + supplyItemIndex)
                 if(supplyItemIndex !== -1){
                     const qunatity = isNaN(parseFloat(element.quantity)) ? 0.00 : parseFloat(element.quantity)
-                    console.log(`qunatity: ${qunatity} to add`)
-                    console.log(`qunatity: ${supply.supplyItems[supplyItemIndex].quantity} before`)
                     supply.supplyItems[supplyItemIndex].quantity += qunatity
-                    console.log(`qunatity: ${supply.supplyItems[supplyItemIndex].quantity} after`)
                 }else{
                     supply.supplyItems.push({
                         rawMaterialId: element.rawMaterialId,

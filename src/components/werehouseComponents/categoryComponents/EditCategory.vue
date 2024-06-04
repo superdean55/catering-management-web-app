@@ -4,41 +4,34 @@
                 <p >Dodaj Kategoriju</p>
         </RouterLink>
     </div>
-    <AddAndEditCategory 
-        title="Izmjeni Kategoriju" 
-        first-button-label="Obriši"
-        second-button-label="Ažuriraj"
+    <CategoryInterface 
         @delete="onDeleteCategory"
-        @confirm="onAddCategory"
+        @confirm="onConfirm"
         :category="category"
     >
-        <template v-slot:firstButtonIcon><span class="material-symbols-outlined">delete</span></template>
-        <template v-slot:secondButtonIcon><span class="material-symbols-outlined">update</span></template>
-    </AddAndEditCategory>
+    </CategoryInterface>
 </template>
 
 <script setup lang="ts">
-import AddAndEditCategory from './AddAndEditCategory.vue';
-import { useArticleStore } from '@/stores/ArticleStor';
-import { useRoute } from 'vue-router';
-import { ref } from 'vue';
-import type { Category } from '@/types/Category';
-import router from '@/router';
+import CategoryInterface from './CategoryInterface.vue'
+import { useRoute } from 'vue-router'
+import { useCategoryStore } from '@/stores/CategoryStore'
+import { ref } from 'vue'
+import type { Category } from '@/types/Category'
 
-const articleStore = useArticleStore()
-const route = useRoute();
+const categoryStore = useCategoryStore()
+const route = useRoute()
 
 var id = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id
-const category = ref(articleStore.getCategoryById(id))
+const category = ref(categoryStore.getCategoryById(id))
 
 const onDeleteCategory = (categoryId: string) => {
-    articleStore.deleteCategory(categoryId)
+    categoryStore.deleteCategory(categoryId)
 }
-const onAddCategory = (imageUrl: string | null, categoryName: string, selectedCategoryLevel: string, oldCategoryData: Category) => {
-    console.log('Update Category')   
-    console.log(`category: on edit :${category}`)
-    articleStore.manageCategory(imageUrl, categoryName, selectedCategoryLevel, oldCategoryData)
-    router.push({ name: 'AddCategory'})
+const onConfirm = (category: Category, selectedCategoryImageUrl: string | null, oldCategory: Category | null) => {
+    if(oldCategory){
+        categoryStore.updateCategory(category, selectedCategoryImageUrl, oldCategory)
+    }
 }
 </script>
 

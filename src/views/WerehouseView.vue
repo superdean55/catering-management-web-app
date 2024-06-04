@@ -7,7 +7,7 @@
                     <ul>
                         <li><div class="h-1 w-full bg-black"></div></li>
                         <li class="bg-orange-700 hover:bg-orange-800 text-white">
-                            <RouterLink :to="{ name: 'AddArticle' }" class="flex items-center justify-center h-10 w-full">Dodaj Artikl</RouterLink>
+                            <RouterLink :to="{ name: 'AddProduct' }" class="flex items-center justify-center h-10 w-full">Proivodi</RouterLink>
                         </li>
                         <li class="h-px w-full bg-slate-600"></li>
                         <li class="bg-orange-700 hover:bg-orange-800 text-white">
@@ -34,15 +34,17 @@
 </template>
 
 <script setup lang="ts">
-import { useArticleStore } from '@/stores/ArticleStor';
-import { useReceiptStore } from '@/stores/ReceiptStore';
-import { useSuppliesStore } from '@/stores/SuppliesStore';
+import { useArticleStore } from '@/stores/ArticleStor'
+import { useReceiptStore } from '@/stores/ReceiptStore'
+import { useSuppliesStore } from '@/stores/SuppliesStore'
+import { useProductStore } from '@/stores/ProductStore'
 
 const articleStore = useArticleStore()
 const receiptStore = useReceiptStore()
 const suppliesStore = useSuppliesStore()
-articleStore.getCategorys()
+const productStore = useProductStore()
 articleStore.getRawMaterials()
 receiptStore.getReceipts()
 suppliesStore.getSupplies()
+productStore.getProducts()
 </script>

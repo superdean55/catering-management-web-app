@@ -47,17 +47,30 @@ const router = createRouter({
       meta: { requiresAuth: true },
       children: [
         {
-          path: 'articles',
-          name: 'ArticleView',
+          path: 'product',
+          name: 'ProductView',
           components: {
-            werehouse:  () => import('../views/werehouseViews/ArticleView.vue')
+            werehouse:  () => import('../views/werehouseViews/ProductView.vue')
           },children:[
             {
               path: 'add',
-              name: 'AddArticle',
+              name: 'AddProduct',
               components:{
-                interface: () => import('../components/werehouseComponents/articleComponents/AddAndEditAtricle.vue'),
-                articleList: () => import('../components/werehouseComponents/articleComponents/ArticleList.vue')
+                product: () => import('../components/werehouseComponents/productComponents/AddProduct.vue'),
+              }
+            },
+            {
+              path: 'edit/:id',
+              name: 'EditProduct',
+              components:{
+                product: () => import('../components/werehouseComponents/productComponents/EditProduct.vue'),
+              }
+            },
+            {
+              path: 'list',
+              name: 'Products',
+              components:{
+                product: () => import('../components/werehouseComponents/productComponents/ProductsList.vue'),
               }
             }
           ]
@@ -75,7 +88,6 @@ const router = createRouter({
               name: 'AddCategory',
               components:{
                 interface: () => import('../components/werehouseComponents/categoryComponents/AddCategory.vue'),
-                categoryList: () => import('../components/werehouseComponents/categoryComponents/CategoryList.vue')
               }
             },
             {
@@ -83,7 +95,7 @@ const router = createRouter({
               name: 'CategoryPreview',
               components:{
                 interface: () => import('../components/werehouseComponents/categoryComponents/CategoryPreview.vue'),
-                categoryList: () => import('../components/werehouseComponents/categoryComponents/CategoryList.vue')
+                
               }
             },
             {
@@ -91,7 +103,15 @@ const router = createRouter({
               name: 'EditCategory',
               components:{
                 interface: () => import('../components/werehouseComponents/categoryComponents/EditCategory.vue'),
-                categoryList: () => import('../components/werehouseComponents/categoryComponents/CategoryList.vue')
+                
+              }
+            },
+            {
+              path: 'categorys',
+              name: 'Categorys',
+              components:{
+                interface: () => import('../components/werehouseComponents/categoryComponents/CategoryList.vue'),
+                
               }
             }
           ]
