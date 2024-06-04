@@ -45,8 +45,11 @@
                                 </div>
                             </div>
                             <div v-else class="w-full flex flex-col items-center gap-2 max-w-xs">
-                                <p>Niti jedan proizvod nije dodan</p>
+                                <p>Lista je prazna</p>
                             </div>
+                        </div>
+                        <div class="w-full flex flex-row justify-center">
+                            <p class="text-red-500">{{ categroyItemsErrorMessage }}</p>
                         </div>
                     </div>
                     <div class="flex flex-row pt-2 justify-end">
@@ -129,6 +132,7 @@ const products = ref<Product[]>([])
 products.value =  JSON.parse(JSON.stringify(productStore.products))
 
 const categoryItems = ref<CategoryItem[]>([])
+const categroyItemsErrorMessage = ref('')
 
 const imageUrl = ref('')
 const categoryImage = ref<HTMLImageElement | null>(null)
@@ -142,6 +146,7 @@ const searchQuery = ref('')
 if(props.category){
     imageUrl.value = props.category.imageUrl
     categoryName.value = props.category.name
+    categoryItems.value = props.category.items
 }
 
 const filteredProducts = computed(() => {
@@ -171,6 +176,7 @@ const handleImageUpdate = (e: any) => {
 }
 const onProductClick = (product: Product) => { 
 
+    categroyItemsErrorMessage.value = ''
     categoryItems.value.push({
         productId: product.id,  
     }as CategoryItem)
@@ -200,6 +206,9 @@ const onConfirmButton = () => {
     if(selectedCategoryImageUrl.value === null && imageUrl.value == ''){
         imageErrorMessage.value = 'slika nije dodana'
         isValid = false
+    }
+    if(!categoryItems.value.length){
+        categroyItemsErrorMessage.value = 'Lista mora sadržavati minimalno jedan proizvod'
     }
     if(isValid){
         const category = {

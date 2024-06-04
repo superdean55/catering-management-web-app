@@ -1,9 +1,4 @@
 <template>
-    <div>
-        <RouterLink :to="{ name: 'AddCategory' }" class="inline-block px-2 py-1 rounded-2xl bg-gray-600 hover:bg-gray-800 text-white">
-                <p >Dodaj Kategoriju</p>
-        </RouterLink>
-    </div>
     <CategoryInterface 
         @delete="onDeleteCategory"
         @confirm="onConfirm"

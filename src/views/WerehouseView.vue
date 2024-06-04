@@ -38,13 +38,16 @@ import { useArticleStore } from '@/stores/ArticleStor'
 import { useReceiptStore } from '@/stores/ReceiptStore'
 import { useSuppliesStore } from '@/stores/SuppliesStore'
 import { useProductStore } from '@/stores/ProductStore'
+import { useCategoryStore } from '@/stores/CategoryStore'
 
 const articleStore = useArticleStore()
 const receiptStore = useReceiptStore()
 const suppliesStore = useSuppliesStore()
 const productStore = useProductStore()
+const categoryStore = useCategoryStore()
 articleStore.getRawMaterials()
 receiptStore.getReceipts()
 suppliesStore.getSupplies()
 productStore.getProducts()
+categoryStore.getCategorys()
 </script>
