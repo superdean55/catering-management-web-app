@@ -199,8 +199,17 @@ const router = createRouter({
     {
       path: '/paydesk',
       name: 'PaydeskView',
-      component: () => import('../views/PaydeskView.vue'),
-      meta: { requiresAuth: true }
+      component: () => import('../views/paydeskViews/PaydeskView.vue'),
+      meta: { requiresAuth: true },
+      children: [
+        {
+          path: 'bill',
+          name: 'BillInterfaceView',
+          components: {
+            interface: () => import('../views/paydeskViews/BillInterfaceView.vue')
+          }
+        }
+      ]
     }
   ]
 })

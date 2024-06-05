@@ -40,7 +40,7 @@ const toUserAccount = () => {
           <RouterLink :to="{ name: 'AddProduct'}">Skladište</RouterLink>
         </div>
         <div v-if="userStore.loggedInVisibility" class="flex items-center hover:bg-orange-800 h-full px-5">
-          <RouterLink :to="{ name: 'PaydeskView'}">Blagajna</RouterLink>
+          <RouterLink :to="{ name: 'BillInterfaceView'}">Blagajna</RouterLink>
         </div>
         <div class="ml-auto"></div>
         <div v-if="userStore.notLoggedInVisibility" class="flex items-center hover:bg-orange-800 h-full px-5">
