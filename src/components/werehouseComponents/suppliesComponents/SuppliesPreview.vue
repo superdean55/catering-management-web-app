@@ -1,5 +1,5 @@
 <template>
-        <RoundedCard>
+        <RoundedCard :background-color="backgroundColor">
             <div class="w-full flex flex-col">
                 <div v-if="title" class="w-full flex flex-col">
                     <div class="flex flex-row justify-center">
@@ -69,7 +69,8 @@ import type { Supply } from '@/types/Supply'
 
 const props = defineProps<{
     title?: string,
-    supply: Supply
+    supply: Supply,
+    backgroundColor?: string
 }>()
 
 const articleStore = useArticleStore()

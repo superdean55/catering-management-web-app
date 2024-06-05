@@ -114,6 +114,7 @@ import { computed, ref } from 'vue'
 import { validateInputString } from '@/helpers/validateInputString'
 import type { Category } from '@/types/Category'
 import { useProductStore } from '@/stores/ProductStore'
+import { useCategoryStore } from '@/stores/CategoryStore'
 import type { CategoryItem } from '@/types/CategoryItem'
 import type { Product } from '@/types/Product'
 import type { FieldValue } from 'firebase/firestore'
@@ -128,8 +129,19 @@ const emit = defineEmits<{
 }>()
 
 const productStore = useProductStore()
+const categoryStore = useCategoryStore()
 const products = ref<Product[]>([])
+
 products.value =  JSON.parse(JSON.stringify(productStore.products))
+
+categoryStore.categorys.forEach(element => {
+    element.items.forEach(product => {
+        const index = products.value.findIndex(it => it.id === product.productId)
+        if(index !== -1){
+            products.value.splice(index, 1)
+        }
+    })
+})
 
 const categoryItems = ref<CategoryItem[]>([])
 const categroyItemsErrorMessage = ref('')
@@ -209,6 +221,7 @@ const onConfirmButton = () => {
     }
     if(!categoryItems.value.length){
         categroyItemsErrorMessage.value = 'Lista mora sadržavati minimalno jedan proizvod'
+        isValid = false
     }
     if(isValid){
         const category = {

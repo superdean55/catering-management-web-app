@@ -1,15 +1,15 @@
 <template>
-    <div class="max-w-4xl">
+    <div class="max-w-5xl">
         <div class="w-full grid grid-cols-2 gap-2">
             <RouterLink 
                 :to="{ name: 'EditProduct', params: { id: product.id }}"
                 v-for="product in products" :key="product.id"
-                class="rounded-xl flex flex-row bg-gray-100 hover:bg-gray-400"
+                class="rounded-xl flex flex-row  bg-gray-100 hover:bg-gray-400 border hover:border-gray-400 hover:shadow-lg"
             >
-                <div class="w-50 h-50 overflow-hidden">
+                <div class="w-48 h-48 overflow-hidden">
                     <img :src="product.imageUrl" :alt="product.imageName" class="w-full h-full object-cover rounded-l-xl">
                 </div>
-                <div class="flex flex-col w-full gap-2 p-4">
+                <div class="flex flex-col flex-grow gap-2 px-2 py-2">
                     <OneLabelAndDataTagInRow label="ime:" :data="product.name"></OneLabelAndDataTagInRow>
                     <TwoLabelAndDataTagInRow
                         first-label="šifra:"
