@@ -195,6 +195,12 @@ const router = createRouter({
           ]
         }
       ]
+    },
+    {
+      path: '/paydesk',
+      name: 'PaydeskView',
+      component: () => import('../views/PaydeskView.vue'),
+      meta: { requiresAuth: true }
     }
   ]
 })

@@ -15,7 +15,7 @@
                         first-label="šifra:"
                         :first-data="product.code"
                         second-label="Cijena:"
-                        :second-data="product.price+'€'"
+                        :second-data="product.price + '€'"
                         class="w-full"
                     >
                     </TwoLabelAndDataTagInRow>
