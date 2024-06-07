@@ -61,6 +61,9 @@ const onCategoryClick = (category :Category) => {
         }
     })
 }
+if(categoryStore.categorys.length){
+    onCategoryClick(categoryStore.categorys[0])
+}
 const onProductClicked = (product :Product) => {
     emit('product', product)
 }

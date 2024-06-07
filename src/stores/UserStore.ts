@@ -1,11 +1,11 @@
-import { defineStore } from "pinia";
-import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import router from "@/router";
-import { doc, setDoc, collection, query, where, onSnapshot } from "firebase/firestore"; 
-import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
-import { storage } from "@/firebase/firebaseConfig";
-import { db } from "@/firebase/firebaseConfig";
-import type { UserData } from "@/types/UserData";
+import { defineStore } from "pinia"
+import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth"
+import router from "@/router"
+import { doc, setDoc, collection, query, where, onSnapshot } from "firebase/firestore"
+import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage"
+import { storage } from "@/firebase/firebaseConfig"
+import { db } from "@/firebase/firebaseConfig"
+import type { UserData } from "@/types/UserData"
 
 
 
@@ -81,7 +81,7 @@ export const useUserStore = defineStore('userStore',{
               console.log(auth.currentUser)
               console.log(`onAuthState: user is logged in: ${user.email}`)
               console.log(`onAuthState: auth: ${auth.currentUser?.email}`)
-              //console.log(`user state: ${this.user.email}\n${this.user.uid}`)
+              
             } else {
               this.user = {
                 uid: null,

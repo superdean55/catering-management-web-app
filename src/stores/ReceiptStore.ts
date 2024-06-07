@@ -5,8 +5,7 @@ import { doc, collection, setDoc, onSnapshot } from "firebase/firestore";
 import { useSuppliesStore } from "./SuppliesStore";
 import { useUserStore } from "./UserStore";
 
-const suppliesStore = useSuppliesStore()
-const userStore = useUserStore()
+
 
 export const useReceiptStore = defineStore('receiptStore',{
     state: () => ({
@@ -25,7 +24,9 @@ export const useReceiptStore = defineStore('receiptStore',{
                 const addRef = doc(collection(db, 'receipts'))
                 receipt.id = addRef.id
                 await setDoc(addRef, receipt as Receipt )
-                    console.log("Adding new data ID: ")
+                console.log("Adding new data ID: ")
+                const suppliesStore = useSuppliesStore()
+                const userStore = useUserStore()                
                 if(userStore.user && userStore.user.email){
                     const updateCausedByDocumentName = `receipt numb. ${receipt.receiptNumber}`
                     await suppliesStore.updateSuppliesByReceipt(userStore.user.email, updateCausedByDocumentName, receipt.receiptItems)

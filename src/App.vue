@@ -1,16 +1,29 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HomeView from './views/HomeView.vue';
-import AboutView from './views/AboutView.vue';
-import SignInView from './views/SignInView.vue';
-import WerehouseView from './views/WerehouseView.vue';
 import { useUserStore } from '@/stores/UserStore'
-import router from "@/router";
-import { ref, watch } from 'vue';
-import { storeToRefs } from 'pinia';
+import router from "@/router"
+import { ref, watch } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useArticleStore } from '@/stores/ArticleStor'
+import { useReceiptStore } from '@/stores/ReceiptStore'
+import { useSuppliesStore } from '@/stores/SuppliesStore'
+import { useProductStore } from '@/stores/ProductStore'
+import { useCategoryStore } from '@/stores/CategoryStore'
 
 const userStore = useUserStore()
+const articleStore = useArticleStore()
+const receiptStore = useReceiptStore()
+const suppliesStore = useSuppliesStore()
+const productStore = useProductStore()
+const categoryStore = useCategoryStore()
+
+articleStore.getRawMaterials()
+
+suppliesStore.getSupplies()
+productStore.getProducts()
+categoryStore.getCategorys()
 userStore.authState()
+receiptStore.getReceipts()
+
 const { user } = storeToRefs(userStore)
 const userImage = ref<HTMLImageElement | null>(null)
 

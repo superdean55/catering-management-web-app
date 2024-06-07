@@ -1,8 +1,8 @@
 <template>
-    <RoundedCard class="max-w-4xl">
-        <div class="w-full grid grid-cols-6 gap-2">
+    <RoundedCard class="max-w-5xl">
+        <div class="w-full grid grid-cols-7 gap-2">
             <ProductSelectionInterface class="col-span-3" @product="onProduct"></ProductSelectionInterface>
-            <BillItemsInterface :product="product" class="col-span-3"></BillItemsInterface>
+            <BillItemsInterface :product="product" class="col-span-4"></BillItemsInterface>
         </div>
     </RoundedCard>
 </template>

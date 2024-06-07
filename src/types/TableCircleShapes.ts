@@ -1,0 +1,18 @@
+export enum TableCircleShapes{
+    fourChairs = '4-circle-4-chair-45',
+    twoCharisLeftSiterRight = '4-circle-2-chair-left-45-siter-right-0',
+    twoCharisRightSiterLeft = '4-circle-2-chair-right-45-siter-left-0',
+    twoCharisTopSiterBottom = '4-circle-2-chair-top-45-siter-bottom-0',
+    twoCharisBottomSiterTop = '4-circle-2-chair-bottom-45-siter-top-0',
+    threeCharis = '3-circle-3-chair-0-45-45',
+    twoChairsOnY = '2-circle-2-chair-y-0',
+    twoChairsOnX = '2-circle-2-chair-x-0',
+    twoCharisLeft = '2-circle-2-chair-left-45',
+    twoChairsTop = '2-circle-2-chair-top-45',
+    twoChairsRight = '2-circle-2-chair-right-45',
+    twochairsBottom = '2-circle-2-chair-bottom-45',
+    siterLeft = '2-circle-siter-left-0',
+    siterTop = '2-circle-siter-top-0',
+    siterRight = '2-circle-siter-right-0',
+    siterBottom = '2-circle-siter-bottom-0',
+}
