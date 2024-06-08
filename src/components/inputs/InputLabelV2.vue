@@ -26,7 +26,7 @@ defineProps<{
   type: string,
   error?: string
   disabled?: boolean
-}>();
+}>()
 const onValueChange = (e: any) => {
     emit('update', e.target.value as string)
 }

@@ -120,3 +120,11 @@ body {
 .scrollbar-hide {
   scrollbar-width: none;
 }
+
+.horizontal-scroll {
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+

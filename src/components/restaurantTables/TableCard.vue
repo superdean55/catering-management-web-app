@@ -1,11 +1,10 @@
 <template>
     <div class="card-size-80">
-      <div  class="relative w-full h-full rounded-xl border border-gray-400 flex flex-col justify-center items-center">
+      <div  class="relative w-full h-full rounded-xl border border-gray-600 flex flex-col justify-center items-center">
         <div class="absolute right-1 top-1 w-2 h-2 rounded-full bg-green-500"></div>
         <div class="table-size-40  bg-gray-500 flex felx-row justify-end" :class="tableShape">
           <div class="w-full h-full flex flex-col justify-center items-center">
-            <p class="text-xs text-white">Stol</p>
-            <p class="text-xs text-white">100</p>
+            <p class="text-xs text-white">{{ tableName }}</p>
           </div>
         </div>
         <div v-for="(chair, index) in chairPositions" :key="index" :class="chair"></div>
@@ -16,21 +15,40 @@
 <script setup lang="ts">
 import type { TableCircleShapes } from '@/types/TableCircleShapes';
 import type { TableCubeShapes } from '@/types/TableCubeShapes';
-import {computed, ref } from 'vue'
+import {computed, ref, watch } from 'vue'
 const props = defineProps<{
-  tableShape: TableCircleShapes | TableCubeShapes
+  shape: TableCircleShapes | TableCubeShapes
+  name: string
 }>()
-const numberOfChairs = ref<number>(0)
-const position = ref<string>('4-circle-4-chair-45')
-const tableShape = ref('rounded-full')
 
-if(position.value.includes('cube')){
+
+const numberOfChairs = ref<number>(0)
+const chairPosition = ref<string>(props.shape)
+const tableShape = ref('rounded-full')
+const tableName = ref(props.name)
+
+watch(() => props.shape, (newShape) => {
+  if(newShape){
+    chairPosition.value = newShape
+    if(chairPosition.value.includes('cube')){
+      tableShape.value = ''
+    }else{
+      tableShape.value = 'rounded-full'
+    }
+  }
+})
+watch(() => props.name, (newName) => {
+    tableName.value = props.name
+})
+
+if(chairPosition.value.includes('cube')){
   tableShape.value = ''
 }
-if(parseInt(position.value)){
-  numberOfChairs.value = parseInt(position.value)
+if(parseInt(chairPosition.value)){
+  numberOfChairs.value = parseInt(chairPosition.value)
   console.log('numberOfChairs:',numberOfChairs.value)
 }
+
 const chairPositions = computed(() => {
   const positions: Record<string, string[]> = {
     '4-circle-4-chair-45': [
@@ -155,7 +173,7 @@ const chairPositions = computed(() => {
       'chair-0 chair-position-cube-bottom-right-0'
     ],
   }
-  return positions[position.value] || []
+  return positions[chairPosition.value] || []
 })
 
 

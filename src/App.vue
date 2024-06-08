@@ -8,6 +8,7 @@ import { useReceiptStore } from '@/stores/ReceiptStore'
 import { useSuppliesStore } from '@/stores/SuppliesStore'
 import { useProductStore } from '@/stores/ProductStore'
 import { useCategoryStore } from '@/stores/CategoryStore'
+import { useTableStore } from './stores/TableStore'
 
 const userStore = useUserStore()
 const articleStore = useArticleStore()
@@ -15,6 +16,7 @@ const receiptStore = useReceiptStore()
 const suppliesStore = useSuppliesStore()
 const productStore = useProductStore()
 const categoryStore = useCategoryStore()
+const tableStore = useTableStore()
 
 articleStore.getRawMaterials()
 
@@ -23,6 +25,7 @@ productStore.getProducts()
 categoryStore.getCategorys()
 userStore.authState()
 receiptStore.getReceipts()
+tableStore.getTables()
 
 const { user } = storeToRefs(userStore)
 const userImage = ref<HTMLImageElement | null>(null)
@@ -54,6 +57,9 @@ const toUserAccount = () => {
         </div>
         <div v-if="userStore.loggedInVisibility" class="flex items-center hover:bg-orange-800 h-full px-5">
           <RouterLink :to="{ name: 'BillInterfaceView'}">Blagajna</RouterLink>
+        </div>
+        <div v-if="userStore.loggedInVisibility" class="flex items-center hover:bg-orange-800 h-full px-5">
+          <RouterLink :to="{ name: 'TablesView'}">Stolovi</RouterLink>
         </div>
         <div class="ml-auto"></div>
         <div v-if="userStore.notLoggedInVisibility" class="flex items-center hover:bg-orange-800 h-full px-5">

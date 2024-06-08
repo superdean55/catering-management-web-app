@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import { getAuth } from 'firebase/auth'
-
+import scrollBehavior from './scrollBehavior'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -210,8 +210,14 @@ const router = createRouter({
           }
         }
       ]
+    },
+    {
+      path: '/tables',
+      name: 'TablesView',
+      component: () => import('../views/TablesView.vue')
     }
-  ]
+  ],
+  scrollBehavior
 })
 
 router.beforeEach(async (to, from, next) => {
