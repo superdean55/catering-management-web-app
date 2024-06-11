@@ -1,7 +1,7 @@
 <template>
     <main class="w-full min-h-screen bg-slate-300 p-0">
         <div class="h-10 w-full"></div>
-        
+        <ManageTableDialog v-if="tableClicked" :showDialog="showTableDialog" :table="tableClicked" @update="onTableDialogUpdate"></ManageTableDialog>
         <div class="w-full flex flex-col gap-2 py-5">
             <RestaurantLayout>
                 <template v-for="slot in tableSlots" :key="slot.id" v-slot:[slot.id]>
@@ -9,7 +9,7 @@
                         <p>{{ slot.id }}</p>
                         <p>prazan slot</p>
                     </div>
-                    <TableCard v-else :name="slot.name" :shape="slot.shape"></TableCard>
+                    <TableCard v-else :name="slot.name" :shape="slot.shape" @click="onTableClicked(slot)" class="cursor-pointer"></TableCard>
 
                 </template>
                 <template #info>
@@ -23,7 +23,7 @@
                 <div class="flex flex-row gap-4 justify-center">
                     <div class="flex flex-col gap-2">
                         <p class="font-bold text-xl">Dodaj stol</p>
-                        <div class="flex flex-col gap-2 items-center w-60 rounded-xl border border-gray-500 p-2">
+                        <div class="flex flex-col gap-2 items-center w-60 rounded-xl border border-gray-500 p-2 bg-gray-200">
                             <div class="felx flex-col h-7 gap-1">
                                 <p v-if="tableId.length" class="font-bold text-xl">{{ tableId }}</p>
                                 
@@ -63,7 +63,7 @@
                                 <p class="font-bold truncate ">(shift) za horizontalno skrolanje</p>
                             </div>
                             <p class="font-bold text-xl">Okrugli stolovi</p>
-                            <div class="flex flex-row gap-2 rounded-xl p-2 border border-gray-500 overflow-hidden overflow-x-scroll scrollbar-hide horizontal-scroll">
+                            <div class="flex flex-row gap-2 rounded-xl p-2 border border-gray-500 overflow-hidden overflow-x-scroll scrollbar-hide horizontal-scroll bg-gray-800">
                                 <div
                                     v-for="(tableShape, index) in TableCircleShapes"
                                     :key="index"
@@ -72,13 +72,13 @@
                                 >
                                     <TableCard
                                         :shape="tableShape"
-                                        name="name"
+                                        name="ime"
                                         class="hover:cursor-pointer"
                                     ></TableCard>
                                 </div>
                             </div>
                             <p class="font-bold text-xl">Kockasti stolovi</p>
-                            <div class="flex flex-row gap-2 rounded-xl p-2 border border-gray-500 overflow-hidden overflow-x-scroll scrollbar-hide horizontal-scroll">
+                            <div class="flex flex-row gap-2 rounded-xl p-2 border border-gray-500 overflow-hidden overflow-x-scroll scrollbar-hide horizontal-scroll bg-gray-800">
                                 <div
                                     v-for="(tableShape, index) in TableCubeShapes"
                                     :key="index"
@@ -87,7 +87,7 @@
                                 >
                                     <TableCard
                                         :shape="tableShape"
-                                        name="name"
+                                        name="ime"
                                         class="hover:cursor-pointer"
                                     ></TableCard>
                                 </div>
@@ -113,6 +113,8 @@ import ConfirmButton from '@/components/buttons/ConfirmButton.vue'
 import { useTableStore } from '@/stores/TableStore'
 import type { Table } from '@/types/Table'
 import { storeToRefs } from 'pinia'
+import { isValidTableId } from '@/helpers/isValidTableId'
+import ManageTableDialog from '../components/dialogs/ManageTableDialog.vue'
 
 const selectedTableShape = ref<TableCircleShapes | TableCubeShapes | null>(null)
 const tableName = ref<string>('')
@@ -121,6 +123,9 @@ const tableId = ref<string>('')
 const selectedTableErrorMessage = ref<string>('')
 const idErrorMessage = ref<string>('')
 const tableStore = useTableStore()
+const tableClicked = ref<Table>()
+
+const showTableDialog = ref<boolean>(false)
 
 const tableSlots = ref<Table[]>([])
 const { tables } = storeToRefs(tableStore)
@@ -130,7 +135,6 @@ const tableSlotsUpdate = () => {
     for (let i = 0; i < 22; i++) {
         var id = `table-${i + 1}`
         const table = tableStore.getTableById(id)
-        console.log('table:',table)
         if(table){
             console.log('in if')
             tableSlots.value.push(
@@ -149,6 +153,7 @@ const tableSlotsUpdate = () => {
         }
     }
 }
+
 tableSlotsUpdate()
 
 watch(tables.value, (newState) => {
@@ -174,6 +179,13 @@ const onTableShapeClicked = (tableShape: TableCircleShapes | TableCubeShapes) =>
     selectedTableErrorMessage.value = ''
     selectedTableShape.value = tableShape
 }
+const onTableClicked = (table: Table) => {
+    tableClicked.value = table
+    showTableDialog.value = true
+}
+const onTableDialogUpdate = (showDialog: boolean) => {
+    showTableDialog.value = showDialog
+}
 const onAddTableConfirm = () => {
     var isValid = true
     if(!selectedTableShape.value){
@@ -181,8 +193,16 @@ const onAddTableConfirm = () => {
         isValid = false
     }
 
-    if(!idErrorMessage.value.length){
+    if(!tableId.value.length){
         idErrorMessage.value = 'niste kliknuli na prazan slot'
+        isValid = false
+    }
+    if(tableStore.getTableById(tableId.value)){
+        idErrorMessage.value = 'id zauzet'
+        isValid = false
+    }
+    if(!isValidTableId(tableId.value)){
+        idErrorMessage.value = 'neispravan id'
         isValid = false
     }
     if(!(tableName.value.length >= 1 && tableName.value.length <= 6)){
@@ -193,12 +213,17 @@ const onAddTableConfirm = () => {
         console.log('adding table')
         const table = {
             id: tableId.value,
+            dbId: '',
             name: tableName.value,
             shape: selectedTableShape.value,
             cretaionDate: '',
             lastTimeUsed: ''
         } as Table
+        console.log(table)
         tableStore.addTable(table)
+        tableId.value = ''
+        tableName.value = ''
+        selectedTableShape.value = null
     }
 
 }

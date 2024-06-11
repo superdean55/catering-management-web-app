@@ -216,8 +216,7 @@ const router = createRouter({
       name: 'TablesView',
       component: () => import('../views/TablesView.vue')
     }
-  ],
-  scrollBehavior
+  ]
 })
 
 router.beforeEach(async (to, from, next) => {
