@@ -7,5 +7,6 @@ export interface UserData{
     imageName: string | null,
     born: string | null,
     phoneNumber: string | null,
+    role: string
 }
 

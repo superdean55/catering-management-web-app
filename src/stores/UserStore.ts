@@ -5,7 +5,7 @@ import { doc, setDoc, collection, query, where, onSnapshot } from "firebase/fire
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage"
 import { storage } from "@/firebase/firebaseConfig"
 import { db } from "@/firebase/firebaseConfig"
-import type { UserData } from "@/types/UserData"
+import type { UserData } from "@/types/User"
 
 
 
@@ -20,7 +20,6 @@ export const useUserStore = defineStore('userStore',{
             const auth = getAuth()
             createUserWithEmailAndPassword(auth, email, password)
               .then((userCredential) => {
-                // Signed up 
                 this.updateUserData({
                   uid: userCredential.user.uid,
                   email: userCredential.user.email,
@@ -30,16 +29,12 @@ export const useUserStore = defineStore('userStore',{
                   imageName: '',
                   born: '',
                   phoneNumber: '',
+                  role: ''
                 })
                 router.push({ name: 'HomeView' }) 
-                // ...
               })
               .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log(errorCode)
-                console.log(errorMessage)
-                // ..
+                console.log(error.message)
               })
         },
 
@@ -48,18 +43,11 @@ export const useUserStore = defineStore('userStore',{
           console.log(`auth: ${auth}`)
           signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-              const user = userCredential.user;
-              console.log(userCredential.user)
               router.push({ name: 'HomeView' }) 
-              
-              // ...
             })
             .catch((error) => {
-              const errorCode = error.code;
-              const errorMessage = error.message;
-              console.log(errorCode)
-              console.log(errorMessage)
-            });
+              console.log(error.message)
+            })
         },
 
         async signOut(){
@@ -92,6 +80,7 @@ export const useUserStore = defineStore('userStore',{
                 imageName: null,
                 born: null,
                 phoneNumber: null,
+                role: ''
               }
               this.notLoggedInVisibility = true
               this.loggedInVisibility = false

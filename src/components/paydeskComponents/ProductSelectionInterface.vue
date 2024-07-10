@@ -46,6 +46,7 @@ import { ref } from 'vue'
 const emit = defineEmits<{
     (e:'product', product: Product): void
 }>()
+
 const categoryStore = useCategoryStore()
 const productStore = useProductStore()
 const selectedCategoryProducts = ref<Product[]>([])

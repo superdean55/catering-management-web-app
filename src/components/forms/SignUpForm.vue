@@ -2,10 +2,7 @@
   import RoundedCard from '@/components/cards/RoundedCard.vue'
   import InputLabel from '@/components/inputs/InputLabel.vue'
   import SubmitButton from '@/components/buttons/SubmitButton.vue'
-  import SignUpView from '@/views/SignUpView.vue'
   import { useUserStore } from '@/stores/UserStore'
-  import { useRouter } from 'vue-router';
-  
   import { ref } from 'vue'
 
   const UserStore = useUserStore()
@@ -19,31 +16,24 @@
   const repeatedPassword = ref<string>("")
   const repeatedPasswordErrorMessage = ref<string>("")
   
-
-// output value key by key
-  
   const onEmailInput = (e: { target: { value: string } }) => {
-    email.value = e.target.value;
+    email.value = e.target.value
     emailErrorMessage.value = ""
     
-  };
+  }
   const onPasswordInput = (e: { target: { value: string } }) => {
-    password.value = e.target.value;
+    password.value = e.target.value
     passwordErrorMessage.value = ""
-  };
+  }
   const onRepeatedPasswordInput = (e: { target: { value: string } }) => {
-    repeatedPassword.value = e.target.value;
+    repeatedPassword.value = e.target.value
     repeatedPasswordErrorMessage.value = ""
-  };
+  }
 
   const onSubmit = () => {
     if(validateEmial() && validatePassword() && validateRepeatedPassword()){
-        console.log('sign up form is valid')
         UserStore.signUp(email.value, password.value)
-        return
     }
-    console.log('sign up form is not valid')
-    
   }
   
   const validateEmial = () : boolean => {
@@ -79,10 +69,8 @@
             <InputLabel :value="password" name="Lozinka:" type="password" :error="passwordErrorMessage" @input="onPasswordInput"/>
             <InputLabel :value="repeatedPassword" name="Ponovite Lozinku:" type="password" :error="repeatedPasswordErrorMessage" @input="onRepeatedPasswordInput"/>
             <InputLabel :value="email" name="Email:" type="email" :error="emailErrorMessage" @input="onEmailInput"/>
-            
-            
             <div class="flex justify-center mt-5 mb-2">
-                <SubmitButton label="Create Account" @submit="onSubmit"></SubmitButton>
+                <SubmitButton label="Kreiraj račun" @submit="onSubmit"></SubmitButton>
             </div>
         </RoundedCard>
     </form>

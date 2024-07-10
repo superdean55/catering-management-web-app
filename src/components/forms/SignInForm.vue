@@ -23,9 +23,6 @@
     console.log(password.value)
   };
   const onSubmit = () => {
-    console.log('submit')
-    console.log(email.value)
-    console.log(password.value)
     UserStore.signIn(email.value, password.value)
   }
   const validateEmial = () => {
@@ -52,10 +49,10 @@
             <InputLabel :value="email" name="Email:" type="email" :error="emailErrorMessage" @input="onEmailInput"/>
             <InputLabel :value="password" name="Password:" type="password" :error="passwordErrorMessage" @input="onPasswordInput"/>
             <div class="flex justify-center my-5">
-                <SubmitButton label="Sign In" @submit="onSubmit"></SubmitButton>
+                <SubmitButton label="Prijavi se" @submit="onSubmit"></SubmitButton>
             </div>
             <div class="flex justify-center">
-                <RouterLink class="inline-block" :to="{ name: 'SignUpView' }" >You dont have account? Register</RouterLink>
+                <RouterLink class="inline-block" :to="{ name: 'SignUpView' }" >Nemate kreiran račun? Registrirajte se</RouterLink>
             </div>
         </RoundedCard>
     </form>

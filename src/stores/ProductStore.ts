@@ -110,10 +110,8 @@ export const useProductStore = defineStore('productStore',{
                                 timestamp: data.timestamp
                             }as Product)
                         }
-                        //console.log("add: ", change.doc.data())
                     }
                     if (change.type === "modified") {
-                        //console.log("modified: ", change.doc.data())
                         const data = change.doc.data()
                         const index = this.products.findIndex(it => it.id === data.id)
                         if (index !== -1) {

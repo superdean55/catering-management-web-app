@@ -32,10 +32,10 @@
                 </div>
                 <div class="flex flex-col items-center">
                     <div class="h-1/2 flex flex-row items-center">
-                        <span @click="onArrowUpClicked(item)" class="material-symbols-outlined text-xl hover:text-green-500">keyboard_arrow_up</span>
+                        <span @click="onArrowUpClicked(item)" class="material-symbols-outlined text-xl hover:text-green-300">keyboard_arrow_up</span>
                     </div>
                     <div class="h-1/2 flex flex-row items-center">
-                        <span @click="onArrowDownClicked(item)" class="material-symbols-outlined text-xl hover:text-red-500">keyboard_arrow_down</span>
+                        <span @click="onArrowDownClicked(item)" class="material-symbols-outlined text-xl hover:text-red-300">keyboard_arrow_down</span>
                     </div>
                 </div>
                 

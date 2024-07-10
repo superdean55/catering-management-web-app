@@ -23,11 +23,11 @@
                 
             </div>
             <div class="flex flex-row justify-between m-5">
-                <ConfirmButton @confirm="signOut" class="w-2/5  lg:w-1/4 flex flex-row justify-center" label="Log Out">
+                <ConfirmButton @confirm="signOut" class="w-2/5  lg:w-1/4 flex flex-row justify-center" label="Odjava">
                     <div class="w-2"></div>
                     <span class="material-symbols-outlined">logout</span>
                 </ConfirmButton>
-                <ConfirmButton @confirm="toEditUser" class="w-2/5  lg:w-1/4 flex flex-row justify-center" label="Edit">
+                <ConfirmButton @confirm="toEditUser" class="w-2/5  lg:w-1/4 flex flex-row justify-center" label="Izmjeni">
                     <div class="w-2"></div>
                     <span class="material-symbols-outlined">edit</span>
                 </ConfirmButton>

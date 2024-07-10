@@ -1,4 +1,4 @@
-export function isValidCode(input: string) {
-    const regex = /^\d+$/;
-    return regex.test(input);
+export function isValidCode(input: string): boolean {
+    const regex = /^\d+$/
+    return regex.test(input)
 }

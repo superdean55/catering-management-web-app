@@ -1,7 +1,7 @@
 <template>
   <main class="w-full h-screen bg-slate-300 p-0 overflow-x-scroll">
     <div class="h-10 w-full"></div>
-    <h1>Home</h1>
+    <div class="h-10"></div>
     <RestaurantLayout>
       <template v-for="table in tableStore.tables" :key="table.id" v-slot:[table.id]>
         <TableCard :name="table.name" :shape="table.shape"></TableCard>

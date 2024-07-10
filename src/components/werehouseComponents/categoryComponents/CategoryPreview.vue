@@ -46,7 +46,7 @@
     </RoundedCard>
     <RoundedCard v-else>
         <div class="w-full flex flex-row justify-center">
-            <p class="font-bold text-xl">Nije selektirana niti jedna kategorija</p>
+            <p class="font-bold text-xl">Nije označena niti jedna kategorija</p>
         </div>
     </RoundedCard>
 </template>

@@ -18,7 +18,7 @@
                     </div>
                 </div>
                 <div class="flex justify-center">
-                    <ConfirmButton @confirm="updateUser" label="Upload">
+                    <ConfirmButton @confirm="updateUser" label="Ažuriraj">
                         <span class="material-symbols-outlined">upload</span>
                     </ConfirmButton>
                 </div>
