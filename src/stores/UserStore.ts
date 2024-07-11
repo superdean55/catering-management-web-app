@@ -1,66 +1,73 @@
 import { defineStore } from "pinia"
 import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth"
 import router from "@/router"
-import { doc, setDoc, collection, query, where, onSnapshot } from "firebase/firestore"
+import { doc, setDoc, collection, query, where, onSnapshot, updateDoc } from "firebase/firestore"
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage"
 import { storage } from "@/firebase/firebaseConfig"
 import { db } from "@/firebase/firebaseConfig"
-import type { UserData } from "@/types/User"
+import type { User } from "@/types/User"
+import { generateImageName } from "@/helpers/generateImageName"
+import { Role } from "@/types/Role"
+import { storageDateToInputString } from "@/helpers/dateFormatterFun"
+import { useToast } from 'vue-toastification'
+import { imageUrlToBlob } from "@/helpers/imageUrlToBlob"
 
-
+const toast = useToast()
 
 export const useUserStore = defineStore('userStore',{
     state: () => ({
-        user: null as UserData | null,
+        user: null as User | null,
         notLoggedInVisibility: false,
-        loggedInVisibility: false
+        loggedInVisibility: false,
+        isLoading: false,
     }),
     actions: {
         async signUp(email: string, password: string) {
-            const auth = getAuth()
-            createUserWithEmailAndPassword(auth, email, password)
-              .then((userCredential) => {
-                this.updateUserData({
-                  uid: userCredential.user.uid,
-                  email: userCredential.user.email,
-                  firstName: '',
-                  lastName: '',
-                  imageUrl: '',
-                  imageName: '',
-                  born: '',
-                  phoneNumber: '',
-                  role: ''
-                })
-                router.push({ name: 'HomeView' }) 
-              })
-              .catch((error) => {
-                console.log(error.message)
-              })
+          this.isLoading = true
+          const auth = getAuth()
+          try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+            let email_ = ''
+            if (userCredential.user.email) {
+              email_ = userCredential.user.email
+            }
+            await this.updateUserData(userCredential.user.uid, email_)
+            router.push({ name: 'UserAccount' })
+            toast.success('Uspješno ste kreirali račun')
+          } catch (error) {
+            toast.error('Neuspješno kreiranje računa')
+            console.log('sign up', error)
+          } finally {
+            this.isLoading = false
+          }
         },
 
         async signIn(email: string, password: string){
+          this.isLoading = true
           const auth = getAuth();
           console.log(`auth: ${auth}`)
-          signInWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-              router.push({ name: 'HomeView' }) 
-            })
-            .catch((error) => {
-              console.log(error.message)
-            })
+          try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password)
+            router.push({ name: 'HomeView' })
+          } catch (error) {
+            console.error('singIn error', error)
+            toast.error('Neuspješna prijava')
+          } finally {
+            this.isLoading = false
+          }
         },
 
         async signOut(){
           const auth = getAuth()
           signOut(auth).then(() => {
           }).catch((error) => {
-            console.log("sign out error")
-          });
+            console.error("sign out error", error)
+          })
           router.push({ name: 'HomeView'})
         },
 
         async authState(){
-            const auth = getAuth();
+          const auth = getAuth()
           onAuthStateChanged(auth, (user) => {
             if (user) {
               this.getUserData(user.uid)
@@ -71,124 +78,92 @@ export const useUserStore = defineStore('userStore',{
               console.log(`onAuthState: auth: ${auth.currentUser?.email}`)
               
             } else {
-              this.user = {
-                uid: null,
-                email: null,
-                firstName: null,
-                lastName: null,
-                imageUrl: null,
-                imageName: null,
-                born: null,
-                phoneNumber: null,
-                role: ''
-              }
+              this.user = null
               this.notLoggedInVisibility = true
               this.loggedInVisibility = false
               console.log(`onAuthState: user is not logged in`)
-              console.log(`user state: ${this.user.email} : ${this.user.uid}`)
             }
-          });
+          })
           
         },
 
-        async updateUserData(
-          user: UserData
-        ){
+        async updateUserData(uid: string, email: string){
           try {
-            if(user.uid){
-              const docRef = await setDoc(doc(db, "users", user.uid), {
-                uid: user.uid,
-                email: user.email,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                phoneNumber: user.phoneNumber,
-                born: user.born,
-                imageName: user.imageName,
-                imageUrl: user.imageUrl
-              });
-              router.push({ name: 'UserAccount'})
-            }
-            console.log("Document written with ID: ", );
-          } catch (e) {
-            console.error("Error adding document: ", e);
+              const docRef = await setDoc(doc(db, "users", uid), {
+                uid: uid,
+                email: email,
+                firstName: '',
+                lastName: '',
+                imageUrl: '',
+                imageName: '',
+                born: '',
+                phoneNumber: '',
+                role: Role.user
+              } as User)
+          } catch (error) {
+            toast.error('Neuspješno kreiranje podataka korisnika')
+            console.error("Adding user data error: ", error)
           }
-          
-         },
-
-        async uploadUserImage(imageUrl: string, user: UserData){
-          const fileName = this.generateImageName()
-          const storageRef = ref(storage, 'users-images/' + fileName);
-            const img = new Image();
-
-            img.onload = () => {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            var MAX_WIDTH = 200;
-            var MAX_HEIGHT = 200;
-            var width = img.width;
-            var height = img.height;
-        
-            if (width > height) {
-
-                if (width > MAX_WIDTH) {
-                    height *= MAX_WIDTH / width;
-                    width = MAX_WIDTH;
-                }
-
-            } else {
-
-                if (height > MAX_HEIGHT) {
-                    width *= MAX_HEIGHT / height;
-                    height = MAX_HEIGHT;
-                }
-            }
-            canvas.width = width;
-            canvas.height = height;
-        
-            ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
-            canvas.toBlob(blob => {
-              if (blob) {
-                uploadBytes(storageRef, blob).then((snapshot) => {
-                  getDownloadURL(snapshot.ref).then((url) => {
-                    if(this.user){
-                      this.deleteUserImage(this.user.imageName)
-                      user.imageUrl = url
-                      user.imageName = fileName
-                      user.uid = this.user.uid
-                      this.updateUserData(user)
-                    }
-                  }).catch((error) => {
-                    console.error('Došlo je do greške prilikom dobivanja URL-a slike:', error);
-                  });
-                  
-                }).catch(error => {
-                  console.error('Došlo je do pogreške prilikom spremanja slike:', error);
-                });
+        },
+        async updateUser(user: User, imageUrl: string | null){
+          this.isLoading = true
+          try {
+            console.log(`image name: ${user.imageName}\nimage url= ${imageUrl}`)
+              const oldImageName: string = user.imageName
+              if(imageUrl){
+                  user.imageName = generateImageName('user')
+                  const blob = await imageUrlToBlob(imageUrl)
+                  const url = await this.addImage(blob, user.imageName)
+                  user.imageUrl = url
+                  if(oldImageName !== ''){
+                    await this.deleteImage(oldImageName)
+                  }
               }
-            }, 'image/jpeg');
-            
-            };
-          
-            img.src = imageUrl;
+              const updateRef = doc(db, 'users', user.uid)
+              await updateDoc(updateRef, {
+                  firstName: user.firstName,
+                  lastName: user.lastName,
+                  imageName: user.imageName,
+                  imageUrl: user.imageUrl,
+                  born: user.born,
+                  phoneNumber: user.phoneNumber
+              })
+              console.log('updating user success') 
+              toast.success('Korisnik ažuriran')
+              router.push({name: 'UserAccount'})
+          } catch (e) {
+          console.error("user update error: ", e)
+          toast.error('Neuspješno ažuriranje korisnika')
+          }
+          this.isLoading = false
         },
-
-        async deleteUserImage(imageName: string | null){
-          console.log('inside delete image func')
-          if(imageName && imageName !== ''){
-            console.log('deleting image condition is true')
-            const desertRef = ref(storage, 'users-images/' + imageName);
-
-            deleteObject(desertRef).then(() => {
-              console.log(`deleting user image success`)
-            }).catch((error) => {
-              console.log(`deleting user image error: ${error.message}`)
-            });
+        async addImage(imageBlob: Blob, imageName: string){
+          try {
+              const storageRef = ref(storage, 'users-images/' + imageName)
+              const snapshot = await uploadBytes(storageRef, imageBlob)
+              const url = await getDownloadURL(snapshot.ref)
+              return url
+          } catch (error) {
+              console.error('Došlo je do greške prilikom spremanja ili dobivanja URL-a slike:', error)
+              toast.error('Došlo je do greške prilikom spremanja ili dobivanja URL-a slike:')
+              return ''
+          }           
+        },
+        async deleteImage(imageName: string){
+          try{
+              if(imageName.length){
+                  const deleteRef = ref(storage, 'users-images/' + imageName)
+                  await deleteObject(deleteRef) 
+                  console.log('old user image deleting success')  
+                }
+          } catch(e){
+              console.error('old user image deleting error', e)
+              toast.error('Brisanje stare slike korisnika nije uspjelo')  
           }
         },
-
         async getUserData(uid: string){
 
-          const q = query(collection(db, "users"), where("uid", "==", uid));
+          const q = query(collection(db, "users"), where("uid", "==", uid))
           const unsubscribe = onSnapshot(q, (snapshot) => {
             snapshot.docChanges().forEach((change) => {
               if (change.type === "added") {
@@ -202,14 +177,14 @@ export const useUserStore = defineStore('userStore',{
                     lastName: data.lastName,
                     imageUrl: data.imageUrl,
                     imageName: data.imageName,
-                    born: data.born,
+                    born: storageDateToInputString(data.born as string),
                     phoneNumber: data.phoneNumber,
+                    role: data.role
                   }
               }
               if (change.type === "modified") {
                   console.log("modified:");
                   const data = change.doc.data()
-                  
                   this.user = {
                     uid: data.uid,
                     email: data.email,
@@ -217,8 +192,9 @@ export const useUserStore = defineStore('userStore',{
                     lastName: data.lastName,
                     imageUrl: data.imageUrl,
                     imageName: data.imageName,
-                    born: data.born,
+                    born: storageDateToInputString(data.born as string),
                     phoneNumber: data.phoneNumber,
+                    role: data.role
                   }
               }
               if (change.type === "removed") {
@@ -227,14 +203,6 @@ export const useUserStore = defineStore('userStore',{
             });
           });
         },
-        generateImageName(): string {
-          const randomNumber = Math.floor(Math.random() * 1000000);
-          const now = new Date();
-          const timestamp = now.getTime();
-          
-          const uniqueName = `image_${timestamp}_${randomNumber}.jpg`;
-          return uniqueName;
-        }
     },
     
 })

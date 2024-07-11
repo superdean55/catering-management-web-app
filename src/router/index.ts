@@ -2,6 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import { getAuth } from 'firebase/auth'
 import scrollBehavior from './scrollBehavior'
+import { useLoadingStore } from '@/stores/LoadingStore'
+import { Role } from '@/types/Role'
+import { useUserStore } from '@/stores/UserStore'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,14 +47,15 @@ const router = createRouter({
       path: '/werehouse',
       name: 'WerehouseView',
       component: () => import('../views/WerehouseView.vue'),
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, requiresRole: [Role.admin , Role.manager] },
       children: [
         {
           path: 'product',
           name: 'ProductView',
           components: {
             werehouse:  () => import('../views/werehouseViews/ProductView.vue')
-          },children:[
+          },
+          children:[
             {
               path: 'add',
               name: 'AddProduct',
@@ -200,7 +204,7 @@ const router = createRouter({
       path: '/paydesk',
       name: 'PaydeskView',
       component: () => import('../views/paydeskViews/PaydeskView.vue'),
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, requiresRole: [Role.admin, Role.manager, Role.staff] },
       children: [
         {
           path: 'bill',
@@ -214,12 +218,15 @@ const router = createRouter({
     {
       path: '/tables',
       name: 'TablesView',
-      component: () => import('../views/TablesView.vue')
+      component: () => import('../views/TablesView.vue'),
+      meta: { requiresAuth: true, requiresRole: [Role.admin] }
     }
   ]
 })
 
 router.beforeEach(async (to, from, next) => {
+  const loadingStore = useLoadingStore()
+  loadingStore.setLoadingState(true)
   const auth = getAuth();
   console.log('router')
   await new Promise((resolve) => {
@@ -231,11 +238,22 @@ router.beforeEach(async (to, from, next) => {
   const currentUser = auth.currentUser;
 
   if (to.matched.some(record => record.meta.requiresAuth)) {
-
     if (currentUser) {
-      next();
+      if (to.matched.some(record => record.meta.requiresRole)) {
+        const userStore = useUserStore()
+        const userRole = userStore.user?.role
+        const requiredRoles: Role[] = to.meta.requiresRole as Role[]
+
+        if (requiredRoles.includes(userRole!)) {
+          next();
+        } else {
+          next({ name: 'HomeView', query: { redirect: to.fullPath } });
+        }
+      } else {
+        next();
+      }
     } else {
-      next({ name: 'HomeView', query: { redirect: to.fullPath } });
+      next({ name: 'HomeView', query: { redirect: to.fullPath } })
     }
 
   } else if(to.matched.some(record => record.meta.requiresNoAuth)){
@@ -252,4 +270,9 @@ router.beforeEach(async (to, from, next) => {
 
   }
 });
+
+router.afterEach(() => {
+  const loadingStore = useLoadingStore()
+  loadingStore.setLoadingState(false)
+})
 export default router

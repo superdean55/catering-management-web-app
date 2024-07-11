@@ -86,10 +86,10 @@ import InputLabelV2 from '@/components/inputs/InputLabelV2.vue';
 import ConfirmButton from '@/components/buttons/ConfirmButton.vue';
 import ReceiptItemInterface from './ReceiptItemInterface.vue'
 import { ref } from 'vue';
-import { validateInputString } from '@/helpers/validateInputString';
+import { isValidInput } from '@/helpers/isValidInput';
 import { isValidOib } from '@/helpers/isValidOib';
 import ReceiptItemsList from './ReceiptItemsList.vue';
-import { ReceiptItem } from '@/types/ReceiptItem';
+import type { ReceiptItem } from '@/types/ReceiptItem';
 import { generateId } from '@/helpers/generateId';
 import type { Receipt } from '@/types/Receipt';
 import { useReceiptStore } from '@/stores/ReceiptStore'
@@ -180,7 +180,7 @@ const onUpdateReceiptItem = (index: number) => {
 }
 const onConfirm = () => {
     var isValid = true
-    if(!validateInputString(name.value)){
+    if(!isValidInput(name.value)){
         nameErrorMessage.value = 'minimalno 2 slova'
         isValid = false
     }
@@ -196,7 +196,7 @@ const onConfirm = () => {
         dateErrorMessage.value = 'ne može biti starije od 7 dana'
         isValid = false
     }
-    if(!validateInputString(documentName.value)){
+    if(!isValidInput(documentName.value)){
         documentNameErrorMessage.value = 'minimalno 2 slova'
         isValid = false
     }

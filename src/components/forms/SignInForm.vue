@@ -12,16 +12,16 @@
   const passwordErrorMessage = ref<string>("")
 
 // output value key by key
-  const onEmailInput = (e: { target: { value: string } }) => {
-    email.value = e.target.value;
+  const onEmailInput = (value: string) => {
+    email.value = value
     emailErrorMessage.value = ""
     console.log(email.value)
-  };
-  const onPasswordInput = (e: { target: { value: string } }) => {
-    password.value = e.target.value;
+  }
+  const onPasswordInput = (value: string) => {
+    password.value = value
     passwordErrorMessage.value = ""
     console.log(password.value)
-  };
+  }
   const onSubmit = () => {
     UserStore.signIn(email.value, password.value)
   }
@@ -46,8 +46,8 @@
 <template>
     <form @submit.prevent >
         <RoundedCard>
-            <InputLabel :value="email" name="Email:" type="email" :error="emailErrorMessage" @input="onEmailInput"/>
-            <InputLabel :value="password" name="Password:" type="password" :error="passwordErrorMessage" @input="onPasswordInput"/>
+            <InputLabel :value="email" name="Email:" type="email" :error="emailErrorMessage" @update="onEmailInput"/>
+            <InputLabel :value="password" name="Password:" type="password" :error="passwordErrorMessage" @update="onPasswordInput"/>
             <div class="flex justify-center my-5">
                 <SubmitButton label="Prijavi se" @submit="onSubmit"></SubmitButton>
             </div>

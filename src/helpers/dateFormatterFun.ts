@@ -3,8 +3,8 @@ export function inputDateToString(date: string): string{
         day: '2-digit',
         month: '2-digit',
         year: 'numeric'
-    });
-    return formattedDate.replace(/ /g, '');
+    })
+    return formattedDate.replace(/ /g, '')
 }
 
 
@@ -17,6 +17,6 @@ export function storageDateToInputString(date: string): string{
         const year = parts[2];
         return `${year}-${month}-${day}`;
     }
-     return 'null'
+     return ''
 }
 

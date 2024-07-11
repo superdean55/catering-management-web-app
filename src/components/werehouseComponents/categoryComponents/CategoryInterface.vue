@@ -19,7 +19,7 @@
                             <InputLabel type="text" name="Ime kategorije:"
                                 :value="categoryName"
                                 :error="categoryNameErrorMessage"
-                                @input="onCategoryNameInput">
+                                @update="onCategoryNameInput">
                             </InputLabel>
                         </div>
                     </div>
@@ -111,7 +111,7 @@ import RoundedCard from '@/components/cards/RoundedCard.vue'
 import InputLabel from '@/components/inputs/InputLabel.vue'
 import ConfirmButton from '@/components/buttons/ConfirmButton.vue'
 import { computed, ref } from 'vue'
-import { validateInputString } from '@/helpers/validateInputString'
+import { isValidInput } from '@/helpers/isValidInput'
 import type { Category } from '@/types/Category'
 import { useProductStore } from '@/stores/ProductStore'
 import { useCategoryStore } from '@/stores/CategoryStore'
@@ -168,10 +168,10 @@ const filteredProducts = computed(() => {
   )
 })
 
-const onCategoryNameInput = (e: { target: { value: string } }) => {
-    categoryName.value = e.target.value;
+const onCategoryNameInput = (value: string) => {
+    categoryName.value = value
     categoryNameErrorMessage.value = ""
-  }
+}
 
 const performClick = (e: any) => {
     e.target.parentElement.children[1].click()
@@ -211,7 +211,7 @@ const removeItem = (item: CategoryItem) => {
 }
 const onConfirmButton = () => {
     var isValid = true
-    if(!validateInputString(categoryName.value)){
+    if(!isValidInput(categoryName.value)){
         categoryNameErrorMessage.value = 'min. 2 i max. 50 znakova'
         isValid = false
     }

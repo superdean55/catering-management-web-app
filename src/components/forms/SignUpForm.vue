@@ -16,17 +16,17 @@
   const repeatedPassword = ref<string>("")
   const repeatedPasswordErrorMessage = ref<string>("")
   
-  const onEmailInput = (e: { target: { value: string } }) => {
-    email.value = e.target.value
+  const onEmailInput = (value: string) => {
+    email.value = value
     emailErrorMessage.value = ""
     
   }
-  const onPasswordInput = (e: { target: { value: string } }) => {
-    password.value = e.target.value
+  const onPasswordInput = (value: string) => {
+    password.value = value
     passwordErrorMessage.value = ""
   }
-  const onRepeatedPasswordInput = (e: { target: { value: string } }) => {
-    repeatedPassword.value = e.target.value
+  const onRepeatedPasswordInput = (value: string) => {
+    repeatedPassword.value = value
     repeatedPasswordErrorMessage.value = ""
   }
 
@@ -66,9 +66,9 @@
 <template>
     <form @submit.prevent >
         <RoundedCard>
-            <InputLabel :value="password" name="Lozinka:" type="password" :error="passwordErrorMessage" @input="onPasswordInput"/>
-            <InputLabel :value="repeatedPassword" name="Ponovite Lozinku:" type="password" :error="repeatedPasswordErrorMessage" @input="onRepeatedPasswordInput"/>
-            <InputLabel :value="email" name="Email:" type="email" :error="emailErrorMessage" @input="onEmailInput"/>
+            <InputLabel :value="password" name="Lozinka:" type="password" :error="passwordErrorMessage" @update="onPasswordInput"/>
+            <InputLabel :value="repeatedPassword" name="Ponovite Lozinku:" type="password" :error="repeatedPasswordErrorMessage" @update="onRepeatedPasswordInput"/>
+            <InputLabel :value="email" name="Email:" type="email" :error="emailErrorMessage" @update="onEmailInput"/>
             <div class="flex justify-center mt-5 mb-2">
                 <SubmitButton label="Kreiraj račun" @submit="onSubmit"></SubmitButton>
             </div>

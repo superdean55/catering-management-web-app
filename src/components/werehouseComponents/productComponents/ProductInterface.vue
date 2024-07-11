@@ -189,7 +189,7 @@ import { useProductStore } from '@/stores/ProductStore'
 import type { ProductItem } from '@/types/ProductItem'
 import type { RawMaterial } from '@/types/RawMaterial'
 import { watch } from 'vue'
-import { validateInputString } from '@/helpers/validateInputString'
+import { isValidInput } from '@/helpers/isValidInput'
 import { isSelectionValid } from '@/helpers/isSelectionValid'
 import { isTwoDecimalNumber } from '@/helpers/isTwoDecimalNumber'
 import type { Product } from '@/types/Product'
@@ -347,11 +347,11 @@ const onDelete = () => {
 }
 const onProductConfirm = () => {
     var isValid = true
-    if(!validateInputString(name.value)){
+    if(!isValidInput(name.value)){
         nameErrorMessage.value = 'min. 2 do max. 50 znakova'
         isValid = false
     }
-    if(!validateInputString(code.value)){
+    if(!isValidInput(code.value)){
         codeErrorMessage.value = 'min. 2 do max. 50 znakova'
         isValid = false
     }

@@ -1,12 +1,15 @@
-export interface UserData{
-    uid: string | null,
-    email: string | null,
-    firstName: string | null,
-    lastName: string | null,
-    imageUrl: string | null,
-    imageName: string | null,
-    born: string | null,
-    phoneNumber: string | null,
-    role: string
+import type { Role } from "./Role";
+
+
+export interface User{
+    uid: string,
+    email: string,
+    firstName: string,
+    lastName: string,
+    imageUrl: string,
+    imageName: string,
+    born: string,
+    phoneNumber: string,
+    role: Role
 }
 

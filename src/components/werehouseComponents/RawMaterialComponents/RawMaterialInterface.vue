@@ -59,7 +59,7 @@ import SelectBox from '@/components/inputs/SelectBox.vue';
 import ConfirmButton from '@/components/buttons/ConfirmButton.vue';
 import { ArticleUnit } from '@/types/ArticleUnit';
 import { computed, ref, watch } from 'vue';
-import { validateInputString } from '@/helpers/validateInputString';
+import { isValidInput } from '@/helpers/isValidInput';
 import { isValidNumber } from '@/helpers/isValidNumber';
 import { isSelectionValid } from '@/helpers/isSelectionValid';
 import type { RawMaterial } from '@/types/RawMaterial';
@@ -122,7 +122,7 @@ const onCodeChanged = (value: string) => {
 }
 const onConfirmButton = () => {
     var valid = true
-    if(!validateInputString(name.value)){
+    if(!isValidInput(name.value)){
         nameErrorMessage.value = 'minimalno 2 slova'
         valid = false
     }
