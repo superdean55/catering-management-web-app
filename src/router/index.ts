@@ -220,6 +220,11 @@ const router = createRouter({
       name: 'TablesView',
       component: () => import('../views/TablesView.vue'),
       meta: { requiresAuth: true, requiresRole: [Role.admin] }
+    },
+    {
+      path: '/price_list',
+      name: 'PriceListView',
+      component: () => import('../views/PriceListView.vue'),
     }
   ]
 })
