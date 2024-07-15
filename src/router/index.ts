@@ -225,6 +225,21 @@ const router = createRouter({
       path: '/price_list',
       name: 'PriceListView',
       component: () => import('../views/PriceListView.vue'),
+    },
+    {
+      path: '/employees',
+      name: 'EmployeesView',
+      component: () => import('../views/EmployeeManagementViews/EmployeesView.vue'),
+      meta: { requiresAuth: true, requiresRole: [Role.admin] },
+      children:[
+        {
+          path: '/add_new_employee',
+          name: 'AddNewEmployeeView',
+          components:{
+            interface: () => import('../views/EmployeeManagementViews/AddNewEmployeeView.vue')
+          }
+        }
+      ]
     }
   ]
 })

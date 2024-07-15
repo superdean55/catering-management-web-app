@@ -68,6 +68,9 @@ const toUserAccount = () => {
         <div v-if="userStore.loggedInVisibility && (userStore.user?.role === Role.admin)" class="flex items-center hover:bg-orange-800 h-full px-5">
           <RouterLink :to="{ name: 'TablesView'}">Stolovi</RouterLink>
         </div>
+        <div v-if="userStore.loggedInVisibility && (userStore.user?.role === Role.admin)" class="flex items-center hover:bg-orange-800 h-full px-5">
+          <RouterLink :to="{ name: 'AddNewEmployeeView'}">Zaposlenici</RouterLink>
+        </div>
         <div class="ml-auto"></div>
         <div v-if="userStore.notLoggedInVisibility" class="flex items-center hover:bg-orange-800 h-full px-5">
           <RouterLink :to="{ name: 'SignInView'}">Sign In</RouterLink>

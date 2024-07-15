@@ -4,7 +4,7 @@
             <label class="uppercase my-2 text-xs text-gray-600">{{ label }}</label>
         </div>
         <div>
-            <select :disabled="disabled" v-model="option" @change="$emit('selectedValue', option)" class="iniline-block bg-inherit border-b border-slate-400 truncate">
+            <select :disabled="disabled" v-model="option" @change="$emit('selectedValue', option)" class="py-1 iniline-block bg-inherit border-b border-slate-400 truncate">
                 <option v-for="value in Object.values(object)" :key="value.id" :value="value.id" class="truncate" >
                     {{ value.name }}
                 </option>
