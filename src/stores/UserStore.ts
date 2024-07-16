@@ -109,15 +109,8 @@ export const useUserStore = defineStore('userStore',{
           this.isLoading = true
           try {
             console.log(`image name: ${user.imageName}\nimage url= ${imageUrl}`)
-              const oldImageName: string = user.imageName
               if(imageUrl){
-                  user.imageName = generateImageName('user')
-                  const blob = await imageUrlToBlob(imageUrl)
-                  const url = await this.addImage(blob, user.imageName)
-                  user.imageUrl = url
-                  if(oldImageName !== ''){
-                    await this.deleteImage(oldImageName)
-                  }
+                user = await this.updateUserImage(user, imageUrl)
               }
               const updateRef = doc(db, 'users', user.uid)
               await updateDoc(updateRef, {
@@ -132,10 +125,27 @@ export const useUserStore = defineStore('userStore',{
               toast.success('Korisnik ažuriran')
               router.push({name: 'UserAccount'})
           } catch (e) {
-          console.error("user update error: ", e)
-          toast.error('Neuspješno ažuriranje korisnika')
+            console.error("user update error: ", e)
+            toast.error('Neuspješno ažuriranje korisnika')
           }
           this.isLoading = false
+        },
+        async updateUserImage(user: User, imageUrl: string): Promise<User>{
+          try{
+            const oldImageName: string = user.imageName
+            user.imageName = generateImageName('user')
+            const blob = await imageUrlToBlob(imageUrl)
+            const url = await this.addImage(blob, user.imageName)
+            user.imageUrl = url
+            if(oldImageName !== ''){
+              await this.deleteImage(oldImageName)
+            }
+            return user
+          }catch(error){
+            console.error('user image update error', error)
+            toast.error('Greška prilikom ažuriranja slike')
+            throw error
+          }
         },
         async addImage(imageBlob: Blob, imageName: string){
           try {
@@ -203,6 +213,41 @@ export const useUserStore = defineStore('userStore',{
             });
           });
         },
+        async createEmployee(user: User, password: string, imageUrl: string | null){
+          if(this.user?.role !== Role.admin){
+            return
+          }
+          this.isLoading = true
+          try {
+            const auth = getAuth()
+            const userCredential = await createUserWithEmailAndPassword(auth, user.email, password);
+            const uid = userCredential.user.uid
+            const email = userCredential.user.email
+            if(imageUrl){
+              user = await this.updateUserImage(user, imageUrl)
+            }
+            await setDoc(doc(db, "users", uid), {
+              uid: uid,
+              email: email,
+              firstName: user.firstName,
+              lastName: user.lastName,
+              imageUrl: user.imageUrl,
+              imageName: user.imageName,
+              born: user.born,
+              phoneNumber: user.phoneNumber,
+              role: user.role
+            })
+    
+            console.log("Employee created")
+            toast.success('Zaposlenik kreiran')
+          } catch (error) {
+            console.error("Greška prilikom kreiranja korisnika:", error)
+            toast.error('Greška prilikom kreiranja zaposlenika')
+          }
+          finally{
+            this.isLoading = false
+          }
+        }
     },
     
 })

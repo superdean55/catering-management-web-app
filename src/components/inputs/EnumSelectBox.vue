@@ -1,10 +1,10 @@
 <template>
     <div class="flex flex-col w-full">
         <div>
-            <label class="inline-block my-1 text-xs text-gray-600">{{ label }}</label>
+            <label class="inline-block uppercase my-2 text-xs text-gray-600">{{ label }}</label>
         </div>
         <div>
-            <select :disabled="disabled" v-model="option" @change="$emit('selectedValue', option)" class="iniline-block bg-inherit border-b border-slate-400">
+            <select :disabled="disabled" v-model="option" @change="$emit('selectedValue', option)" class="block w-full py-1 px-2 box-border border-b border-slate-300 bg-inherit">
                 <option v-for="value in Object.values(object)" :key="value" :value="value">
                     {{ value }}
                 </option>

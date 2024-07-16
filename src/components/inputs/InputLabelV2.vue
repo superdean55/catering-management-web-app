@@ -10,7 +10,7 @@
             :disabled="disabled"
             >
         <div v-if="error?.length">
-            <p class="text-red-600">{{ error }}</p>
+            <p class="text-red-600 text-xs">{{ error }}</p>
         </div>
         
     </div>

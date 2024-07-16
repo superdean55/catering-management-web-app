@@ -1,5 +1,5 @@
 <template>
-    <div class="felx flex-col w-full">
+    <div class="flex flex-col w-full">
         <div>
             <label class="uppercase my-2 text-xs text-gray-600">{{ label }}</label>
         </div>
