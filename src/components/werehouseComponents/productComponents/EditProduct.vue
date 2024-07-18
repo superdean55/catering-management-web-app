@@ -15,8 +15,8 @@
 import ProductInterface from './ProductInterface.vue'
 import type { Product } from '@/types/Product.ts'
 import { useProductStore } from '@/stores/ProductStore'
-import { ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import { ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 
 const productStore = useProductStore()
 

@@ -238,6 +238,44 @@ const router = createRouter({
           components:{
             interface: () => import('../views/EmployeeManagementViews/AddNewEmployeeView.vue')
           }
+        },
+        {
+          path: '/update_role',
+          name: 'UpdateRoleView',
+          components:{
+            interface: () => import('../views/EmployeeManagementViews/UpdateRoleView.vue')
+          }
+        }
+      ]
+    },
+    {
+      path: '/management',
+      name: 'RestaurantManagementView',
+      component:() => import('../views/RestaurantManagement/RestaurantManagementView.vue'),
+      meta: { requiresAuth: true, requiresRole: [Role.admin] },
+      children: [
+        {
+          path: 'payDesk_management',
+          name: 'PayDeskManagementView',
+          components: {
+            management:  () => import('../views/RestaurantManagement/PayDeskManagementView.vue')
+          },
+          children: [
+            {
+              path: 'payDesk_list',
+              name: 'PayDeskList',
+              components: {
+                interface: () => import('@/components/restaurantManagement/payDeskManagement/PayDeskList.vue')
+              }
+            },
+            {
+              path: 'add_paydesk',
+              name: 'AddPayDesk',
+              components: {
+                interface: () => import('@/components/restaurantManagement/payDeskManagement/AddPayDesk.vue')
+              }
+            }
+          ]
         }
       ]
     }

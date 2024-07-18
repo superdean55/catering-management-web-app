@@ -8,9 +8,12 @@
                         <RouterLink :to="{ name: 'AddNewEmployeeView' }">
                             <button class="py-1 px-2 text-white">Dodaj Zaposlenika</button>
                         </RouterLink>
-                    
                     </li>
-                    
+                    <li class="inline-block rounded-xl bg-gray-500 hover:bg-gray-800">
+                        <RouterLink :to="{ name: 'UpdateRoleView' }">
+                            <button class="py-1 px-2 text-white">Ažuriraj ulogu</button>
+                        </RouterLink>
+                    </li>
                 </ul>
             </nav>
             <div class="h-20"></div>
@@ -20,5 +23,8 @@
 </template>
 
 <script setup lang="ts">
+import { useUserStore } from '@/stores/UserStore'
 
+const userStore = useUserStore()
+userStore.getUsers()
 </script>

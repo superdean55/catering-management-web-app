@@ -17,6 +17,7 @@ const toast = useToast()
 export const useUserStore = defineStore('userStore',{
     state: () => ({
         user: null as User | null,
+        users: [] as User [],
         notLoggedInVisibility: false,
         loggedInVisibility: false,
         isLoading: false,
@@ -213,6 +214,55 @@ export const useUserStore = defineStore('userStore',{
             });
           });
         },
+        getUsers(){
+          const collectionRef = collection(db, "users");
+          const unsubscribe = onSnapshot(collectionRef, (snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+              const data = change.doc.data()
+                
+              if (change.type === "added") {
+                  const data = change.doc.data()
+                  const user = this.users.find(it => it.uid === data.uid)
+                  if(!user){
+                    this.users.push({
+                      uid: data.uid,
+                      email: data.email,
+                      firstName: data.firstName,
+                      lastName: data.lastName,
+                      imageUrl: data.imageUrl,
+                      imageName: data.imageName,
+                      born: storageDateToInputString(data.born as string),
+                      phoneNumber: data.phoneNumber,
+                      role: data.role
+                    })
+                  }
+              }
+              if (change.type === "modified") {
+                  const data = change.doc.data()
+                  const index = this.users.findIndex(it => it.uid === data.uid)
+                  if (index !== -1) {
+                    this.users[index] = {
+                      uid: data.uid,
+                      email: data.email,
+                      firstName: data.firstName,
+                      lastName: data.lastName,
+                      imageUrl: data.imageUrl,
+                      imageName: data.imageName,
+                      born: storageDateToInputString(data.born as string),
+                      phoneNumber: data.phoneNumber,
+                      role: data.role
+                    }
+                  }
+              }
+              if (change.type === "removed") {
+                  const index = this.users.findIndex(it => it.uid === data.uid);
+                  if (index !== -1) {
+                      this.users.splice(index, 1);
+                  }
+              }
+            })
+          })
+        },
         async createEmployee(user: User, password: string, imageUrl: string | null){
           if(this.user?.role !== Role.admin){
             return
@@ -247,7 +297,25 @@ export const useUserStore = defineStore('userStore',{
           finally{
             this.isLoading = false
           }
-        }
+        },
+        async updateEmployee(user: User, role: Role){
+          if(this.user?.role !== Role.admin){
+            return
+          }
+          this.isLoading = true
+          try {
+              const updateRef = doc(db, 'users', user.uid)
+              await updateDoc(updateRef, {
+                  role: role
+              })
+              console.log('updating role success') 
+              toast.success('Uloga ažurirana')
+          } catch (e) {
+            console.error("role update error: ", e)
+            toast.error('Neuspješno ažuriranje uloge')
+          }
+          this.isLoading = false
+        },
     },
     
 })
