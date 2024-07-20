@@ -1,5 +1,5 @@
 <template>
-    <div class="">
+    <div class="w-full">
         <PayDeskInterface @change="onConfirm"></PayDeskInterface>
 
     </div>
@@ -13,9 +13,7 @@ import type { PayDesk } from '@/types/PayDesk'
 
 const payDeskStore = usePayDeskStore()
 const onConfirm = (payDesk: PayDesk, oldPayDesk: PayDesk | null) => {
-    console.log('in add paydesk vue')
     if(!oldPayDesk){
-        console.log('in if')
         payDeskStore.addPayDesk(payDesk)
     }
 }

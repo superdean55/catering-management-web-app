@@ -8,7 +8,7 @@
                 </RouterLink>
             </div>
         </div>
-        <div class="w-full ml-2">
+        <div class="w-full pl-2">
             <RouterView name="interface"></RouterView>
         </div>
     </main>

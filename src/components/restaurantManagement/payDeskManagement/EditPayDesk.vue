@@ -32,9 +32,9 @@ watch(() => route.params.id, (newId) => {
 })
 
 const onConfirm = (payDesk: PayDesk, oldPayDesk: PayDesk | null) => {
-    console.log()
+    console.log('update paydesk')
     if(oldPayDesk){
-        
+        payDeskStore.updatePayDesk(payDesk, oldPayDesk)
     }
 }
 const onDelete = (paydeskId: string) => {

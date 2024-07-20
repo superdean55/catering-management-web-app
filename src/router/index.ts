@@ -262,17 +262,24 @@ const router = createRouter({
           },
           children: [
             {
-              path: 'payDesk_list',
-              name: 'PayDeskList',
+              path: 'dashboard',
+              name: 'PayDeskDashboard',
               components: {
-                interface: () => import('@/components/restaurantManagement/payDeskManagement/PayDeskList.vue')
+                interface: () => import('@/components/restaurantManagement/payDeskManagement/PayDeskDashboard.vue')
               }
             },
             {
-              path: 'add_paydesk',
+              path: 'add',
               name: 'AddPayDesk',
               components: {
                 interface: () => import('@/components/restaurantManagement/payDeskManagement/AddPayDesk.vue')
+              }
+            },
+            {
+              path: 'edit/:id',
+              name: 'EditPayDesk',
+              components: {
+                interface: () => import('@/components/restaurantManagement/payDeskManagement/EditPayDesk.vue')
               }
             }
           ]

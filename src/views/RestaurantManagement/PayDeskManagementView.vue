@@ -2,8 +2,8 @@
     <div class="w-full flex flex-col">
         <div class="w-full p-2 flex flex-row gap-2 justify-start">
             <div class="inline-block rounded-xl bg-gray-500 hover:bg-gray-800">
-                <RouterLink :to="{ name: 'PayDeskList' }">
-                    <button class="py-1 px-2 text-white">Popis blagajni</button>
+                <RouterLink :to="{ name: 'PayDeskDashboard' }">
+                    <button class="py-1 px-2 text-white">Upravljačka ploča</button>
                 </RouterLink>
             </div>
             <div class="inline-block rounded-xl bg-gray-500 hover:bg-gray-800">

@@ -17,18 +17,19 @@ const payDeskCollection = 'payDesks'
 export const usePayDeskStore = defineStore('payDeskStore',{
     state: () => ({
         payDeskInUse: null as PayDesk | null,
-        payDesks:[] as PayDesk[]
+        payDesks:[] as PayDesk[],
+        isLoading: false
     }),
     actions: {
         async addPayDesk(paydesk: PayDesk){
             try {
-                console.log('in tay bloku paydesk')
                 paydesk.timestamp = serverTimestamp()
-                paydesk.creatinoDate = new Date().toLocaleString()
+                paydesk.creationDate = new Date().toLocaleString()
+                paydesk.totalCash = '0.00'
                 const addRef = doc(collection(db, payDeskCollection))
                 paydesk.id = addRef.id
                 await setDoc(addRef, paydesk as PayDesk)
-                router.push({ name: 'PayDeskList'})
+                router.push({ name: 'PayDeskDashboard'})
                 console.log("PayDesk added")
                 toast.success("Blagajna kreirana")
               } catch (e) {
@@ -36,13 +37,38 @@ export const usePayDeskStore = defineStore('payDeskStore',{
                 toast.error('Podreška prilikom kreiranja blagajne')
               }
         },
+        async updatePayDesk(paydesk: PayDesk, oldPayDesk: PayDesk){
+            try {
+                if(this.getPayDeskById(oldPayDesk.id)){
+                    this.isLoading = true
+                    const updateRef = doc(db, payDeskCollection, oldPayDesk.id)
+                    
+                    await updateDoc(updateRef, {
+                        name: paydesk.name,
+                        deposite: paydesk.deposite,
+                        startOfWorkingHours: paydesk.startOfWorkingHours,
+                        endOfWorkingHours: paydesk.endOfWorkingHours
+                    })
+                    toast.success("Blagajna ažurirana")
+                    router.push({ name: 'PayDeskDashboard'})
+                }else{
+                    toast.warning('Nepostojeća blagajna ne može se ažurirati')
+                }
+            } catch (e) {
+                console.error("paydesk update: ", e)
+                toast.error('Podreška prilikom ažuriranja blagajne')
+            } finally {
+                this.isLoading = false
+            }
+        },
         async loginToPayDesk(userId: string, paydeskId: string){
             try {
                 const updateRef = doc(db, payDeskCollection, paydeskId)
                 
                 await updateDoc(updateRef, {
-                    user: userId,
-                    isInUse: true
+                    userId: userId,
+                    isInUse: true,
+                    logInDate: new Date().toLocaleString()
                 })
                 toast.success("Uspješna prijava")
             } catch (e) {
@@ -50,13 +76,35 @@ export const usePayDeskStore = defineStore('payDeskStore',{
                 toast.error('Podreška prilikom prijave')
             }
         },
-        async logOutToPayDesk(userId: string, paydeskId: string){
+        async disablePayDesk(paydeskId: string, isDisabled: boolean){
+            try {
+                const paydesk = this.getPayDeskById(paydeskId)
+                if(paydesk){
+                    const updateRef = doc(db, payDeskCollection, paydeskId)
+                    
+                    await updateDoc(updateRef, {
+                        isDisabled: isDisabled
+                    })
+                    if(isDisabled){
+                        toast.success(`Blagajna ${paydesk.name} onemogučena`)
+                    }else{
+                        toast.success(`Blagajna ${paydesk.name} omogučena`)
+                    }
+                }
+                
+            } catch (e) {
+                console.error("paydesk disable: ", e)
+                toast.error('Podreška prilikom onemogučavanja blagajne')
+            }
+        },
+        async logOutFromPayDesk(paydeskId: string){
             try {
                 const updateRef = doc(db, payDeskCollection, paydeskId)
                 
                 await updateDoc(updateRef, {
-                    user: '',
-                    isInUse: false
+                    userId: '',
+                    isInUse: false,
+                    logInDate: ''
                 })
                 toast.success("Uspješna odjava")
             } catch (e) {
@@ -88,6 +136,8 @@ export const usePayDeskStore = defineStore('payDeskStore',{
                     if (change.type === "added") {
                         const data = change.doc.data()
                         const paydesk = this.payDesks.find(it => it.id === data.id)
+                        console.log('all payDesks')
+                        console.log(data)
                         if(!paydesk){
                             this.payDesks.push({
                                 id: data.id,
@@ -99,7 +149,9 @@ export const usePayDeskStore = defineStore('payDeskStore',{
                                 userId: data.userId,
                                 bills: data.bills,
                                 isInUse: data.isInUse,
-                                creatinoDate: data.creationDate,
+                                isDisabled: data.isDisabled,
+                                creationDate: data.creationDate,
+                                logInDate: data.logInDate,
                                 timestamp: data.timestamp,
                             }as PayDesk)
                         }
@@ -118,7 +170,9 @@ export const usePayDeskStore = defineStore('payDeskStore',{
                                 userId: data.userId,
                                 bills: data.bills,
                                 isInUse: data.isInUse,
-                                creatinoDate: data.creationDate,
+                                isDisabled: data.isDisabled,
+                                creationDate: data.creationDate,
+                                logInDate: data.logInDate,
                                 timestamp: data.timestamp,
                             }as PayDesk
                         }

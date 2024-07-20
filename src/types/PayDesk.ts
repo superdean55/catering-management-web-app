@@ -10,6 +10,8 @@ export interface PayDesk{
     userId: string,
     bills: string [],
     isInUse: boolean,
-    creatinoDate: string,
+    isDisabled: boolean,
+    creationDate: string,
+    logInDate: string,
     timestamp: FieldValue,
 }

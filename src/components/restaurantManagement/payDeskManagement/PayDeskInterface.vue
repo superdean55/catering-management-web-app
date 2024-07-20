@@ -48,7 +48,7 @@
                     </InputLabelV2>
                 </div>
                 <div v-if="payDesk" class="w-full flex flex-row justify-end mt-2">
-                    <ConfirmButton label="Ažuriraj" @confirm="onDelete">
+                    <ConfirmButton label="Obriši" @confirm="onDelete">
                         <span class="material-symbols-outlined">delete</span>
                     </ConfirmButton>
                     <div class="w-2"></div>
@@ -144,7 +144,6 @@ const onConfirm = () => {
         isValid = false
     }
     if(isValid){
-        console.log('is valid')
         const payDesk = {
             id: '',
             name: name.value,
@@ -155,15 +154,14 @@ const onConfirm = () => {
             userId: '',
             bills: [],
             isInUse: false,
-            creatinoDate: '',
+            isDisabled: false,
+            creationDate: '',
+            logInDate: '',
             timestamp: null as FieldValue | null,
             }as PayDesk
         if(props.payDesk){
-            console.log('edit')
             emit('change', payDesk, props.payDesk)    
         }else{
-            console.log('paydesk add')
-            console.log('paydesk object = ',payDesk)
             emit('change', payDesk, null)
         }
     }

@@ -12,6 +12,7 @@ import { useTableStore } from './stores/TableStore'
 import LoadingSpiner from './components/loading/LoadingSpiner.vue'
 import { useLoadingStore } from './stores/LoadingStore'
 import { Role } from './types/Role'
+import { usePayDeskStore } from './stores/payDeskStore'
 
 const userStore = useUserStore()
 const articleStore = useArticleStore()
@@ -21,6 +22,7 @@ const productStore = useProductStore()
 const categoryStore = useCategoryStore()
 const tableStore = useTableStore()
 const loadingStore = useLoadingStore()
+const payDeskStore = usePayDeskStore()
 
 articleStore.getRawMaterials()
 
@@ -31,18 +33,38 @@ userStore.authState()
 receiptStore.getReceipts()
 tableStore.getTables()
 
+
 const { user } = storeToRefs(userStore)
 const userImage = ref<HTMLImageElement | null>(null)
+if(userStore.user && 
+  (userStore.user.role === Role.admin || userStore.user.role === Role.manager || userStore.user.role === Role.staff))
+{
+  console.log('getusers')
+  userStore.getUsers()
+}
 
 watch(user,() =>{
   if(userImage.value != null && user.value && user.value.imageUrl && user.value.imageUrl != ''){
     userImage.value.src = user.value.imageUrl
   }
+  if(userStore.user && 
+  (userStore.user.role === Role.admin || userStore.user.role === Role.manager || userStore.user.role === Role.staff))
+  {
+    console.log('getusers')
+    userStore.getUsers()
+  }
 })
 watch(() => userStore.isLoading, (newValue) => {
     loadingStore.setLoadingState(newValue) 
 })
-
+watch(() => payDeskStore.isLoading, (newValue) => {
+    loadingStore.setLoadingState(newValue) 
+})
+watch(user, () => {
+  if(user.value?.role === Role.admin || user.value?.role === Role.manager || user.value?.role === Role.staff){
+    payDeskStore.fetchPayDesks()
+  }
+})
 const toUserAccount = () => {
   router.push({ name: 'UserAccount'})
 }

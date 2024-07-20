@@ -263,6 +263,12 @@ export const useUserStore = defineStore('userStore',{
             })
           })
         },
+        getUserById(uid: string){
+          console.log('userId = ', uid)
+          console.log('find user', this.users.find(it => it.uid === uid) || null)
+          console.log('users', this.users)
+          return this.users.find(it => it.uid === uid) || null
+        },
         async createEmployee(user: User, password: string, imageUrl: string | null){
           if(this.user?.role !== Role.admin){
             return
