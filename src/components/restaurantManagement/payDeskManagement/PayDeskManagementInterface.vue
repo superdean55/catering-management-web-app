@@ -9,15 +9,19 @@
                 
                 <TwoLabelAndDataTagInRow
                     first-label="Prijavljen:"
-                    :first-data="user.firstName"
+                    :first-data="user.firstName + ' ' + user.lastName"
                     second-label="Vrijeme prijave:"
                     :second-data="payDesk.logInDate"
                     >
                 </TwoLabelAndDataTagInRow>
                 
                 <div class="flex flex-row justify-end gap-2">
-                    <FilledButton label="Odjavi korisnika"></FilledButton>
-                    <FilledButton label="Zaključak"></FilledButton>
+                    <FilledButton 
+                        label="Odjavi korisnika" 
+                        :disabled="paydesk.bills.length || paydesk.isDisabled ? true : false"
+                        @confirm="onLogOut"
+                    ></FilledButton>
+                    <FilledButton label="Zaključak" :disabled="!paydesk.bills.length || paydesk.isDisabled ? true : false"></FilledButton>
                 </div>
             </div>
             <div class="w-full flex flex-col gap-1 py-2">
@@ -63,6 +67,7 @@ import { ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/UserStore'
 import type { User } from '@/types/User'
+import { Role } from '@/types/Role'
 const payDeskStore = usePayDeskStore()
 const userStore = useUserStore()
 
@@ -95,5 +100,12 @@ watch(payDeskStore.payDesks, () => {
 const onPayDeskDisabledUpdate = (value: boolean) => {
     console.log('disabled', value)
     payDeskStore.disablePayDesk(paydesk.value.id, value)
+}
+const onLogOut = () => {
+    if(userStore.user?.role === Role.admin && !paydesk.value.bills.length){
+        payDeskStore.logOutFromPayDesk(paydesk.value.id)
+    }else if(paydesk.value.bills.length){
+        
+    }
 }
 </script>

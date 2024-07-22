@@ -292,14 +292,14 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const loadingStore = useLoadingStore()
   loadingStore.setLoadingState(true)
-  const auth = getAuth();
+  const auth = getAuth()
   console.log('router')
   await new Promise((resolve) => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      unsubscribe();
-      resolve(user); 
-    });
-  });
+      unsubscribe()
+      resolve(user)
+    })
+  })
   const currentUser = auth.currentUser;
 
   if (to.matched.some(record => record.meta.requiresAuth)) {
@@ -310,9 +310,9 @@ router.beforeEach(async (to, from, next) => {
         const requiredRoles: Role[] = to.meta.requiresRole as Role[]
 
         if (requiredRoles.includes(userRole!)) {
-          next();
+          next()
         } else {
-          next({ name: 'HomeView', query: { redirect: to.fullPath } });
+          next({ name: 'HomeView', query: { redirect: to.fullPath } })
         }
       } else {
         next();
@@ -324,17 +324,15 @@ router.beforeEach(async (to, from, next) => {
   } else if(to.matched.some(record => record.meta.requiresNoAuth)){
 
     if (currentUser) {
-      next({ name: 'HomeView', query: { redirect: to.fullPath } });
+      next({ name: 'HomeView', query: { redirect: to.fullPath } })
     } else {
-      next();
+      next()
     }
 
   } else {
-  
-    next();
-
+    next()
   }
-});
+})
 
 router.afterEach(() => {
   const loadingStore = useLoadingStore()

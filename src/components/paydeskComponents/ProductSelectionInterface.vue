@@ -1,6 +1,6 @@
 <template>
     <div v-if="categoryStore.categorys.length" class="flex flex-row gap-2 rounded-xl border bg-gray-200 border-gray-300 p-2 h-96">
-        <div class="flex flex-col gap-1 items-start ">
+        <div class="flex flex-col gap-1 items-start overflow-y-scroll scrollbar-hide">
             <div
                 v-for="category in categoryStore.categorys" :key="category.id"
                 @click="onCategoryClick(category)"
@@ -17,16 +17,18 @@
             <div class="flex felx-row justify-center">
                 <p class="font-bold text-xl">{{ currentlySelectedCategoryName }}</p>
             </div>
-            <div 
-                v-for="product in selectedCategoryProducts" :key="product.id"
-                class="rounded-xl flex flex-row gap-2 border bg-gray-300 border-gray-100 hover:border-gray-400 hover:bg-gray-400 cursor-pointer  transition duration-300 ease-in-out hover:opacity-60"
-                @click="onProductClicked(product)"
-            >
-                <div class="h-16 w-16 overflow-hidden">
-                    <img :src="product.imageUrl" :alt="product.imageName" class="w-full h-full object-cover rounded-l-xl">
-                </div>
-                <div class="flex flex-row items-center">
-                    <p class="font-bold text-xl">{{ product.name }}</p>
+            <div class="flex flex-col flex-grow gap-2 overflow-y-scroll scrollbar-hide">
+                <div
+                    v-for="product in selectedCategoryProducts" :key="product.id"
+                    class="rounded-xl flex flex-row gap-2 border bg-gray-300 border-gray-100 hover:border-gray-400 hover:bg-gray-400 cursor-pointer  transition duration-300 ease-in-out hover:opacity-60"
+                    @click="onProductClicked(product)"
+                >
+                    <div class="h-16 w-16 overflow-hidden">
+                        <img :src="product.imageUrl" :alt="product.imageName" class="w-full h-full object-cover rounded-l-xl">
+                    </div>
+                    <div class="flex flex-row items-center">
+                        <p class="font-bold text-xl">{{ product.name }}</p>
+                    </div>
                 </div>
             </div>
         </div>
