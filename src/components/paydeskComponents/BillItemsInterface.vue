@@ -61,13 +61,16 @@
             </div>
         </div>
         <div class="w-full h-2"></div>
-        <div class="flex flex-row justify-end">
+        <div class="flex flex-row items-center justify-between">
+            <p v-if="!tableSelected" class="text-red-500 font-bold pl-4">Odaberite stol</p>
+            <p v-else class="font-bold pl-4">{{ 'Stol: ' + tableSelected.name }}</p>
             <FilledButton
                 label="Ispis"
                 backgroundColor="bg-orange-700"
                 hoverColor="hover:bg-orange-900"
                 textColor="text-white"
-                :disabled="paydesk.isDisabled"
+                :disabled="paydesk.isDisabled || billItems.length === 0 || tableSelected === null"
+                @confirm="onCreateBill"
             >
                 <span class="material-symbols-outlined text-xl">receipt</span>
             </FilledButton>
@@ -83,32 +86,42 @@ import { ref, watch } from 'vue'
 import { generateImageName } from '@/helpers/generateImageName'
 import { useProductStore } from '@/stores/ProductStore'
 import type { PayDesk } from '@/types/PayDesk'
+import type { Bill } from '@/types/Bill'
+import type { User } from '@/types/User'
+import { usePayDeskStore } from '@/stores/payDeskStore'
+import type { Table } from '@/types/Table'
+
 
 const props = defineProps<{
     product?: Product,
+    user: User,
+    table: Table | null,
+    change: number,
     payDesk: PayDesk
+}>()
+const emit = defineEmits<{
+    (e:'bill', bill: Bill): void
 }>()
 
 const productStore = useProductStore()
+const payDeskStore = usePayDeskStore()
+
 const billItems = ref<BillItem[]>([])
 const paydesk = ref<PayDesk>(props.payDesk)
+const tableSelected = ref<Table | null>(props.table)
 
-watch(props.payDesk,(newPayDesk) => {
-    paydesk.value = newPayDesk
-})
-const getImage = (id: string): string => {
-    const imageUrl = productStore.getProductById(id)?.imageUrl
-    if(imageUrl){
-        return imageUrl
-    }
-    return '@/assets/blank_profile_picture.jpg'
-}
 const isQuantityInputVisible = ref(false)
-const totalPrice = ref<string>('0')
+const totalPrice = ref<string>('0.00')
 const totalBillItems = ref<string>('0')
 const totalProductItems = ref<string>('0')
 
-watch(() => props.product, (newProduct) => {
+watch(() => props.payDesk,(newPayDesk) => {
+    paydesk.value = newPayDesk
+})
+watch(() => props.table,(newTable) =>{
+    tableSelected.value = newTable
+})
+watch([() => props.product, () => props.change],([newProduct, newChange]) => {
     if(newProduct){
         const price = isNaN(parseFloat(newProduct.price)) ?  0 : parseFloat(newProduct.price)
         billItems.value.push({
@@ -117,12 +130,17 @@ watch(() => props.product, (newProduct) => {
             productName: newProduct.name,
             quantity: 1,
             price: price,
-            amount: price.toFixed(2)
         }as BillItem)
         changeTotal()
     }
 })
-
+const getImage = (id: string): string => {
+    const imageUrl = productStore.getProductById(id)?.imageUrl
+    if(imageUrl){
+        return imageUrl
+    }
+    return '@/assets/blank_profile_picture.jpg'
+}
 const onArrowUpClicked = (item: BillItem) => {
     item.quantity ++
     
@@ -160,5 +178,28 @@ const changeTotal = () => {
     })
     totalPrice.value = priceTotal.toFixed(2)
     totalProductItems.value = productItemsTotal.toString()
+}
+const onCreateBill = () => {
+
+    if(billItems.value.length && tableSelected.value){
+        const bill = {
+            id: '',
+            number: 0,
+            tableId: tableSelected.value.id,
+            Date: '',
+            Time: '',
+            billItems: billItems.value,
+            totalCash: totalPrice.value,
+            JIR: '',
+            ZKI: '',
+            paydeskName: paydesk.value.name,
+            user: props.user.firstName + ' ' + props.user.lastName
+        } as Bill
+        emit('bill', bill)
+        billItems.value = []
+        totalPrice.value = '0.00'
+        totalBillItems.value = '0'
+        totalProductItems.value = '0'
+    }
 }
 </script>

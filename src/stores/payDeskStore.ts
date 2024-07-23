@@ -10,9 +10,11 @@ import router from "@/router"
 import { useToast } from 'vue-toastification'
 import type { PayDesk } from '../types/PayDesk'
 import type { User } from "@/types/User"
+import type { Bill } from "@/types/Bill"
 
 const toast = useToast()
 const payDeskCollection = 'payDesks'
+const billsCollection = 'bills'
 
 export const usePayDeskStore = defineStore('payDeskStore',{
     state: () => ({
@@ -26,6 +28,8 @@ export const usePayDeskStore = defineStore('payDeskStore',{
                 paydesk.timestamp = serverTimestamp()
                 paydesk.creationDate = new Date().toLocaleString()
                 paydesk.totalCash = '0.00'
+                paydesk.billNumber = 1
+                paydesk.currentYear = new Date().getFullYear().toString()
                 const addRef = doc(collection(db, payDeskCollection))
                 paydesk.id = addRef.id
                 await setDoc(addRef, paydesk as PayDesk)
@@ -63,17 +67,38 @@ export const usePayDeskStore = defineStore('payDeskStore',{
         },
         async loginToPayDesk(userId: string, paydeskId: string){
             try {
-                const updateRef = doc(db, payDeskCollection, paydeskId)
-                
-                await updateDoc(updateRef, {
-                    userId: userId,
-                    isInUse: true,
-                    logInDate: new Date().toLocaleString()
-                })
-                toast.success("Uspješna prijava")
+                const paydesk = this.getPayDeskById(paydeskId)
+                if(paydesk){
+                    if(paydesk.currentYear !== new Date().getFullYear().toString()){
+                        console.log('paydesk years are not the seam')
+                        await this.updateCurrentYearAndBillNumber(paydeskId)
+                    }
+                    const updateRef = doc(db, payDeskCollection, paydeskId)
+                    
+                    await updateDoc(updateRef, {
+                        userId: userId,
+                        isInUse: true,
+                        logInDate: new Date().toLocaleString()
+                    })
+                    toast.success("Uspješna prijava")
+                }
             } catch (e) {
                 console.error("paydesk login: ", e)
                 toast.error('Podreška prilikom prijave')
+            }
+        },
+        async updateCurrentYearAndBillNumber(paydeskId: string){
+            try {
+                const updateRef = doc(db, payDeskCollection, paydeskId)
+                
+                await updateDoc(updateRef, {
+                    billNumber: 1,
+                    currentYear: new Date().getFullYear().toString()
+                })
+                toast.success("Blagajna resetirana na novu godinu")
+            } catch (e) {
+                console.error("paydesk reset: ", e)
+                toast.error('Pogreška prilikom reseta blagajne')
             }
         },
         async disablePayDesk(paydeskId: string, isDisabled: boolean){
@@ -148,6 +173,8 @@ export const usePayDeskStore = defineStore('payDeskStore',{
                                 totalCash: data.totalCash,
                                 userId: data.userId,
                                 bills: data.bills,
+                                billNumber: data.billNumber,
+                                currentYear: data.currentYear,
                                 isInUse: data.isInUse,
                                 isDisabled: data.isDisabled,
                                 creationDate: data.creationDate,
@@ -169,6 +196,8 @@ export const usePayDeskStore = defineStore('payDeskStore',{
                                 totalCash: data.totalCash,
                                 userId: data.userId,
                                 bills: data.bills,
+                                billNumber: data.billNumber,
+                                currentYear: data.currentYear,
                                 isInUse: data.isInUse,
                                 isDisabled: data.isDisabled,
                                 creationDate: data.creationDate,
@@ -205,6 +234,24 @@ export const usePayDeskStore = defineStore('payDeskStore',{
         },
         getPayDeskById(id: string) {
             return this.payDesks.find(it => it.id === id) || null
+        },
+        async addBill(bill: Bill){
+            try {
+                this.isLoading = true
+                bill.Date = new Date().toLocaleDateString()
+                bill.Time = new Date().toLocaleTimeString()
+                const addRef = doc(collection(db, billsCollection))
+                bill.id = addRef.id
+                await setDoc(addRef, bill as Bill)
+                router.push({ name: 'PayDeskDashboard'})
+                console.log("PayDesk added")
+                toast.success("Blagajna kreirana")
+              } catch (e) {
+                console.error("adding paydesk: ", e)
+                toast.error('Podreška prilikom kreiranja blagajne')
+              }finally{
+                this.isLoading = false
+              }
         }
 
     }

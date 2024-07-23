@@ -1,8 +1,11 @@
-import type { BillItem } from "./BillItem";
+import type { BillItem } from "./BillItem"
 
 export interface Bill{
     id: string,
-    creationDate: string,
+    number: number,
+    tableId: string,
+    Date: string,
+    Time: string,
     billItems: BillItem[],
     totalCash: string,
     JIR: string,

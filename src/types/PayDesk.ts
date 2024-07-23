@@ -9,6 +9,8 @@ export interface PayDesk{
     totalCash: string,
     userId: string,
     bills: string [],
+    billNumber: number,
+    currentYear: string,
     isInUse: boolean,
     isDisabled: boolean,
     creationDate: string,
