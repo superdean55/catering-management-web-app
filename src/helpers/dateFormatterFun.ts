@@ -11,11 +11,11 @@ export function inputDateToString(date: string): string{
 
 export function storageDateToInputString(date: string): string{
     if(date){
-        const parts = date.split('.');
-        const day = parts[0];
-        const month = parts[1];
-        const year = parts[2];
-        return `${year}-${month}-${day}`;
+        const parts = date.split('.')
+        const day = parts[0]
+        const month = parts[1]
+        const year = parts[2]
+        return `${year}-${month}-${day}`
     }
      return ''
 }

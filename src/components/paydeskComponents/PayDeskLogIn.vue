@@ -19,7 +19,6 @@
                 </div>
                 <div v-else class="w-full flex flex-row gap-2 items-center p-2">
                     <p>{{ payDesk.name }}</p>
-                    <p>{{ payDesk.userId }}</p>
                     <p class="mx-auto">{{ 'Prijavljen: '+ userStore.getUserById(payDesk.userId)?.firstName + ' ' +  userStore.getUserById(payDesk.userId)?.lastName}}</p>
                     <div class="pl-4 w-4 h-4 rounded-full bg-green-500"></div>
                 </div>

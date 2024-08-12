@@ -4,6 +4,7 @@ import { collection, doc, setDoc, onSnapshot, query, orderBy, serverTimestamp } 
 import { db } from "@/firebase/firebaseConfig"
 import type { ReceiptItem } from "@/types/ReceiptItem"
 import type { SupplyItem } from "@/types/SupplyItem"
+import type { User } from "@/types/User"
 
 
 export const useSuppliesStore = defineStore('suppliesStore',{
@@ -35,21 +36,24 @@ export const useSuppliesStore = defineStore('suppliesStore',{
                 receiptItems.forEach(element => {
                     suppliesItems.push({
                         rawMaterialId: element.rawMaterialId,
+                        name: element.name,
+                        code: element.code,
+                        unit: element.unit,
                         quantity:  isNaN(parseFloat(element.quantity)) ? 0.00 : parseFloat(element.quantity)
                     }as SupplyItem)
                 })
                 supply.supplyItems = suppliesItems
-                this.addReceipt(supply)
+                this.addSupply(supply)
                 return
             }
             
             const lastSupplyState = this.supplies[this.supplies.length - 1]
             
             if (lastSupplyState && Array.isArray(lastSupplyState.supplyItems)) {
-                supply.supplyItems = lastSupplyState.supplyItems.map(item => ({ ...item }));
+                supply.supplyItems = lastSupplyState.supplyItems.map(item => ({ ...item }))
             } 
             receiptItems.forEach(element => {
-                const supplyItemIndex = supply.supplyItems.findIndex(it => it.rawMaterialId === element.rawMaterialId)
+                const supplyItemIndex = supply.supplyItems.findIndex(it => it.rawMaterialId === element.rawMaterialId || it.name === element.name)
                 console.log('index:' + supplyItemIndex)
                 if(supplyItemIndex !== -1){
                     const qunatity = isNaN(parseFloat(element.quantity)) ? 0.00 : parseFloat(element.quantity)
@@ -57,16 +61,51 @@ export const useSuppliesStore = defineStore('suppliesStore',{
                 }else{
                     supply.supplyItems.push({
                         rawMaterialId: element.rawMaterialId,
+                        name: element.name,
+                        code: element.code,
+                        unit: element.unit,
                         quantity: isNaN(parseFloat(element.quantity)) ? 0.00 : parseFloat(element.quantity)
                     }as SupplyItem)
                 }
                 
             })
 
-            this.addReceipt(supply)
+            this.addSupply(supply)
                     
         },
-        async addReceipt(supply: Supply){
+        async updateSuppliesByBill(user: User, documentName: string, supplyItems: SupplyItem[]){
+            const date = new Date().toLocaleString()
+            console.log(`supplies length: ${this.supplies.length}`)
+            
+            const supply = {
+                id: '',
+                updateCausedByDocumentName: documentName,
+                email: user.email,
+                updateDate: date,
+                timestamp: serverTimestamp(),
+                supplyItems: []
+            }as Supply
+
+            const lastSupplyState = this.supplies[this.supplies.length - 1]
+            if (lastSupplyState && Array.isArray(lastSupplyState.supplyItems)) {
+                supply.supplyItems = lastSupplyState.supplyItems.map(item => ({ ...item }))
+            } 
+            supplyItems.forEach(supplyItem => {
+                const supplyItemIndex = supply.supplyItems.findIndex(it => it.rawMaterialId === supplyItem.rawMaterialId)
+                console.log('index:' + supplyItemIndex)
+                if(supplyItemIndex !== -1){
+                    const qunatity = supplyItem.quantity
+                    supply.supplyItems[supplyItemIndex].quantity += qunatity
+                }else{
+                    console.log('supply item not exists in ')
+                    supply.supplyItems.push(supplyItem)
+                }
+            })
+
+            this.addSupply(supply)
+                    
+        },
+        async addSupply(supply: Supply){
             try {
                 const addRef = doc(collection(db, 'supplies'))
                 const id = addRef.id

@@ -212,6 +212,20 @@ const router = createRouter({
           components: {
             interface: () => import('../views/paydeskViews/BillInterfaceView.vue')
           }
+        },
+        {
+          path: 'bills',
+          name: 'BillListView',
+          components: {
+            interface: () => import('../views/paydeskViews/BillListView.vue')
+          }
+        },
+        {
+          path: 'conclusions',
+          name: 'ConclusionList',
+          components: {
+            interface: () => import('../components/paydeskComponents/ConclusionList.vue')
+          }
         }
       ]
     },

@@ -1,31 +1,38 @@
 <template>
     <div class="w-full font-merienda">
-        <RoundedCard class="max-w-5xl" v-if="isUserLoggedInPayDesk && paydesk && user">
-            <div
-                class="w-full grid grid-cols-7 gap-2">
-                <PayDeskInfoPanel class="col-span-7" :payDesk="paydesk"></PayDeskInfoPanel>
-                <ProductSelectionInterface class="col-span-3" @product="onProduct"></ProductSelectionInterface>
-                <BillItemsInterface 
-                    :product="product" 
-                    :user="user" 
-                    :table="selectedTable"
-                    :change="change" 
-                    :payDesk="paydesk"
-                    @bill="onBillPrinting" 
-                    class="col-span-4"
-                ></BillItemsInterface> 
-                <TableSelectionInterface class="col-span-7" @table="OnTableSelected"></TableSelectionInterface> 
-            </div>
-        </RoundedCard>
-        <RoundedCard v-else-if="!payDeskStore.payDesks.length" class="max-w-md mx-auto">
-            <div class="w-full flex flex-col gap-2 items-center">
-                <p class="text-red-500">Ne postoji niti jedan blagajna</p>
-                <p>Obratite se administratoru</p>
-            </div>
-        </RoundedCard>
-        <RoundedCard v-else class="max-w-md mx-auto">
-            <PayDeskLogIn @logIn="onLogIn"></PayDeskLogIn>
-        </RoundedCard>
+        <div class="grid grid-cols-7 gap-2">
+            <RoundedCard class="col-span-5" v-if="isUserLoggedInPayDesk && paydesk && user" :style="{height: adjustedHeight + 'px'}">
+                <div class="w-full h-full grid grid-cols-7 gap-2">
+                    <PayDeskInfoPanel class="col-span-7" :payDesk="paydesk"></PayDeskInfoPanel>
+                    <ProductSelectionInterface class="col-span-3 overflow-hidden" @product="onProduct" :style="{height: interfaceHeight + 'px'}"></ProductSelectionInterface>
+                    <BillItemsInterface
+                        :product="product"
+                        :order="order"
+                        :productListHeight="productInterfaceHeight"
+                        :user="user"
+                        :table="selectedTable"
+                        :change="change"
+                        :payDesk="paydesk"
+                        @bill="onBillPrinting"
+                        class="col-span-4 overflow-hidden"
+                        :style="{height: interfaceHeight + 'px'}"
+                    ></BillItemsInterface>
+                    <TableSelectionInterface class="col-span-7 overflow-hidden" @table="OnTableSelected"></TableSelectionInterface>
+                </div>
+            </RoundedCard>
+            <RoundedCard v-else-if="!payDeskStore.payDesks.length" class="col-span-5">
+                <div class="w-full flex flex-col gap-2 items-center">
+                    <p class="text-red-500">Ne postoji niti jedan blagajna</p>
+                    <p>Obratite se administratoru</p>
+                </div>
+            </RoundedCard>
+            <RoundedCard v-else class="col-span-5">
+                <PayDeskLogIn @logIn="onLogIn"></PayDeskLogIn>
+            </RoundedCard>
+            <RoundedCard class="col-span-2" v-if="isUserLoggedInPayDesk && paydesk && user" :style="{height: adjustedHeight + 'px'}">
+                <ListOfOrders class="w-full" @order="onOrder"></ListOfOrders> 
+            </RoundedCard>
+        </div>
     </div>
 </template>
 
@@ -38,15 +45,28 @@ import PayDeskLogIn from '@/components/paydeskComponents/PayDeskLogIn.vue'
 import TableSelectionInterface from '@/components/paydeskComponents/TableSelectionInterface.vue'
 import { useUserStore } from '@/stores/UserStore'
 import type { Product } from '@/types/Product'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { usePayDeskStore } from '@/stores/payDeskStore'
 import type { PayDesk } from '@/types/PayDesk'
 import type { User } from '@/types/User'
 import type { Table } from '@/types/Table'
 import type { Bill } from '@/types/Bill'
+import { useProductStore } from '@/stores/ProductStore'
+import type { SupplyItem } from '@/types/SupplyItem'
+import { useArticleStore } from '@/stores/ArticleStor'
+import { useSuppliesStore } from '@/stores/SuppliesStore'
+import ListOfOrders from '@/components/paydeskComponents/ListOfOrders.vue'
+import { useOrderStore } from '@/stores/OrderStore'
+import { useScreenStore } from '@/stores/ScreenStore'
+import type { Order } from '@/types/Order'
 
 const userStore = useUserStore()
+const suppliesStore = useSuppliesStore()
+const productStore = useProductStore()
+const articleStore = useArticleStore()
 const payDeskStore = usePayDeskStore()
+const orderStore = useOrderStore()
+const screenStore = useScreenStore()
 
 const product = ref<Product>()
 const change = ref<number>(0)
@@ -54,23 +74,59 @@ const isUserLoggedInPayDesk = ref<boolean>(false)
 const paydesk = ref<PayDesk | null>(null)
 const user = ref<User | null>(userStore.user)
 const selectedTable = ref<Table | null>(null)
+const order = ref<Order | null>(null)
+const approvedOrders = ref<Order []>(orderStore.approvedOrders)
 
+if(orderStore.approvedOrders.length){
+    order.value = orderStore.approvedOrders[0]
+}
+
+watch(orderStore.approvedOrders, (newApprovedOrders) => {
+    approvedOrders.value = []
+    newApprovedOrders.forEach( order => {
+        if(order.payDeskId === paydesk.value?.id){
+            approvedOrders.value.push(order)
+        }
+    })
+    if(approvedOrders.value.length){
+        order.value = approvedOrders.value[0]
+    }else{
+        order.value = null
+    }
+})
 
 const checkIsUserLoggdInPayDesk = () => {
     if(user.value){
         isUserLoggedInPayDesk.value =  payDeskStore.payDesks.some(it => it.userId === user.value?.uid)
     }
     if(isUserLoggedInPayDesk){
+        orderStore.fetchOrders()
+        orderStore.fetchApprovedOrders()
         const paydesk_ = payDeskStore.payDesks.find(it => it.userId === userStore.user?.uid)
         if(paydesk_){
             paydesk.value = paydesk_
         }
     }
 }
+
 checkIsUserLoggdInPayDesk()
+
+const adjustedHeight = computed(() => {
+      return screenStore.screenHeight - 96
+})
+
+const interfaceHeight = computed(() => {
+      return adjustedHeight.value - 276
+})
+
+const productInterfaceHeight = computed(() => {
+      return interfaceHeight.value - 141
+})
+
 watch(payDeskStore.payDesks, () => {
     checkIsUserLoggdInPayDesk()
 })
+
 const onProduct = (_product: Product) => {
     product.value = _product
     change.value ++
@@ -83,9 +139,46 @@ const onLogIn = (payDeskId: string) => {
 const OnTableSelected = (table: Table) => {
     selectedTable.value = table
 }
-
+const onOrder = (order_: Order) => {
+    if(paydesk.value){
+        order_.payDeskId = paydesk.value.id
+        orderStore.approveTheOrder(order_)
+    }
+}
 const onBillPrinting = (bill: Bill) => {
     console.log('billPrinting: ', bill)
     selectedTable.value = null
+    const supplyItems: SupplyItem [] = []
+    bill.billItems.forEach(billItem => {
+        const product = productStore.getProductById(billItem.productId)
+        if(!product){
+            throw new Error('Product not exists')
+        }
+        product.productItems.forEach(productItem => {
+                const rawMaterial = articleStore.rawMaterials.find(it => it.id === productItem.rawMaterialId)
+                if(!rawMaterial){
+                    throw new Error ('Raw material not exists')
+                }
+                supplyItems.push({
+                        rawMaterialId: productItem.rawMaterialId,
+                        name: rawMaterial.name,
+                        code: rawMaterial.code,
+                        unit: rawMaterial.unit,
+                        quantity: (Math.round(productItem.quantity * billItem.quantity * 100) / 100) * (-1)
+                    } as SupplyItem)
+        })
+    })
+
+    console.log('supply items = ',supplyItems)
+    if(user.value && paydesk.value){
+        payDeskStore.addBill(bill)
+        const documentName = bill.paydeskName + ' Rč.br.:' + bill.number.toString()
+        suppliesStore.updateSuppliesByBill(user.value, documentName, supplyItems)
+        //payDeskStore.updateBillNumberTotalCashAndBillList(paydesk.value, bill.totalCash)
+    }
+    if(bill.byOrderId !== ''){
+        orderStore.completeTheOrder(bill.byOrderId)
+        bill.byOrderId
+    }
 }
 </script>

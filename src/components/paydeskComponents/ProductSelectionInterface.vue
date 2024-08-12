@@ -1,5 +1,5 @@
 <template>
-    <div v-if="categoryStore.categorys.length" class="flex flex-row gap-2 rounded-xl border bg-gray-200 border-gray-300 p-2 h-96">
+    <div v-if="categoryStore.categorys.length" class="w-full h-full flex flex-row gap-2 rounded-xl border bg-gray-200 border-gray-300 p-2">
         <div class="flex flex-col gap-1 items-start overflow-y-scroll scrollbar-hide">
             <div
                 v-for="category in categoryStore.categorys" :key="category.id"
@@ -27,7 +27,7 @@
                         <img :src="product.imageUrl" :alt="product.imageName" class="w-full h-full object-cover rounded-l-xl">
                     </div>
                     <div class="flex flex-row items-center">
-                        <p class="font-bold text-xl">{{ product.name }}</p>
+                        <p class="font-bold text-sm lg:text-xl">{{ product.name }}</p>
                     </div>
                 </div>
             </div>

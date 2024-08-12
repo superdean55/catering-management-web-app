@@ -7,9 +7,11 @@ export interface Bill{
     Date: string,
     Time: string,
     billItems: BillItem[],
-    totalCash: string,
+    totalCash: number,
     JIR: string,
     ZKI: string,
     paydeskName: string,
-    user: string
+    user: string,
+    isCancelled: boolean,
+    byOrderId: string
 }

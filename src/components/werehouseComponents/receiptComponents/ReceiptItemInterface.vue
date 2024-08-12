@@ -82,14 +82,14 @@
                     <ConfirmButton
                         v-if="oldReceiptItem"
                         label="Ažuriraj"
-                        @confirm="onConfirm"
+                        @confirm="onUpdate"
                     >
                     <span class="material-symbols-outlined">update</span>
                     </ConfirmButton>
                     <ConfirmButton
                         v-else
                         label="Dodaj Sirovinu"
-                        @confirm="onConfirm"
+                        @confirm="onAdd"
                     >
                     <span class="material-symbols-outlined">add</span>
                     </ConfirmButton>
@@ -109,14 +109,16 @@ import { ArticleUnit } from '@/types/ArticleUnit';
 import { computed, ref, watch } from 'vue';
 import { useArticleStore } from '@/stores/ArticleStor';
 import { isTwoDecimalNumber } from '@/helpers/isTwoDecimalNumber';
-import type { ReceiptItem } from '@/types/ReceiptItem';
+import { ReceiptItem } from '@/types/ReceiptItem';
+import { generateId } from '@/helpers/generateId';
 
 const props = defineProps<{
     oldReceiptItem: ReceiptItem | null
 }>()
 
 const emit = defineEmits<{
-  (e: 'confirm', rawMaterialId: string, quantity: string, pricePerUnit: string, amount: string, update: boolean): void
+  (e: 'update', receiptItem: ReceiptItem): void,
+  (e:'add', receiptItem: ReceiptItem): void
 }>()
 
 const articleStore = useArticleStore()
@@ -226,7 +228,7 @@ const formatToTwoDecimalPlaces = (input: string) => {
   }
   return number.toFixed(2).toString()
 }
-const onConfirm = () => {
+function isValidData(): boolean{
     quantity.value = formatToTwoDecimalPlaces(quantity.value)
     var isValid = true
     if(!isTwoDecimalNumber(quantity.value)){
@@ -245,20 +247,53 @@ const onConfirm = () => {
         rawMaterialErrorMessage.value = 'sirovina nije odabrana'
         isValid = false
     }
-    if(isValid){
-        console.log(`valid raw material`)
-        emit('confirm', rawMaterialId.value, quantity.value, pricePerUnit.value, amount.value, update.value)
-        code.value = ''
-        rawMaterialId.value = ''
-        unit.value = ''
-        quantity.value = ''
-        pricePerUnit.value = ''
-        amount.value = ''
-        qunatityErrorMessage.value = ''
-        pricePerUnitErrorMessage.value = ''
-        amountErrorMessage.value = ''
-        rawMaterialErrorMessage.value = ''
-        update.value = false
+    return isValid
+}
+function resetData(){
+    code.value = ''
+    rawMaterialId.value = ''
+    unit.value = ''
+    quantity.value = ''
+    pricePerUnit.value = ''
+    amount.value = ''
+    qunatityErrorMessage.value = ''
+    pricePerUnitErrorMessage.value = ''
+    amountErrorMessage.value = ''
+    rawMaterialErrorMessage.value = ''
+    update.value = false
+}
+const onAdd = () => {
+    if(isValidData() && !props.oldReceiptItem){
+        console.log(`valid raw material add new`)
+        const receiptItem = {
+            id: generateId(),
+            rawMaterialId: rawMaterialId.value,
+            name: rawMaterialById.value?.name,
+            code: rawMaterialById.value?.code,
+            unit: rawMaterialById.value?.unit,
+            quantity: quantity.value,
+            pricePerUnit: pricePerUnit.value,
+            amount: amount.value
+        } as ReceiptItem
+        emit('add', receiptItem)
+        resetData()
+    }
+}
+const onUpdate = () => {
+    if(isValidData() && props.oldReceiptItem){
+        console.log(`valid raw material update`)
+        const receiptItem = {
+            id: props.oldReceiptItem.id,
+            rawMaterialId: rawMaterialId.value,
+            name: rawMaterialById.value?.name,
+            code: rawMaterialById.value?.code,
+            unit: rawMaterialById.value?.unit,
+            quantity: quantity.value,
+            pricePerUnit: pricePerUnit.value,
+            amount: amount.value
+        } as ReceiptItem
+        emit('update', receiptItem)
+        resetData()
     }
 }
 </script>

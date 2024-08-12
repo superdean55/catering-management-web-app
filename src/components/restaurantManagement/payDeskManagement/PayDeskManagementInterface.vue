@@ -18,10 +18,10 @@
                 <div class="flex flex-row justify-end gap-2">
                     <FilledButton 
                         label="Odjavi korisnika" 
-                        :disabled="paydesk.bills.length || paydesk.isDisabled ? true : false"
+                        :disabled="paydesk.conclusionItems.length || paydesk.isDisabled ? true : false"
                         @confirm="onLogOut"
                     ></FilledButton>
-                    <FilledButton label="Zaključak" :disabled="!paydesk.bills.length || paydesk.isDisabled ? true : false"></FilledButton>
+                    <FilledButton label="Zaključak" :disabled="!paydesk.conclusionItems.length || paydesk.isDisabled ? true : false"></FilledButton>
                 </div>
             </div>
             <div class="w-full flex flex-col gap-1 py-2">
@@ -102,9 +102,9 @@ const onPayDeskDisabledUpdate = (value: boolean) => {
     payDeskStore.disablePayDesk(paydesk.value.id, value)
 }
 const onLogOut = () => {
-    if(userStore.user?.role === Role.admin && !paydesk.value.bills.length){
+    if(userStore.user?.role === Role.admin && !paydesk.value.conclusionItems.length){
         payDeskStore.logOutFromPayDesk(paydesk.value.id)
-    }else if(paydesk.value.bills.length){
+    }else if(paydesk.value.conclusionItems.length){
         
     }
 }

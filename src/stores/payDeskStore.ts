@@ -1,5 +1,5 @@
 import type { Product } from "@/types/Product"
-import { doc, collection, setDoc, onSnapshot, updateDoc, deleteDoc, serverTimestamp, query, orderBy, getDoc} from "firebase/firestore"
+import { doc, collection, setDoc, onSnapshot, updateDoc, deleteDoc, serverTimestamp, query, orderBy, getDoc, where, getDocs} from "firebase/firestore"
 import { defineStore } from "pinia"
 import { db } from "@/firebase/firebaseConfig"
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage"
@@ -11,24 +11,33 @@ import { useToast } from 'vue-toastification'
 import type { PayDesk } from '../types/PayDesk'
 import type { User } from "@/types/User"
 import type { Bill } from "@/types/Bill"
+import { generateJIR } from "@/helpers/generateJIR"
+import { generateZKI } from "@/helpers/generateZKI"
+import type { ConclusionItem } from "@/types/ConclusionItem"
+import { generateId } from "@/helpers/generateId"
+import type { Conclusion } from "@/types/Conclusion"
 
 const toast = useToast()
 const payDeskCollection = 'payDesks'
 const billsCollection = 'bills'
+const conclusionsCollection = 'conclusions'
 
 export const usePayDeskStore = defineStore('payDeskStore',{
     state: () => ({
         payDeskInUse: null as PayDesk | null,
-        payDesks:[] as PayDesk[],
-        isLoading: false
+        payDesks:[] as PayDesk [],
+        isLoading: false,
+        bills:[] as Bill [],
+        conclusions:[] as Conclusion []
     }),
     actions: {
         async addPayDesk(paydesk: PayDesk){
             try {
                 paydesk.timestamp = serverTimestamp()
                 paydesk.creationDate = new Date().toLocaleString()
-                paydesk.totalCash = '0.00'
+                paydesk.totalCash = 0.00
                 paydesk.billNumber = 1
+                paydesk.conclusionNumber = 1
                 paydesk.currentYear = new Date().getFullYear().toString()
                 const addRef = doc(collection(db, payDeskCollection))
                 paydesk.id = addRef.id
@@ -71,14 +80,15 @@ export const usePayDeskStore = defineStore('payDeskStore',{
                 if(paydesk){
                     if(paydesk.currentYear !== new Date().getFullYear().toString()){
                         console.log('paydesk years are not the seam')
-                        await this.updateCurrentYearAndBillNumber(paydeskId)
+                        await this.resetCurrentYearAndBillNumber(paydeskId)
                     }
                     const updateRef = doc(db, payDeskCollection, paydeskId)
                     
                     await updateDoc(updateRef, {
                         userId: userId,
                         isInUse: true,
-                        logInDate: new Date().toLocaleString()
+                        logInDate: new Date().toLocaleDateString(),
+                        logInTime: new Date().toLocaleTimeString()
                     })
                     toast.success("Uspješna prijava")
                 }
@@ -87,7 +97,7 @@ export const usePayDeskStore = defineStore('payDeskStore',{
                 toast.error('Podreška prilikom prijave')
             }
         },
-        async updateCurrentYearAndBillNumber(paydeskId: string){
+        async resetCurrentYearAndBillNumber(paydeskId: string){
             try {
                 const updateRef = doc(db, payDeskCollection, paydeskId)
                 
@@ -99,6 +109,28 @@ export const usePayDeskStore = defineStore('payDeskStore',{
             } catch (e) {
                 console.error("paydesk reset: ", e)
                 toast.error('Pogreška prilikom reseta blagajne')
+            }
+        },
+        async updateBillNumberTotalCashAndBillList(paydesk: PayDesk, totalCash: number){
+            try {
+                const updateRef = doc(db, payDeskCollection, paydesk.id)
+                const payDeskTotalCash = Math.round((paydesk.totalCash + totalCash) * 100) / 100
+                console.log('paydesk state: ',paydesk)
+                console.log('total cash befor = ', paydesk.totalCash)
+                console.log('total cash to add = ', totalCash)
+                console.log('math =', Math.round((paydesk.totalCash + totalCash) * 100))
+                console.log('/100 =', Math.round((paydesk.totalCash + totalCash) * 100) / 100)
+                console.log('total cash after = ', payDeskTotalCash)
+                
+                await updateDoc(updateRef, {
+                    billNumber: paydesk.billNumber += 1,
+                    totalCash: payDeskTotalCash,
+                    conclusionItems: paydesk.conclusionItems
+                })
+                console.log("bill number ++")
+            } catch (e) {
+                console.error("bill number update: ", e)
+                toast.error('Pogreška prilikom ažuriranja broja računa')
             }
         },
         async disablePayDesk(paydeskId: string, isDisabled: boolean){
@@ -129,7 +161,8 @@ export const usePayDeskStore = defineStore('payDeskStore',{
                 await updateDoc(updateRef, {
                     userId: '',
                     isInUse: false,
-                    logInDate: ''
+                    logInDate: '',
+                    logInTime: ''
                 })
                 toast.success("Uspješna odjava")
             } catch (e) {
@@ -172,13 +205,15 @@ export const usePayDeskStore = defineStore('payDeskStore',{
                                 endOfWorkingHours: data.endOfWorkingHours,
                                 totalCash: data.totalCash,
                                 userId: data.userId,
-                                bills: data.bills,
+                                conclusionItems: data.conclusionItems,
+                                conclusionNumber: data.conclusionNumber,
                                 billNumber: data.billNumber,
                                 currentYear: data.currentYear,
                                 isInUse: data.isInUse,
                                 isDisabled: data.isDisabled,
                                 creationDate: data.creationDate,
                                 logInDate: data.logInDate,
+                                logInTime: data.logInTime,
                                 timestamp: data.timestamp,
                             }as PayDesk)
                         }
@@ -195,13 +230,15 @@ export const usePayDeskStore = defineStore('payDeskStore',{
                                 endOfWorkingHours: data.endOfWorkingHours,
                                 totalCash: data.totalCash,
                                 userId: data.userId,
-                                bills: data.bills,
+                                conclusionItems: data.conclusionItems,
+                                conclusionNumber: data.conclusionNumber,
                                 billNumber: data.billNumber,
                                 currentYear: data.currentYear,
                                 isInUse: data.isInUse,
                                 isDisabled: data.isDisabled,
                                 creationDate: data.creationDate,
                                 logInDate: data.logInDate,
+                                logInTime: data.logInTime,
                                 timestamp: data.timestamp,
                             }as PayDesk
                         }
@@ -221,7 +258,7 @@ export const usePayDeskStore = defineStore('payDeskStore',{
             if(paydesk && !paydesk.isInUse){
                 try{
                     await deleteDoc(doc(db, payDeskCollection, id))
-                    router.push({ name: 'PayDeskList'})
+                    router.push({ name: 'PayDeskDashboard'})
                     toast.success('Blagajna izbrisana')
                 } catch (e) {
                     toast.error('Neuspješno brisanje blagajne')
@@ -236,23 +273,159 @@ export const usePayDeskStore = defineStore('payDeskStore',{
             return this.payDesks.find(it => it.id === id) || null
         },
         async addBill(bill: Bill){
+            bill.isCancelled = false
+            this.createBill(bill)
+        },
+        async updateBill(bill: Bill){
+            bill.isCancelled = true   
+            this.createBill(bill)     
+        },
+        async createBill(bill: Bill){
             try {
                 this.isLoading = true
                 bill.Date = new Date().toLocaleDateString()
                 bill.Time = new Date().toLocaleTimeString()
+                bill.JIR = generateJIR()
+                bill.ZKI = generateZKI()
                 const addRef = doc(collection(db, billsCollection))
                 bill.id = addRef.id
+
                 await setDoc(addRef, bill as Bill)
-                router.push({ name: 'PayDeskDashboard'})
-                console.log("PayDesk added")
-                toast.success("Blagajna kreirana")
+                console.log("bill added")
+                toast.success("Račun zapisan")
+                const paydesk = this.payDesks.find(it => it.name === bill.paydeskName)
+
+                if(paydesk){
+                    bill.billItems.forEach(billItem => {
+                        const index = paydesk.conclusionItems.findIndex(it => it.productName === billItem.productName)
+                        if(index !== -1){
+                            paydesk.conclusionItems[index].quantity += billItem.quantity
+                        }else{
+                            paydesk.conclusionItems.push({
+                                id: generateId(),
+                                productName: billItem.productName,
+                                quantity: billItem.quantity,
+                                price: billItem.price,
+                                taxRate: '25%'
+                            }as ConclusionItem)
+                        }
+                        
+                    })
+                    await this.updateBillNumberTotalCashAndBillList(paydesk, bill.totalCash)
+                }else{
+                    console.error('paydesk dont exist')
+                }
               } catch (e) {
-                console.error("adding paydesk: ", e)
-                toast.error('Podreška prilikom kreiranja blagajne')
+                console.error("paydesk bill: ", e)
+                toast.error('Podreška prilikom zapisa računa')
               }finally{
                 this.isLoading = false
               }
-        }
+        },
+        async fetchBillsByDateAndUser(date :string, user: string) {
+            this.isLoading = true
+            const q = query(
+              collection(db, 'bills'),
+              where('Date', '==', date),
+              where('user', '==', user)
+            );
+      
+            try {
+              const querySnapshot = await getDocs(q);
+              this.bills = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                number: doc.data().number,
+                tableId: doc.data().tableId,
+                Date: doc.data().Date,
+                Time: doc.data().Time,
+                billItems: doc.data().billItems,
+                totalCash: doc.data().totalCash,
+                JIR: doc.data().JIR,
+                ZKI: doc.data().ZKI,
+                paydeskName: doc.data().paydeskName,
+                user: doc.data().user,
+                isCancelled: doc.data().isCancelled,
+                byOrderId: doc.data().byOrderId
+              } as Bill))
+            } catch (error) {
+              console.error('Error getting documents: ', error)
+              throw new Error('Error getting documents')
+            }finally{
+                this.isLoading = false
+            }
+        },
+        async conclusion(paydesk: PayDesk, user: User){
+            try {
+                this.isLoading = true
+                const conclusion = {
+                    id: '',
+                    number: paydesk.conclusionNumber,
+                    userName: user.firstName + ' ' + user.lastName,
+                    paydeskName: paydesk.name,
+                    date: new Date().toLocaleDateString('sv-SE'),
+                    time: new Date().toLocaleTimeString(),
+                    timestamp: serverTimestamp(),
+                    conclusionItems: paydesk.conclusionItems,
+                    totalCash: paydesk.totalCash
+                }as Conclusion
+                
+                const addRef = doc(collection(db, conclusionsCollection))
+                conclusion.id = addRef.id
+
+                await setDoc(addRef, conclusion as Conclusion)
+                toast.success("Zaključak zapisan")
+                await this.resetTotalCashAndConclusionItems(paydesk)
+              } catch (e) {
+                console.error("conclusion: ", e)
+                toast.error('Podreška prilikom zapisa zaključka')
+              }finally{
+                this.isLoading = false
+              }
+        },
+        async resetTotalCashAndConclusionItems(paydesk: PayDesk){
+            try {
+                const updateRef = doc(db, payDeskCollection, paydesk.id)
+                await updateDoc(updateRef, {
+                    conclusionNumber: paydesk.conclusionNumber += 1,
+                    totalCash: 0,
+                    conclusionItems: []
+                })
+            } catch (e) {
+                console.error("reset total cash and conclusion items: ", e)
+                toast.error('Pogreška prilikom resetiranja stanja blagajne i stavki zaključka')
+            }
+        },
+        async fetchConclusions(startDate :string, endDate: string) {
+            this.isLoading = true
+            const q = query(
+              collection(db, conclusionsCollection),
+              where('date', '>=', startDate),
+              where('date', '<=', endDate)
+            )
+      
+            try {
+              const querySnapshot = await getDocs(q)
+              this.conclusions = querySnapshot.docs.map(doc => ({
+                    id: doc.data().id,
+                    number: doc.data().number,
+                    userName: doc.data().userName,
+                    paydeskName: doc.data().paydeskName,
+                    date: doc.data().date,
+                    time: doc.data().time,
+                    timestamp: doc.data().timestamp,
+                    conclusionItems: doc.data().conclusionItems,
+                    totalCash: doc.data().totalCash
+              } as Conclusion))
+            } catch (error) {
+              console.error('Error getting conclusions: ', error)
+              toast.error('Pogreška prilikom dohvaćanja zaključaka')
+              throw new Error('Error getting conclusions')
+            }finally{
+                this.isLoading = false
+            }
+        },
+        
+
 
     }
 })

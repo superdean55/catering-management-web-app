@@ -47,7 +47,7 @@ export const useArticleStore = defineStore('articleStore',{
           }
         },
         async getRawMaterials(){
-            const collectionRef = collection(db, 'raw-materials');
+            const collectionRef = collection(db, 'raw-materials')
 
             const unsubscribe = onSnapshot(collectionRef, (snapshot) => {
                 snapshot.docChanges().forEach((change) => {

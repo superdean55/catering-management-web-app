@@ -50,7 +50,8 @@
                 </div>
             </RoundedCard>
             <ReceiptItemInterface    
-                @confirm="onAddNewReceiptItem"
+                @add="onAddReceiptItem"
+                @update="onUpdateReceiptItem"
                 :oldReceiptItem="oldReceiptItem"
             >
             </ReceiptItemInterface>
@@ -59,7 +60,7 @@
                     <ReceiptItemsList 
                         :receiptItems="receiptItems"
                         @remove="onRemoveReceiptItem"
-                        @update="onUpdateReceiptItem"
+                        @update="onUpdateReceiptItemFromList"
                     >
                     </ReceiptItemsList>
                     <div class="flex flex-row justify-center">
@@ -147,34 +148,24 @@ const isOlderThanSevenDays = () => {
       return input < sevenDaysAgo;
 }
 
-const onAddNewReceiptItem = (rawMaterialId: string, quantity: string, pricePerUnit: string, amount: string, update: boolean) => {
-    console.log(`update: ${update}`)
+const onAddReceiptItem = (receiptItem: ReceiptItem) => {
+    console.log(`add receipt item: ${receiptItem}`)
     listErrorMessage.value = ''
-    const index = receiptItems.value.findIndex( it => it.rawMaterialId === rawMaterialId)
-    console.log(`index: ${index}`)
-    if(update && index >= 0){
-        receiptItems.value[index] = {
-            id: receiptItems.value[index].id,
-            rawMaterialId: rawMaterialId,
-            quantity: quantity,
-            pricePerUnit: pricePerUnit,
-            amount: amount
-        } as ReceiptItem
-        oldReceiptItem.value = null
-    }else{
-        receiptItems.value.push({
-            id: generateId(),
-            rawMaterialId: rawMaterialId,
-            quantity: quantity,
-            pricePerUnit: pricePerUnit,
-            amount: amount,
-        }as ReceiptItem)
+    receiptItems.value.push(receiptItem)
+}
+
+const onUpdateReceiptItem = (receiptItem: ReceiptItem) => {
+    const index = receiptItems.value.findIndex(it => it.id === receiptItem.id)
+    console.log('index ', index)
+    if(index !== -1){
+        receiptItems.value[index] = receiptItem
     }
+    oldReceiptItem.value = null
 }
 const onRemoveReceiptItem = (index: number) => {
     receiptItems.value.splice(index, 1)
 }
-const onUpdateReceiptItem = (index: number) => {
+const onUpdateReceiptItemFromList = (index: number) => {
     console.log('update is clicked')
     oldReceiptItem.value = receiptItems.value[index]
 }

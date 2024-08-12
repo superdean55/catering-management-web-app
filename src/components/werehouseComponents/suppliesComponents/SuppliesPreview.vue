@@ -42,13 +42,13 @@
                             <p class="truncate">{{ index + 1 }}.</p>
                         </div>
                         <div class="flex flex-row justify-between items-center pl-1">
-                            <p class="truncate">{{ articleStore.getRawMaterialById(item.rawMaterialId)?.code }}</p>
+                            <p class="truncate">{{ item.code }}</p>
                         </div>
                         <div class="col-span-2 flex flex-row justify-between items-center pl-1 bg-slate-300">
-                            <p class="truncate">{{ articleStore.getRawMaterialById(item.rawMaterialId)?.name }}</p>
+                            <p class="truncate">{{ item.name }}</p>
                         </div>
                         <div class="flex flex-row justify-between items-center pl-1">
-                            <p class="truncate">{{ articleStore.getRawMaterialById(item.rawMaterialId)?.unit }}</p>
+                            <p class="truncate">{{ item.unit }}</p>
                         </div>
                         <div class="flex flex-row justify-between items-center pl-1 bg-slate-300">
                             <p class="truncate">{{ item.quantity }}</p>
@@ -64,7 +64,6 @@
 import RoundedCard from '@/components/cards/RoundedCard.vue'
 import TwoLabelAndDataTagInRow from '@/components/dataTags/TwoLabelAndDataTagInRow.vue'
 import OneLabelAndDataTagInRow from '@/components/dataTags/OneLabelAndDataTagInRow.vue'
-import { useArticleStore } from '@/stores/ArticleStor'
 import type { Supply } from '@/types/Supply'
 
 const props = defineProps<{
@@ -72,7 +71,5 @@ const props = defineProps<{
     supply: Supply,
     backgroundColor?: string
 }>()
-
-const articleStore = useArticleStore()
 
 </script>

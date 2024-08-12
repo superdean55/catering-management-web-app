@@ -14,7 +14,7 @@
             <FilledButton 
                 label="Zaključak" 
                 @confirm="onShowConclusionDialog" 
-                :disabled="!paydesk.bills.length || paydesk.isDisabled ? true : false"
+                :disabled="!paydesk.conclusionItems.length || paydesk.isDisabled ? true : false"
             >
                 <span class="material-symbols-outlined">done_all</span>
             </FilledButton>
@@ -22,7 +22,7 @@
             <FilledButton 
                 label="Odjava" 
                 @confirm="onShowLogOutDialog" 
-                :disabled="paydesk.bills.length || paydesk.isDisabled ? true : false"
+                :disabled="paydesk.conclusionItems.length || paydesk.isDisabled ? true : false"
             >
                 <span class="material-symbols-outlined">logout</span>
             </FilledButton>
@@ -41,7 +41,7 @@
             <OneLabelAndDataTagInRow 
                 class="col-span-1"
                 label="Prijavljen:" 
-                :data="paydesk.logInDate"
+                :data="paydesk.logInDate + ' ' + paydesk.logInTime"
             ></OneLabelAndDataTagInRow>
         </div>
     </div>
@@ -68,7 +68,7 @@ const isVisible = ref<boolean>(false)
 const message = ref<string>('')
 const dialogAction = ref<string>('')
 
-watch(props.payDesk, (newPayDesk) => {
+watch(() => props.payDesk, (newPayDesk) => {
     paydesk.value = newPayDesk
 })
 function showDialog(dialogMessage: string, action: string){
@@ -87,8 +87,8 @@ const onDialogConfirm = () => {
         if(dialogAction.value ==='log_out'){
             payDeskStore.logOutFromPayDesk(paydesk.value.id)
         }
-        if(dialogAction.value === 'conclusion'){
-
+        if(dialogAction.value === 'conclusion' && userStore.user.uid === paydesk.value.userId){
+            payDeskStore.conclusion(paydesk.value, userStore.user)
         }
     }
     resetDialog()

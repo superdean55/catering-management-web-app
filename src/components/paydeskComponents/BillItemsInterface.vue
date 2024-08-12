@@ -1,63 +1,66 @@
 <template>
-    <div class="w-full flex flex-col rounded-xl p-2 bg-gray-200 h-96">
-        <div class="w-full flex flex-row justify-center mb-2">
+    <div class="w-full h-full flex flex-col rounded-xl p-2 bg-gray-200">
+        <div class="w-full flex flex-row justify-center">
             <p class="font-bold text-xl">Stavke Računa</p>
         </div>
-        <div class="w-full flex flex-col gap-1 h-full overflow-y-scroll scrollbar-hide">
-            <div 
-                @click="displayQuantityInput(false)"
-                v-for="(item, index) in billItems" :key="item.id"
-                class="h-16 rounded-xl flex flex-row gap-2  bg-gray-300 hover:bg-gray-400 cursor-pointer  transition duration-300 ease-in-out hover:brightness-70"
-            >
-                <div class="h-16 w-16 overflow-hidden">
-                    <img :src="getImage(item.productId)" class="w-full h-full object-cover rounded-l-xl">
-                </div>
-                <div class="flex flex-row items-center">
-                    <p class="font-bold text-xl">{{ productStore.getProductById(item.productId)?.name }}</p>
-                </div>
-                <div class="m-auto"></div>
-                <div class="flex flex-row items-center">
-                    <p class="font-bold text-xl">{{ (item.quantity * item.price).toFixed(2) }} €</p>
-                </div>
-                <div @click.stop v-if="isQuantityInputVisible" class="flex flex-row items-center justify-center w-14 bg-white">
-                    <input 
-                        type="number" 
-                        v-model:="item.quantity" 
-                        class="w-full h-full text-center text-xl"
-                        @input="onQuantityChanged(item)"
-                    >
-                </div>
-                <div v-else @click.stop="displayQuantityInput(true)" class="flex flex-row items-center justify-center w-14 bg-white">
-                    <p class="font-bold text-xl">{{ item.quantity }}</p>
-                </div>
-                <div class="flex flex-col items-center">
-                    <div class="h-1/2 flex flex-row items-center">
-                        <span @click="onArrowUpClicked(item)" class="material-symbols-outlined text-xl hover:text-green-300">keyboard_arrow_up</span>
+        <div class="w-full h-2"></div>
+        <div class="w-full overflow-y-scroll scrollbar-hide" :style="{height: productListHeight + 'px'}">
+            <div class="w-full flex flex-col gap-1 ">
+                <div
+                    @click="displayQuantityInput(false)"
+                    v-for="(item, index) in billItems" :key="item.id"
+                    class="h-16 rounded-xl flex flex-row gap-2  bg-gray-300 hover:bg-gray-400 cursor-pointer  transition duration-300 ease-in-out hover:brightness-70"
+                >
+                    <div class="h-16 w-16 overflow-hidden">
+                        <img :src="getImage(item.productId)" class="w-full h-full object-cover rounded-l-xl">
                     </div>
-                    <div class="h-1/2 flex flex-row items-center">
-                        <span @click="onArrowDownClicked(item)" class="material-symbols-outlined text-xl hover:text-red-300">keyboard_arrow_down</span>
+                    <div class="flex flex-row items-center">
+                        <p class="font-bold text-xl">{{ productStore.getProductById(item.productId)?.name }}</p>
                     </div>
-                </div>
-                
-                <div class="flex flex-row items-center pr-4 pl-2">
-                    <span @click="onRemoveClicked(index)" class="material-symbols-outlined hover:text-red-500">close</span>
+                    <div class="m-auto"></div>
+                    <div class="flex flex-row items-center">
+                        <p class="font-bold text-xl">{{ (item.quantity * item.price).toFixed(2) }} €</p>
+                    </div>
+                    <div @click.stop v-if="isQuantityInputVisible" class="flex flex-row items-center justify-center w-14 bg-white">
+                        <input
+                            type="number"
+                            v-model:="item.quantity"
+                            class="w-full h-full text-center text-xl"
+                            @input="onQuantityChanged(item)"
+                        >
+                    </div>
+                    <div v-else @click.stop="displayQuantityInput(true)" class="flex flex-row items-center justify-center w-14 bg-white">
+                        <p class="font-bold text-xl">{{ item.quantity }}</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="h-1/2 flex flex-row items-center">
+                            <span @click="onArrowUpClicked(item)" class="material-symbols-outlined text-xl hover:text-green-300">keyboard_arrow_up</span>
+                        </div>
+                        <div class="h-1/2 flex flex-row items-center">
+                            <span @click="onArrowDownClicked(item)" class="material-symbols-outlined text-xl hover:text-red-300">keyboard_arrow_down</span>
+                        </div>
+                    </div>
+            
+                    <div class="flex flex-row items-center pr-4 pl-2">
+                        <span @click="onRemoveClicked(index)" class="material-symbols-outlined hover:text-red-500">close</span>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="w-full h-px bg-gray-500"></div>
         <div class="w-full h-2"></div>
-        <div class="w-full flex flex-row h-10 justify-between px-4">
+        <div class="w-full flex flex-row justify-between px-4">
             <div class="flex flex-row items-center">
-                <p class="font-bold text-xl">Ukupno:</p>
-                <p class="font-bold text-xl">{{ totalPrice }} €</p>
+                <p class="font-bold text-lg">Ukupno:</p>
+                <p class="font-bold text-lg">{{ totalPrice }} €</p>
             </div>
             <div class="pl-2 flex flex-row items-center">
-                <p class="font-bold text-xl">Br.stavki:</p>
-                <p class="font-bold text-xl">{{ totalBillItems }}</p>
+                <p class="font-bold text-lg">Br.stavki:</p>
+                <p class="font-bold text-lg">{{ totalBillItems }}</p>
             </div>
             <div class="pl-2 flex flex-row items-center">
-                <p class="font-bold text-xl">Br. proizvoda:</p>
-                <p class="font-bold text-xl">{{ totalProductItems }}</p>
+                <p class="font-bold text-lg">Br. proizvoda:</p>
+                <p class="font-bold text-lg">{{ totalProductItems }}</p>
             </div>
         </div>
         <div class="w-full h-2"></div>
@@ -90,10 +93,15 @@ import type { Bill } from '@/types/Bill'
 import type { User } from '@/types/User'
 import { usePayDeskStore } from '@/stores/payDeskStore'
 import type { Table } from '@/types/Table'
+import { generateId } from '@/helpers/generateId'
+import type { Order } from '@/types/Order'
+import { useTableStore } from '@/stores/TableStore'
 
 
 const props = defineProps<{
     product?: Product,
+    order: Order | null,
+    productListHeight: number,
     user: User,
     table: Table | null,
     change: number,
@@ -105,6 +113,7 @@ const emit = defineEmits<{
 
 const productStore = useProductStore()
 const payDeskStore = usePayDeskStore()
+const tableStore = useTableStore()
 
 const billItems = ref<BillItem[]>([])
 const paydesk = ref<PayDesk>(props.payDesk)
@@ -114,9 +123,20 @@ const isQuantityInputVisible = ref(false)
 const totalPrice = ref<string>('0.00')
 const totalBillItems = ref<string>('0')
 const totalProductItems = ref<string>('0')
+const productInterfaceHeight = ref<number>(props.productListHeight)
+const order = ref<Order | null>(props.order)
 
 watch(() => props.payDesk,(newPayDesk) => {
     paydesk.value = newPayDesk
+})
+
+watch(() => props.order,(newOrder) => {
+    order.value = newOrder
+    if(order.value){
+        billItems.value = order.value.billItems
+        tableSelected.value = tableStore.getTableById(order.value.tableId)
+        changeTotal()
+    }
 })
 watch(() => props.table,(newTable) =>{
     tableSelected.value = newTable
@@ -125,7 +145,7 @@ watch([() => props.product, () => props.change],([newProduct, newChange]) => {
     if(newProduct){
         const price = isNaN(parseFloat(newProduct.price)) ?  0 : parseFloat(newProduct.price)
         billItems.value.push({
-            id: generateImageName(''),
+            id: generateId(),
             productId: newProduct.id,
             productName: newProduct.name,
             quantity: 1,
@@ -133,6 +153,9 @@ watch([() => props.product, () => props.change],([newProduct, newChange]) => {
         }as BillItem)
         changeTotal()
     }
+})
+watch(() => props.productListHeight, (newHeight) => {
+    productInterfaceHeight.value = newHeight
 })
 const getImage = (id: string): string => {
     const imageUrl = productStore.getProductById(id)?.imageUrl
@@ -184,16 +207,18 @@ const onCreateBill = () => {
     if(billItems.value.length && tableSelected.value){
         const bill = {
             id: '',
-            number: 0,
+            number: paydesk.value.billNumber,
             tableId: tableSelected.value.id,
             Date: '',
             Time: '',
             billItems: billItems.value,
-            totalCash: totalPrice.value,
+            totalCash: (Math.round(parseFloat(totalPrice.value) * 100) / 100),
             JIR: '',
             ZKI: '',
             paydeskName: paydesk.value.name,
-            user: props.user.firstName + ' ' + props.user.lastName
+            user: props.user.firstName + ' ' + props.user.lastName,
+            isCancelled: false,
+            byOrderId: order.value ? order.value.id : ''
         } as Bill
         emit('bill', bill)
         billItems.value = []

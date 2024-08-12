@@ -1,5 +1,6 @@
 <template>
   <main class="w-full h-screen bg-slate-300 p-0 overflow-x-scroll">
+    <OrderProductDialog v-if="selectedTable" :showDialog="showOrderProductDialog" :table="selectedTable" @update="onOrderProductDialogUpdate"></OrderProductDialog>
     <div class="h-10 w-full"></div>
     <div class="h-10 w-full"></div>
     <div class="w-full flex flex-row justify-center">
@@ -11,11 +12,13 @@
         </RouterLink>
       </div>
     </div>
-    <RestaurantLayout>
-      <template v-for="table in tableStore.tables" :key="table.id" v-slot:[table.id]>
-        <TableCard :name="table.name" :shape="table.shape"></TableCard>
-      </template> 
-    </RestaurantLayout>
+    <div class="w-full">
+      <RestaurantLayout>
+        <template v-for="table in tableStore.tables" :key="table.id" v-slot:[table.id]>
+          <TableCard @click="onTableClicked(table)" :name="table.name" :shape="table.shape" class="cursor-pointer"></TableCard>
+        </template>
+      </RestaurantLayout>
+    </div>
     
     
   </main>
@@ -25,11 +28,25 @@
 import TableCard from '@/components/restaurantTables/TableCard.vue'
 import RestaurantLayout from '../components/restaurantLayout/RestaurantLayout.vue'
 import { useTableStore } from '@/stores/TableStore'
+import OrderProductDialog from '@/components/dialogs/OrderProductDialog.vue'
 import PriceListView from './PriceListView.vue'
 import RoundedCard from '@/components/cards/RoundedCard.vue'
+import { ref } from 'vue'
+import type { Table } from '@/types/Table'
 
 const tableStore = useTableStore()
 
+const selectedTable = ref<Table>()
+
+
+const showOrderProductDialog = ref<boolean>(false)
+const onTableClicked = (table_: Table) => {
+  selectedTable.value = table_
+  showOrderProductDialog.value = true
+}
+const onOrderProductDialogUpdate = (showDialog: boolean) => {
+  showOrderProductDialog.value = showDialog
+}
 </script>
 
 <style scoped>

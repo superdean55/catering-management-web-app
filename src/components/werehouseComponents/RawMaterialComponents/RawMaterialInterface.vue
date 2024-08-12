@@ -98,15 +98,20 @@ watch(() => props.oldRawMaterial, (newMaterial, oldMaterial) => {
         unit.value = props.oldRawMaterial.unit
         code.value = props.oldRawMaterial.code
     }
-});
+})
 
 const codeExists = computed(() => {
       return articleStore.rawMaterials.some(it => it.code === code.value)
 })
-
+const nameExists = computed(() => {
+      return articleStore.rawMaterials.some(it => it.name === name.value)
+})
 const onNameChanged = (value: string) => {
     nameErrorMessage.value = ''
     name.value = value
+    if(nameExists.value && !(props.oldRawMaterial?.name === name.value)){
+        nameErrorMessage.value = 'Ime već postoji'
+    }
 }
 const onUnitChanged = (value: string) => {
     unitErrorMessage.value = ''
@@ -123,19 +128,23 @@ const onCodeChanged = (value: string) => {
 const onConfirmButton = () => {
     var valid = true
     if(!isValidInput(name.value)){
-        nameErrorMessage.value = 'minimalno 2 slova'
+        nameErrorMessage.value = 'Minimalno 2 slova'
         valid = false
     }
     if(!isValidCode(code.value)){
-        codeErrorMessage.value = 'samo brojčane vrijednosti'
+        codeErrorMessage.value = 'Samo brojčane vrijednosti'
         valid = false
     }
     if(!isSelectionValid(unit.value, ArticleUnit)){
-        unitErrorMessage.value = 'jed. mj. ne postoji'
+        unitErrorMessage.value = 'Jed. mj. ne postoji'
         valid = false
     }
     if(codeExists.value && !(props.oldRawMaterial?.code === code.value)){
-        codeErrorMessage.value = 'šifra već postoji'
+        codeErrorMessage.value = 'Šifra već postoji'
+        valid = false
+    }
+    if(nameExists.value && !(props.oldRawMaterial?.name === name.value)){
+        nameErrorMessage.value = 'Ime već postoji'
         valid = false
     }
     if(valid){

@@ -75,7 +75,7 @@ import { isValidInput } from '@/helpers/isValidInput'
 import { isPositiveNumber } from '@/helpers/isPositiveNumber'
 import { isTwoDecimalNumber } from '@/helpers/isTwoDecimalNumber'
 import { isValidTime } from '@/helpers/isValidTime'
-import type { PayDesk } from '@/types/PayDesk'
+import { PayDesk } from '@/types/PayDesk'
 import type { FieldValue } from 'firebase/firestore'
 
 const props = defineProps<{
@@ -150,13 +150,17 @@ const onConfirm = () => {
             deposite: deposit.value,
             startOfWorkingHours: startOfWorkingHours.value,
             endOfWorkingHours: endOfWorkingHours.value,
-            totalCash: '',
+            totalCash: 0,
             userId: '',
-            bills: [],
+            conclusionItems: [],
+            conclusionNumber: 0,
+            billNumber: 0,
+            currentYear: '',
             isInUse: false,
             isDisabled: false,
             creationDate: '',
             logInDate: '',
+            logInTime: '',
             timestamp: null as FieldValue | null,
             }as PayDesk
         if(props.payDesk){

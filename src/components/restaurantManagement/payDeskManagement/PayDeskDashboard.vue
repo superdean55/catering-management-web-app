@@ -25,7 +25,7 @@ import PayDeskManagementInterface from './PayDeskManagementInterface.vue'
 import PayDeskList from './PayDeskList.vue'
 import { usePayDeskStore } from '@/stores/payDeskStore'
 import { ref, watch } from 'vue'
-import { PayDesk } from '@/types/PayDesk'
+import type { PayDesk } from '@/types/PayDesk'
 const payDeskStore = usePayDeskStore()
 const selectedPaydesk = ref<PayDesk | null>(null)
 
