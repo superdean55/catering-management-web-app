@@ -218,7 +218,8 @@ const onCreateBill = () => {
             paydeskName: paydesk.value.name,
             user: props.user.firstName + ' ' + props.user.lastName,
             isCancelled: false,
-            byOrderId: order.value ? order.value.id : ''
+            byOrderId: order.value ? order.value.id : '',
+            uid: order.value ? order.value.uid : ''
         } as Bill
         emit('bill', bill)
         billItems.value = []

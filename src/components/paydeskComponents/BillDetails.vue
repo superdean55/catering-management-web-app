@@ -61,7 +61,7 @@
   const props = defineProps<{ bill: Bill }>()
   const emit = defineEmits<{
     (e:'cancel'): void,
-    (e:'billcancelled', bill: Bill)
+    (e:'billcancelled', bill: Bill): void
   }>()
   const alertMessage = ref<string>('')
   const alertTitle = ref<string>('Storniranje računa')

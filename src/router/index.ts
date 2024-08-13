@@ -299,7 +299,13 @@ const router = createRouter({
           ]
         }
       ]
-    }
+    },
+    {
+      path: '/user-orders-and-bills',
+      name: 'UserOrdersAndBillsView',
+      component: () => import('../views/UserOrdersAndBillsView.vue'),
+      meta: { requiresAuth: true, requiresRole: [Role.user, Role.staff, Role.manager, Role.admin] }
+    },
   ]
 })
 

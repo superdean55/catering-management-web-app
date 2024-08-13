@@ -345,7 +345,8 @@ export const usePayDeskStore = defineStore('payDeskStore',{
                 paydeskName: doc.data().paydeskName,
                 user: doc.data().user,
                 isCancelled: doc.data().isCancelled,
-                byOrderId: doc.data().byOrderId
+                byOrderId: doc.data().byOrderId,
+                uid: doc.data().uid
               } as Bill))
             } catch (error) {
               console.error('Error getting documents: ', error)

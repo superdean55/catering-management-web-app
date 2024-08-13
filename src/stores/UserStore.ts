@@ -11,8 +11,12 @@ import { Role } from "@/types/Role"
 import { storageDateToInputString } from "@/helpers/dateFormatterFun"
 import { useToast } from 'vue-toastification'
 import { imageUrlToBlob } from "@/helpers/imageUrlToBlob"
+import type { Order } from "@/types/Order"
+import type { Bill } from "@/types/Bill"
 
 const toast = useToast()
+const orderCollection = 'orders'
+const billCollection = 'bills'
 
 export const useUserStore = defineStore('userStore',{
     state: () => ({
@@ -21,6 +25,8 @@ export const useUserStore = defineStore('userStore',{
         notLoggedInVisibility: false,
         loggedInVisibility: false,
         isLoading: false,
+        orders: [] as Order [],
+        bills: [] as Bill []
     }),
     actions: {
         async signUp(email: string, password: string) {
@@ -322,6 +328,120 @@ export const useUserStore = defineStore('userStore',{
           }
           this.isLoading = false
         },
+        async fetchUserOrders(){
+          const collectionRef = collection(db, orderCollection)
+          const q = query(collectionRef, where('uid' ,'==', this.user?.uid ))
+
+          const unsubscribe = onSnapshot(q, (snapshot) => {
+              snapshot.docChanges().forEach((change) => {
+                  if (change.type === "added") {
+                      const data = change.doc.data()
+                      const order = this.orders.find(it => it.id === data.id)
+                      if(!order){
+                        this.orders.push({
+                          id: data.id,
+                          code: data.code,
+                          tableId: data.tableId,
+                          payDeskId: data.payDeskId,
+                          date: data.date,
+                          time: data.time,
+                          billItems: data.billItems,
+                          uid: data.uid,
+                          timestamp: data.timestamp,
+                          isApproved: data.isApproved,
+                          isCompleted: data.isCompleted
+                        }as Order)
+                      }
+                  }
+                  if (change.type === "modified") {
+                      const data = change.doc.data()
+                      const index = this.orders.findIndex(it => it.id === data.id)
+                      if (index !== -1) {
+                          this.orders[index] = {
+                            id: data.id,
+                            code: data.code,
+                            tableId: data.tableId,
+                            payDeskId: data.payDeskId,
+                            date: data.date,
+                            time: data.time,
+                            billItems: data.billItems,
+                            uid: data.uid,
+                            timestamp: data.timestamp,
+                            isApproved: data.isApproved,
+                            isCompleted: data.isCompleted
+                          }as Order
+                      }
+                  }
+                  if (change.type === "removed") {
+                      const data = change.doc.data()
+                      const index = this.orders.findIndex(it => it.id === data.id)
+                      if (index !== -1) {
+                          this.orders.splice(index, 1)
+                      }
+                  }
+              })
+          })
+      },
+      async fetchUserBills(){
+        const collectionRef = collection(db, billCollection)
+        const q = query(collectionRef, where('uid' ,'==', this.user?.uid ))
+
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+                if (change.type === "added") {
+                    const data = change.doc.data()
+                    const bill = this.bills.find(it => it.id === data.id)
+                    if(!bill){
+                      this.bills.push({
+                        id: data.id,
+                        number: data.number,
+                        tableId: data.tableId,
+                        Date: data.Date,
+                        Time: data.Time,
+                        billItems: data.billItems,
+                        totalCash: data.totalCash,
+                        JIR: data.JIR,
+                        ZKI: data.ZKI,
+                        paydeskName: data.paydeskName,
+                        user: data.user,
+                        isCancelled: data.isCancelled,
+                        byOrderId: data.byOrderId,
+                        uid: data.uid
+                      }as Bill)
+                    }
+                }
+                if (change.type === "modified") {
+                    const data = change.doc.data()
+                    const index = this.bills.findIndex(it => it.id === data.id)
+                    if (index !== -1) {
+                        this.bills[index] = {
+                            id: data.id,
+                            number: data.number,
+                            tableId: data.tableId,
+                            Date: data.Date,
+                            Time: data.Time,
+                            billItems: data.billItems,
+                            totalCash: data.totalCash,
+                            JIR: data.JIR,
+                            ZKI: data.ZKI,
+                            paydeskName: data.paydeskName,
+                            user: data.user,
+                            isCancelled: data.isCancelled,
+                            byOrderId: data.byOrderId,
+                            uid: data.uid
+                          }as Bill
+                    }
+                }
+                if (change.type === "removed") {
+                    const data = change.doc.data()
+                    const index = this.bills.findIndex(it => it.id === data.id)
+                    if (index !== -1) {
+                        this.bills.splice(index, 1)
+                    }
+                }
+            })
+        })
+    },
     },
     
 })

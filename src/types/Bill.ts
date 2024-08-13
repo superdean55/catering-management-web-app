@@ -13,5 +13,6 @@ export interface Bill{
     paydeskName: string,
     user: string,
     isCancelled: boolean,
-    byOrderId: string
+    byOrderId: string,
+    uid: string
 }

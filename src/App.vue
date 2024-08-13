@@ -58,6 +58,13 @@ watch(user,() =>{
     console.log('getusers')
     userStore.getUsers()
   }
+  if(userStore.user && 
+  (userStore.user.role === Role.admin || userStore.user.role === Role.manager || userStore.user.role === Role.staff || userStore.user.role === Role.user))
+  {
+    console.log('getusers')
+    userStore.fetchUserOrders()
+    userStore.fetchUserBills()
+  }
 })
 watch(() => userStore.isLoading, (newValue) => {
     loadingStore.setLoadingState(newValue) 
@@ -124,6 +131,9 @@ const onChangeHamburgerVisibiliti = (isNavVisible: boolean) => {
         </div>
         <div v-if="userStore.loggedInVisibility && (userStore.user?.role === Role.admin)" class="flex items-center hover:bg-orange-800 h-10 px-5">
           <RouterLink :to="{ name: 'RestaurantManagementView'}">Upravljanje</RouterLink>
+        </div>
+        <div v-if="userStore.loggedInVisibility && (userStore.user?.role === Role.admin || userStore.user?.role === Role.manager || userStore.user?.role === Role.staff || userStore.user?.role === Role.user)" class="flex items-center hover:bg-orange-800 h-10 px-5">
+          <RouterLink :to="{ name: 'UserOrdersAndBillsView'}">Narudžbe i Računi</RouterLink>
         </div>
         <div class="ml-auto"></div>
         <div v-if="userStore.notLoggedInVisibility" class="flex items-center hover:bg-orange-800 h-10 px-5">
