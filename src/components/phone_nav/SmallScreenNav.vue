@@ -1,11 +1,10 @@
 <template>
     <div class="w-full pb-2 flex flex-row justify-around overflow-x-scroll scrollbar-hide">
     <IconButton
-      v-for="(item, index) in icons"
+      v-for="(item, index) in navIconsRef"
       :key="index"
-      :icon="item.icon"
-      :title="item.title"
-      :isSelected="selectedIcon === item.title"
+      :navIcon="item"
+      :external-change="externalChange"
       @icon-clicked="onIconClicked"
     />
   </div>
@@ -14,20 +13,37 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import IconButton from './IconButton.vue'
-import type { NavIcon } from '@/types/NavIcon';
+import type { NavIcon } from '@/types/NavIcon'
+import { watch } from 'vue';
 
 const props = defineProps<{
-    icons: NavIcon []
+    icons: NavIcon [],
+    externalChange: number
 }>()
 
 const emit = defineEmits<{
     (e:'selected', selectedIcon: string): void
 }>()
 
-const selectedIcon = ref<string | null>(null)
+const navIconsRef = ref<NavIcon []>(props.icons)
+
+watch(() => props.externalChange, () => {
+  navIconsRef.value = props.icons
+})
+
 
 function onIconClicked(title: string) {
-  selectedIcon.value = title
+  changeSelection(title)
   emit('selected', title)
+}
+
+function changeSelection(title: string){
+  navIconsRef.value.forEach(icon => {
+    if(icon.title === title){
+      icon.isSelected = true
+    }else{
+      icon.isSelected = false
+    }
+  })
 }
 </script>

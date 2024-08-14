@@ -1,4 +1,5 @@
 export interface NavIcon{
     icon: string,
-    title: string
+    title: string,
+    isSelected: boolean
 }

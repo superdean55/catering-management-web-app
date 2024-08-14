@@ -4,7 +4,7 @@
         <div class="w-full p-4">
             <RoundedCard class="w-full" :style="{height: cardHeight + 'px'}">
                 <div v-if="isSmallScreen" class="w-full grid grid-cols-1">
-                    <SmallScreenNav :icons="icons" @selected="onIconSelected"></SmallScreenNav>
+                    <SmallScreenNav :icons="navIconsRef" :external-change="change" @selected="onIconSelected"></SmallScreenNav>
                     <UserOrderList
                     v-if="selectedIcon === 'Narudžbe'"
                     :height="cardHeight"
@@ -61,12 +61,16 @@ import type { NavIcon } from '@/types/NavIcon'
 const screenStore = useScreenStore()
 const selectedItem = ref<Bill | Order | null>(null)
 const selectedIcon = ref<string>('Narudžbe')
+const change = ref<number>(0)
 
 const icons = [
-  { icon: 'article', title: 'Narudžbe' } as NavIcon,
-  { icon: 'article', title: 'Računi' } as NavIcon,
-  { icon: 'article', title: 'Detalji' } as NavIcon
+  { icon: 'article', title: 'Narudžbe', isSelected: true } as NavIcon,
+  { icon: 'article', title: 'Računi', isSelected: false } as NavIcon,
+  { icon: 'article', title: 'Detalji', isSelected: false } as NavIcon
 ]
+
+const navIconsRef = ref<NavIcon[]>(icons)
+
 const cardHeight = computed(() => {
     return screenStore.screenHeight - 72
 })
@@ -77,20 +81,33 @@ const isSmallScreen = computed(() => {
 
 const onOrderCard = (order: Order) => {
     selectedItem.value = order
-    selectedIcon.value = 'Detalji'
+    changeSelection('Detalji')
+    change.value ++
 }
 
 const onBillCard = (bill: Bill) => {
     selectedItem.value = bill
-    selectedIcon.value = 'Detalji'
+    changeSelection('Detalji')
+    change.value ++
 }
 const onIconSelected = (selectedIcon_: string) =>{
     selectedIcon.value = selectedIcon_
 }
+
 function isBill(item: any): item is Bill {
     return item && typeof item.JIR === 'string'
 }
 function isOrder(item: any): item is Order {
     return item && typeof item.isApproved === 'boolean'
+}
+
+function changeSelection(title: string){
+    navIconsRef.value.forEach(icon => {
+        if(icon.title === title){
+            icon.isSelected = true
+        }else{
+            icon.isSelected = false
+        }
+    })
 }
 </script>

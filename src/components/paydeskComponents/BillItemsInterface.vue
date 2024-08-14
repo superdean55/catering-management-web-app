@@ -15,34 +15,34 @@
                         <img :src="getImage(item.productId)" class="w-full h-full object-cover rounded-l-xl">
                     </div>
                     <div class="flex flex-row items-center">
-                        <p class="font-bold text-xl">{{ productStore.getProductById(item.productId)?.name }}</p>
+                        <p class="font-bold text-xs md:text-sm lg:text-lg xl:text-xl">{{ productStore.getProductById(item.productId)?.name }}</p>
                     </div>
                     <div class="m-auto"></div>
                     <div class="flex flex-row items-center">
-                        <p class="font-bold text-xl">{{ (item.quantity * item.price).toFixed(2) }} €</p>
+                        <p class="font-bold text-xs md:text-sm lg:text-lg xl:text-xl">{{ (item.quantity * item.price).toFixed(2) }} €</p>
                     </div>
                     <div @click.stop v-if="isQuantityInputVisible" class="flex flex-row items-center justify-center w-14 bg-white">
                         <input
                             type="number"
                             v-model:="item.quantity"
-                            class="w-full h-full text-center text-xl"
+                            class="w-full h-full text-center text-xs md:text-sm lg:text-lg xl:text-xl"
                             @input="onQuantityChanged(item)"
                         >
                     </div>
                     <div v-else @click.stop="displayQuantityInput(true)" class="flex flex-row items-center justify-center w-14 bg-white">
-                        <p class="font-bold text-xl">{{ item.quantity }}</p>
+                        <p class="font-bold text-xs md:text-sm lg:text-lg xl:text-xl">{{ item.quantity }}</p>
                     </div>
                     <div class="flex flex-col items-center">
                         <div class="h-1/2 flex flex-row items-center">
-                            <span @click="onArrowUpClicked(item)" class="material-symbols-outlined text-xl hover:text-green-300">keyboard_arrow_up</span>
+                            <span @click="onArrowUpClicked(item)" class="material-symbols-outlined text-xs md:text-sm lg:text-lg xl:text-xl hover:text-green-300">keyboard_arrow_up</span>
                         </div>
                         <div class="h-1/2 flex flex-row items-center">
-                            <span @click="onArrowDownClicked(item)" class="material-symbols-outlined text-xl hover:text-red-300">keyboard_arrow_down</span>
+                            <span @click="onArrowDownClicked(item)" class="material-symbols-outlined text-xs md:text-sm lg:text-lg xl:text-xl hover:text-red-300">keyboard_arrow_down</span>
                         </div>
                     </div>
             
                     <div class="flex flex-row items-center pr-4 pl-2">
-                        <span @click="onRemoveClicked(index)" class="material-symbols-outlined hover:text-red-500">close</span>
+                        <span @click="onRemoveClicked(index)" class="material-symbols-outlined hover:text-red-500 text-xs md:text-sm lg:text-lg xl:text-xl">close</span>
                     </div>
                 </div>
             </div>
@@ -51,16 +51,16 @@
         <div class="w-full h-2"></div>
         <div class="w-full flex flex-row justify-between px-4">
             <div class="flex flex-row items-center">
-                <p class="font-bold text-lg">Ukupno:</p>
-                <p class="font-bold text-lg">{{ totalPrice }} €</p>
+                <p class="font-bold text-xs md:text-sm lg:text-base xl:text-xl">Ukupno:</p>
+                <p class="font-bold text-xs md:text-sm lg:text-base xl:text-xl">{{ totalPrice }} €</p>
             </div>
             <div class="pl-2 flex flex-row items-center">
-                <p class="font-bold text-lg">Br.stavki:</p>
-                <p class="font-bold text-lg">{{ totalBillItems }}</p>
+                <p class="font-bold text-xs md:text-sm lg:text-base xl:text-xl">Br.stavki:</p>
+                <p class="font-bold text-xs md:text-sm lg:text-base xl:text-xl">{{ totalBillItems }}</p>
             </div>
             <div class="pl-2 flex flex-row items-center">
-                <p class="font-bold text-lg">Br. proizvoda:</p>
-                <p class="font-bold text-lg">{{ totalProductItems }}</p>
+                <p class="font-bold text-xs md:text-sm lg:text-base xl:text-xl">Br. proizvoda:</p>
+                <p class="font-bold text-xs md:text-sm lg:text-base xl:text-xl">{{ totalProductItems }}</p>
             </div>
         </div>
         <div class="w-full h-2"></div>
