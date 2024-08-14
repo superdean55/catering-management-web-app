@@ -3,10 +3,42 @@
         <div class="h-10 w-full"></div>
         <div class="w-full p-4">
             <RoundedCard class="w-full" :style="{height: cardHeight + 'px'}">
-                <div class="w-full grid grid-cols-3 gap-2">
+                <div v-if="isSmallScreen" class="w-full grid grid-cols-1">
+                    <SmallScreenNav :icons="icons" @selected="onIconSelected"></SmallScreenNav>
+                    <UserOrderList
+                    v-if="selectedIcon === 'Narudžbe'"
+                    :height="cardHeight"
+                    @card="onOrderCard"
+                    />
+                    <UserBillList
+                    v-else-if="selectedIcon === 'Računi'"
+                    :height="cardHeight"
+                    @card="onBillCard"
+                    />
+                    <UserBillDetails
+                    v-else-if="selectedIcon === 'Detalji' && isBill(selectedItem)"
+                    :bill="selectedItem"
+                    :height="cardHeight"
+                    />
+                    <UserOrderDetails
+                    v-else-if="selectedIcon === 'Detalji' && isOrder(selectedItem)"
+                    :order="selectedItem"
+                    :height="cardHeight"
+                    />
+                    <div v-else class="w-full flex flex-row justify-center">
+                        <p class="mt-4 text-xs md:text-sm text-red-500">
+                            Nije označen niti jedan račun ili narudžba X
+                        </p>
+                    </div>
+                </div>
+                <div v-else class="w-full grid grid-cols-3 gap-2"> 
                     <UserOrderList :height="cardHeight" @card="onOrderCard"></UserOrderList>
                     <UserBillList :height="cardHeight" @card="onBillCard"></UserBillList>
-                    <UserBillDetails v-if="isBill(selectedItem)" :bill="selectedItem"></UserBillDetails>
+                    <UserBillDetails v-if="isBill(selectedItem)" :bill="selectedItem" :height="cardHeight"></UserBillDetails>
+                    <UserOrderDetails v-else-if="isOrder(selectedItem)" :order="selectedItem" :height="cardHeight"></UserOrderDetails>
+                    <div v-else class="w-full flex flex-row justify-center">
+                        <p class="mt-4 text-xs md:text-sm text-red-500">Nije označen niti jedan račun ili narudžba ??</p>
+                    </div>
                 </div>
             </RoundedCard>
         </div>
@@ -20,25 +52,45 @@ import { computed, ref } from 'vue'
 import UserOrderList from '@/components/user_orders_and_bills/UserOrderList.vue'
 import UserBillList from '@/components/user_orders_and_bills/UserBillList.vue'
 import UserBillDetails from '@/components/user_orders_and_bills/UserBillDetails.vue'
+import UserOrderDetails from '@/components/user_orders_and_bills/UserOrderDetails.vue'
+import SmallScreenNav from '@/components/phone_nav/SmallScreenNav.vue'
 import type { Order } from '@/types/Order'
 import type { Bill } from '@/types/Bill'
+import type { NavIcon } from '@/types/NavIcon'
 
 const screenStore = useScreenStore()
 const selectedItem = ref<Bill | Order | null>(null)
+const selectedIcon = ref<string>('Narudžbe')
 
+const icons = [
+  { icon: 'article', title: 'Narudžbe' } as NavIcon,
+  { icon: 'article', title: 'Računi' } as NavIcon,
+  { icon: 'article', title: 'Detalji' } as NavIcon
+]
 const cardHeight = computed(() => {
     return screenStore.screenHeight - 72
 })
 
+const isSmallScreen = computed(() => {
+    return screenStore.screenWidth < 768
+})
+
 const onOrderCard = (order: Order) => {
     selectedItem.value = order
+    selectedIcon.value = 'Detalji'
 }
 
 const onBillCard = (bill: Bill) => {
     selectedItem.value = bill
+    selectedIcon.value = 'Detalji'
 }
-
+const onIconSelected = (selectedIcon_: string) =>{
+    selectedIcon.value = selectedIcon_
+}
 function isBill(item: any): item is Bill {
-  return item
+    return item && typeof item.JIR === 'string'
+}
+function isOrder(item: any): item is Order {
+    return item && typeof item.isApproved === 'boolean'
 }
 </script>

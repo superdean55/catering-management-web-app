@@ -8,7 +8,7 @@
         </div>
         <div v-if="userStore.orders.length" class="w-full flex flex-col gap-2 overflow-y-scroll scrollbar-hide">
             <div v-for="order in userStore.orders" :key="order.id" class="w-full ">
-                <OrderCard :order="order" @click="onCardClicked(order)"></OrderCard>
+                <OrderCard class="cursor-pointer" :order="order" @click="onCardClicked(order)"></OrderCard>
             </div>
         </div>
         <div v-else class="w-full flex flex-row justify-center">
@@ -22,6 +22,7 @@ import type { Order } from '@/types/Order'
 import OrderCard from './OrderCard.vue'
 import { useUserStore } from '@/stores/UserStore'
 import { computed, ref, watch } from 'vue'
+import { useScreenStore } from '@/stores/ScreenStore';
 
 
 const props = defineProps<{
@@ -30,14 +31,20 @@ const props = defineProps<{
 const emit = defineEmits<{
     (e:'card', order: Order): void
 }>()
+const screenStore = useScreenStore()
 const userStore = useUserStore()
 const height = ref<number>(props.height)
+
 watch(() => props.height, (newHeight) => {
     height.value = newHeight
 })
-
 const componentHeight = computed(() => {
-    return height.value - 32
+    if(screenStore.isSmallScreen){
+        console.log('visina', height.value)
+        return height.value - 104
+    }else{
+        return height.value - 32
+    }
 })
 
 const onCardClicked = (order: Order) => {

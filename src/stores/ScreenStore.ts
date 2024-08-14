@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 export const useScreenStore = defineStore('screen', () => {
   const screenHeight = ref(window.innerHeight)
@@ -11,6 +11,7 @@ export const useScreenStore = defineStore('screen', () => {
   }
 
   window.addEventListener('resize', updateScreenHeight)
+  const isSmallScreen = computed(() => screenWidth.value < 768)
 
-  return { screenHeight, screenWidth }
+  return { screenHeight, screenWidth, isSmallScreen}
 })
