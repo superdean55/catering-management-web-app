@@ -1,5 +1,5 @@
-import type { TableCircleShapes } from "./TableCircleShapes";
-import type { TableCubeShapes } from "./TableCubeShapes";
+import type { TableCircleShapes } from "./TableCircleShapes"
+import type { TableCubeShapes } from "./TableCubeShapes"
 
 export interface Table{
     id: string,

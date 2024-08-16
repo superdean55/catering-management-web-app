@@ -17,8 +17,9 @@ import type { TableCircleShapes } from '@/types/TableCircleShapes';
 import type { TableCubeShapes } from '@/types/TableCubeShapes';
 import {computed, ref, watch } from 'vue'
 const props = defineProps<{
-  shape: TableCircleShapes | TableCubeShapes
-  name: string
+  shape: TableCircleShapes | TableCubeShapes,
+  name: string,
+  lastTimeUsed?: string
 }>()
 
 
@@ -39,6 +40,10 @@ watch(() => props.shape, (newShape) => {
 })
 watch(() => props.name, (newName) => {
     tableName.value = props.name
+})
+
+watch(() => props.lastTimeUsed, (newLastTimeUsed) => {
+  new Date().toLocaleString
 })
 
 if(chairPosition.value.includes('cube')){

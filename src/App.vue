@@ -102,7 +102,7 @@ const onChangeHamburgerVisibiliti = (isNavVisible: boolean) => {
     </div>
     <header 
       class="fixed bg-orange-700 h-10 w-full z-40 transition-transform duration-300" 
-      :style="{height: isSmallScreen ? '100%' : 40 + 'px', width: isSmallScreen ? 200 + 'px' : '100%'}"
+      :style="{height: isSmallScreen ? '100%' : 40 + 'px', width: isSmallScreen ? 250 + 'px' : '100%'}"
       :class="{
           '-translate-x-full': isSmallScreen && !isHamburgerOpen,
           'translate-x-0': isSmallScreen && isHamburgerOpen,

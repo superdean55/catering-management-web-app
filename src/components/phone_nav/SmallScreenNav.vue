@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full pb-2 flex flex-row justify-around overflow-x-scroll scrollbar-hide">
+    <div class="w-full  flex flex-row justify-around overflow-x-scroll scrollbar-hide h-16">
     <IconButton
       v-for="(item, index) in navIconsRef"
       :key="index"

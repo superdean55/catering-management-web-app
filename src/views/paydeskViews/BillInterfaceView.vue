@@ -1,7 +1,47 @@
 <template>
     <div class="w-full font-merienda">
-        <div class="grid grid-cols-7 gap-2">
-            <RoundedCard class="col-span-5" v-if="isUserLoggedInPayDesk && paydesk && user" :style="{height: adjustedHeight + 'px'}">
+        <div class="w-full grid grid-cols-7 gap-2">
+            <RoundedCard class="col-span-7" v-if="isUserLoggedInPayDesk && screenStore.isSmallScreen && paydesk && user" :style="{height: adjustedHeight + 'px'}">
+                <div class="w-full grid grid-cols-1 gap-4">
+                    <SmallScreenNav :icons="navIconsRef" :external-change="change" @selected="onIconSelected"></SmallScreenNav>
+                    <PayDeskInfoPanel 
+                        class="col-span-1" 
+                        :payDesk="paydesk"
+                        v-if="selectedIcon === 'Panel'"
+                    ></PayDeskInfoPanel>
+                    <ProductSelectionInterface 
+                        class="col-span-1" 
+                        @product="onProduct" 
+                        :style="{height: smallInterfaceHeight + 'px'}"
+                        v-else-if="selectedIcon === 'Proizvodi'"
+                    ></ProductSelectionInterface>
+                    <BillItemsInterface
+                        v-else-if="selectedIcon === 'Ispis'"
+                        :product="product"
+                        :order="order"
+                        :productListHeight="productInterfaceHeight"
+                        :user="user"
+                        :table="selectedTable"
+                        :change="change"
+                        :payDesk="paydesk"
+                        @bill="onBillPrinting"
+                        class="col-span-1"
+                        :style="{height: smallInterfaceHeight + 'px'}"
+                    ></BillItemsInterface>
+                    <TableSelectionInterface 
+                        class="col-span-1"
+                        @table="OnTableSelected"
+                        v-else-if="selectedIcon === 'Stolovi'"
+                    ></TableSelectionInterface>
+                    <ListOfOrders 
+                        class="col-span-1" 
+                        @order="onOrder"
+                        v-else-if="selectedIcon === 'Narudžbe'"
+                        :style="{height: smallInterfaceHeight + 'px'}"
+                    ></ListOfOrders>
+                </div>
+            </RoundedCard>
+            <RoundedCard class="col-span-5" v-else-if="isUserLoggedInPayDesk && paydesk && user" :style="{height: adjustedHeight + 'px'}">
                 <div class="w-full h-full grid grid-cols-7 gap-2">
                     <PayDeskInfoPanel class="col-span-7" :payDesk="paydesk"></PayDeskInfoPanel>
                     <ProductSelectionInterface class="col-span-3 overflow-hidden" @product="onProduct" :style="{height: interfaceHeight + 'px'}"></ProductSelectionInterface>
@@ -29,7 +69,7 @@
             <RoundedCard v-else class="col-span-5">
                 <PayDeskLogIn @logIn="onLogIn"></PayDeskLogIn>
             </RoundedCard>
-            <RoundedCard class="col-span-2" v-if="isUserLoggedInPayDesk && paydesk && user" :style="{height: adjustedHeight + 'px'}">
+            <RoundedCard class="col-span-2" v-if="isUserLoggedInPayDesk && !screenStore.isSmallScreen && paydesk && user" :style="{height: adjustedHeight + 'px'}">
                 <ListOfOrders class="w-full" @order="onOrder"></ListOfOrders> 
             </RoundedCard>
         </div>
@@ -43,6 +83,7 @@ import BillItemsInterface from '@/components/paydeskComponents/BillItemsInterfac
 import PayDeskInfoPanel from '@/components/paydeskComponents/PayDeskInfoPanel.vue'
 import PayDeskLogIn from '@/components/paydeskComponents/PayDeskLogIn.vue'
 import TableSelectionInterface from '@/components/paydeskComponents/TableSelectionInterface.vue'
+import SmallScreenNav from '@/components/phone_nav/SmallScreenNav.vue'
 import { useUserStore } from '@/stores/UserStore'
 import type { Product } from '@/types/Product'
 import { computed, ref, watch } from 'vue'
@@ -59,6 +100,7 @@ import ListOfOrders from '@/components/paydeskComponents/ListOfOrders.vue'
 import { useOrderStore } from '@/stores/OrderStore'
 import { useScreenStore } from '@/stores/ScreenStore'
 import type { Order } from '@/types/Order'
+import type { NavIcon } from '@/types/NavIcon'
 
 const userStore = useUserStore()
 const suppliesStore = useSuppliesStore()
@@ -76,6 +118,19 @@ const user = ref<User | null>(userStore.user)
 const selectedTable = ref<Table | null>(null)
 const order = ref<Order | null>(null)
 const approvedOrders = ref<Order []>(orderStore.approvedOrders)
+const selectedIcon = ref<string>('Stolovi')
+const changeIcon = ref<number>(0)
+
+const icons = [
+  { icon: 'article', title: 'Stolovi', isSelected: true } as NavIcon,
+  { icon: 'article', title: 'Proizvodi', isSelected: false } as NavIcon,
+  { icon: 'article', title: 'Ispis', isSelected: false } as NavIcon,
+  { icon: 'article', title: 'Narudžbe', isSelected: false } as NavIcon,
+  { icon: 'article', title: 'Panel', isSelected: false } as NavIcon
+]
+
+const navIconsRef = ref<NavIcon[]>(icons)
+
 
 if(orderStore.approvedOrders.length){
     order.value = orderStore.approvedOrders[0]
@@ -123,6 +178,10 @@ const productInterfaceHeight = computed(() => {
       return interfaceHeight.value - 141
 })
 
+const smallInterfaceHeight = computed(() => {
+    return adjustedHeight.value - 96
+})
+
 watch(payDeskStore.payDesks, () => {
     checkIsUserLoggdInPayDesk()
 })
@@ -144,6 +203,9 @@ const onOrder = (order_: Order) => {
         order_.payDeskId = paydesk.value.id
         orderStore.approveTheOrder(order_)
     }
+}
+const onIconSelected = (selectedIcon_: string) =>{
+    selectedIcon.value = selectedIcon_
 }
 const onBillPrinting = (bill: Bill) => {
     console.log('billPrinting: ', bill)

@@ -31,7 +31,7 @@
                 </button>
             </div>
         </div>
-        <div v-if="showOrderProductScreen" class="max-w-4xl">
+        <div v-if="showOrderProductScreen"  :style="{width: isSmallScreen ? smallDialogWidth + 'px' : '900px', height: isSmallScreen ? smallDialogHeight + 'px' : ''}" >
             <div class="w-full">
                 <div v-if="userStore.user" class="w-full flex flex-col gap-2">
                     <div @click="onArrowBack" class="flex flex-row justify-center items-center rounded-full w-10 h-10 bg-gray-300 hover:bg-gray-500 cursor-pointer"><span class="material-symbols-outlined text-lg text-white">arrow_back</span></div>
@@ -40,7 +40,11 @@
                         <NavButton label="Narudžba" :selected="activeComponent === 'OrderProduct' ? true : false" @confirm="onOrderInterface"></NavButton>
                     </div>
                     <div class="w-full grid grid-cols-1 lg:grid-cols-5 gap-2">
-                        <ProductSelectionInterface v-if="!isSmallScreen || activeComponent === 'ProductSelection'" @product="onProduct" class="col-span-1 sm:col-span-2"></ProductSelectionInterface>
+                        <ProductSelectionInterface 
+                        v-if="!isSmallScreen || activeComponent === 'ProductSelection'" 
+                        @product="onProduct" class="col-span-1 sm:col-span-2"
+                        :style="{height: smallInterfaceHeight + 'px'}"
+                        ></ProductSelectionInterface>
                         <OrderProductInterface
                             v-if="!isSmallScreen || activeComponent === 'OrderProduct'"
                             class="col-span-1 sm:col-span-3"
@@ -49,6 +53,7 @@
                             :table="selectedTable"
                             :change="change"
                             @order="onOrder"
+                            :style="{height: smallInterfaceHeight + 'px'}"
                         ></OrderProductInterface>
                     </div>
                 </div>
@@ -103,7 +108,15 @@ const showChangeNameScreen = ref<boolean>(false)
 const isSmallScreen = computed(() => {
       return screenStore.screenWidth < 1024
 })
-
+const smallDialogWidth = computed(() => {
+    return screenStore.screenWidth - 32
+})
+const smallDialogHeight = computed(() => {
+    return screenStore.screenHeight - 128
+})
+const smallInterfaceHeight = computed(() => {
+    return smallDialogHeight.value - 96
+}) 
 const onShowDialogUpdate = (showDialog: boolean) => {
     showMainOrderProductScreen.value = true
     showOrderProductScreen.value = false

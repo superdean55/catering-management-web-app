@@ -70,8 +70,7 @@ watch(() => props.order, (newOrder) => {
 })
 const componentHeight = computed(() => {
     if(screenStore.isSmallScreen){
-        console.log('visina', height.value)
-        return height.value - 104
+        return height.value - 88
     }else{
         return height.value - 32
     }
