@@ -101,6 +101,8 @@ import { useOrderStore } from '@/stores/OrderStore'
 import { useScreenStore } from '@/stores/ScreenStore'
 import type { Order } from '@/types/Order'
 import type { NavIcon } from '@/types/NavIcon'
+import { useTableStore } from '@/stores/TableStore'
+import { table } from 'console'
 
 const userStore = useUserStore()
 const suppliesStore = useSuppliesStore()
@@ -109,6 +111,7 @@ const articleStore = useArticleStore()
 const payDeskStore = usePayDeskStore()
 const orderStore = useOrderStore()
 const screenStore = useScreenStore()
+const tableStore = useTableStore()
 
 const product = ref<Product>()
 const change = ref<number>(0)
@@ -134,6 +137,7 @@ const navIconsRef = ref<NavIcon[]>(icons)
 
 if(orderStore.approvedOrders.length){
     order.value = orderStore.approvedOrders[0]
+    selectedTable.value = tableStore.getTableById(order.value.tableId)
 }
 
 watch(orderStore.approvedOrders, (newApprovedOrders) => {
@@ -145,6 +149,7 @@ watch(orderStore.approvedOrders, (newApprovedOrders) => {
     })
     if(approvedOrders.value.length){
         order.value = approvedOrders.value[0]
+        selectedTable.value = tableStore.getTableById(order.value.tableId)
     }else{
         order.value = null
     }
@@ -209,7 +214,6 @@ const onIconSelected = (selectedIcon_: string) =>{
 }
 const onBillPrinting = (bill: Bill) => {
     console.log('billPrinting: ', bill)
-    selectedTable.value = null
     const supplyItems: SupplyItem [] = []
     bill.billItems.forEach(billItem => {
         const product = productStore.getProductById(billItem.productId)
@@ -236,11 +240,18 @@ const onBillPrinting = (bill: Bill) => {
         payDeskStore.addBill(bill)
         const documentName = bill.paydeskName + ' Rč.br.:' + bill.number.toString()
         suppliesStore.updateSuppliesByBill(user.value, documentName, supplyItems)
-        //payDeskStore.updateBillNumberTotalCashAndBillList(paydesk.value, bill.totalCash)
+        
+    }
+    console.log('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
+    if(selectedTable.value){
+        console.log('table selected, store function call')
+        tableStore.tableUsageUpdate(selectedTable.value?.dbId)
+        selectedTable.value = null
     }
     if(bill.byOrderId !== ''){
         orderStore.completeTheOrder(bill.byOrderId)
         bill.byOrderId
     }
+    
 }
 </script>

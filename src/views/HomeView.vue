@@ -12,10 +12,24 @@
         </RouterLink>
       </div>
     </div>
-    <div class="w-full">
+    <div class="w-full flex flex-row justify-center">
       <RestaurantLayout>
         <template v-for="table in tableStore.tables" :key="table.id" v-slot:[table.id]>
-          <TableCard @click="onTableClicked(table)" :name="table.name" :shape="table.shape" class="cursor-pointer"></TableCard>
+          <TableCardSmall 
+            v-if="screenStore.isSmallScreen"
+            @click="onTableClicked(table)" 
+            :name="table.name" 
+            :shape="table.shape" 
+            class="cursor-pointer"
+            :backgroudColor="table.backgroundColor"
+          ></TableCardSmall>
+          <TableCard v-else
+            @click="onTableClicked(table)" 
+            :name="table.name" 
+            :shape="table.shape" 
+            class="cursor-pointer"
+            :backgroudColor="table.backgroundColor"
+          ></TableCard>
         </template>
       </RestaurantLayout>
     </div>
@@ -33,16 +47,21 @@ import PriceListView from './PriceListView.vue'
 import RoundedCard from '@/components/cards/RoundedCard.vue'
 import { ref } from 'vue'
 import type { Table } from '@/types/Table'
+import { useUserStore } from '@/stores/UserStore'
+import TableCardSmall from '@/components/restaurantTables/TableCardSmall.vue'
+import { useScreenStore } from '@/stores/ScreenStore'
 
 const tableStore = useTableStore()
-
+const userStore = useUserStore()
 const selectedTable = ref<Table>()
-
+const screenStore = useScreenStore()
 
 const showOrderProductDialog = ref<boolean>(false)
 const onTableClicked = (table_: Table) => {
+  if(userStore.user){
   selectedTable.value = table_
   showOrderProductDialog.value = true
+  }
 }
 const onOrderProductDialogUpdate = (showDialog: boolean) => {
   showOrderProductDialog.value = showDialog

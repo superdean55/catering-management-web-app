@@ -1,6 +1,6 @@
 <template>
     <RoundedCard >
-        <div>
+        <div class="w-full">
             <div class="grid grid-cols-1 gap-2">
                 <div class="">
                         <p class="font-bold">Uvoz sirovina</p>

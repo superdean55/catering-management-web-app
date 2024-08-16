@@ -1,6 +1,6 @@
 <template>
     <div class="max-w-5xl">
-        <div class="w-full grid grid-cols-2 gap-2">
+        <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-2">
             <RouterLink 
                 :to="{ name: 'EditProduct', params: { id: product.id }}"
                 v-for="product in products" :key="product.id"

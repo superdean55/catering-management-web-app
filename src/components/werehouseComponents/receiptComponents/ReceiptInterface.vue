@@ -1,7 +1,7 @@
 <template>
     <div class="max-w-4xl">
-        <div class="w-full grid grid-cols-2 gap-2">
-            <RoundedCard>
+        <div class="w-full grid gap-2" :class="screenStore.isSmallScreen ? 'grid-cols-1': 'grid-cols-2'">
+            <RoundedCard class="col-span-1">
                 <div class="grid grid-cols-4 gap-2">
                     <div class="col-span-4">
                         <p class="font-bold">Primka: osnovne Informacije</p>
@@ -49,13 +49,14 @@
                     
                 </div>
             </RoundedCard>
-            <ReceiptItemInterface    
+            <ReceiptItemInterface   
+                class="col-span-1" 
                 @add="onAddReceiptItem"
                 @update="onUpdateReceiptItem"
                 :oldReceiptItem="oldReceiptItem"
             >
             </ReceiptItemInterface>
-            <RoundedCard class="col-span-2">
+            <RoundedCard :class="screenStore.isSmallScreen ? 'col-span-1' : 'col-span-2'">
                 <div class="flex flex-col w-full">
                     <ReceiptItemsList 
                         :receiptItems="receiptItems"
@@ -82,20 +83,22 @@
 </template>
 
 <script setup lang="ts">
-import RoundedCard from '@/components/cards/RoundedCard.vue';
-import InputLabelV2 from '@/components/inputs/InputLabelV2.vue';
-import ConfirmButton from '@/components/buttons/ConfirmButton.vue';
+import RoundedCard from '@/components/cards/RoundedCard.vue'
+import InputLabelV2 from '@/components/inputs/InputLabelV2.vue'
+import ConfirmButton from '@/components/buttons/ConfirmButton.vue'
 import ReceiptItemInterface from './ReceiptItemInterface.vue'
-import { ref } from 'vue';
-import { isValidInput } from '@/helpers/isValidInput';
-import { isValidOib } from '@/helpers/isValidOib';
-import ReceiptItemsList from './ReceiptItemsList.vue';
-import type { ReceiptItem } from '@/types/ReceiptItem';
-import { generateId } from '@/helpers/generateId';
-import type { Receipt } from '@/types/Receipt';
+import { ref } from 'vue'
+import { isValidInput } from '@/helpers/isValidInput'
+import { isValidOib } from '@/helpers/isValidOib'
+import ReceiptItemsList from './ReceiptItemsList.vue'
+import type { ReceiptItem } from '@/types/ReceiptItem'
+import { generateId } from '@/helpers/generateId'
+import type { Receipt } from '@/types/Receipt'
 import { useReceiptStore } from '@/stores/ReceiptStore'
+import { useScreenStore } from '@/stores/ScreenStore'
 
 const receiptStore = useReceiptStore()
+const screenStore = useScreenStore()
 
 const name = ref<string>('')
 const nameErrorMessage = ref<string>('')
@@ -107,6 +110,7 @@ const documentNameErrorMessage = ref<string>('')
 const receiptItems = ref<ReceiptItem[]>([])
 const oldReceiptItem = ref<ReceiptItem | null>(null)
 const listErrorMessage = ref<string>('')
+
 const formatDate = (): string => {
     const date = new Date()
     return date.toISOString().split('T')[0];

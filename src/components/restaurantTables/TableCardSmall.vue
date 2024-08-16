@@ -1,10 +1,10 @@
 <template>
-    <div class="card-size-80">
+    <div class="card-size-40">
       <div  class="relative w-full h-full rounded-xl border border-gray-600 flex flex-col justify-center items-center">
-        <div class="absolute right-1 top-1 w-2 h-2 rounded-full" :class="backgroudColorRef"></div>
-        <div class="table-size-40  bg-gray-500 flex felx-row justify-end" :class="tableShape">
+        <div class="absolute activity-light w-1 h-1 rounded-full" :class="backgroudColorRef"></div>
+        <div class="table-size-20  bg-gray-500 flex felx-row justify-end" :class="tableShape">
           <div class="w-full h-full flex flex-col justify-center items-center">
-            <p class="text-xs text-white">{{ tableName }}</p>
+            <p class="table-name-text-size text-white">{{ tableName }}</p>
           </div>
         </div>
         <div v-for="(chair, index) in chairPositions" :key="index" :class="chair"></div>
@@ -194,118 +194,126 @@ const chairPositions = computed(() => {
 </script>
 
 <style scoped>
-.card-size-80{
-  width: 80px;
-  height: 80px;
+.table-name-text-size{
+    font-size: 0.5rem;
+    line-height: 0.75rem;
 }
-.table-size-40{
+.activity-light{
+  right: 3px;
+  top: 3px;
+}
+.card-size-40{
   width: 40px;
   height: 40px;
 }
+.table-size-20{
+  width: 20px;
+  height: 20px;
+}
 .chair-45 {
-  width: 13px;
-  height: 13px;
+  width: 6px;
+  height: 6px;
   background-color: #6b7280;
   position: absolute;
   transform: rotate(45deg);
 }
 .chair-0{
-  width: 13px;
-  height: 13px;
+  width: 6px;
+  height: 6px;
   background-color: #6b7280;
   position: absolute;
 }
 .two-siter-x{
-  width: 40px;
-  height: 13px;
+  width: 20px;
+  height: 6px;
   background-color: #6b7280;
   position: absolute;
 }
 .two-siter-y{
-  width: 13px;
-  height: 40px;
+  width: 6px;
+  height: 20px;
   background-color: #6b7280;
   position: absolute;
 }
 .two-siter-position-right-0{
-  top:19px;
-  right:3px;
+  top:9px;
+  right:2px;
 }
 .two-siter-position-left-0{
-  top:19px;
-  left:3px;
+  top:9px;
+  left:2px;
 }
 .two-siter-position-top-0{
-  top:3px;
-  left:19px;
+  top:2px;
+  left:9px;
 }
 .two-siter-position-bottom-0{
-  bottom:3px;
-  left:19px;
+  bottom:2px;
+  left:9px;
 }
 .position-circle-top-center-0{
-  left:33px;
-  top:3px;
+  left:16px;
+  top:2px;
 }
 .position-circle-bottom-center-0{
-  left:33px;
-  bottom:3px;
+  left:16px;
+  bottom:2px;
 }
 .position-circle-left-center-0{
-  top:33px;
-  left:3px;
+  top:16px;
+  left:2px;
 }
 .position-circle-right-center-0{
-  top:33px;
-  right:3px;
+  top:16px;
+  right:2px;
 }
 
 .position-circle-bottom-left-45{
-  left: 11px;
-  bottom: 11px;
+  left: 6px;
+  bottom: 6px;
 }
 .position-circle-bottom-right-45{
-  right: 11px;
-  bottom: 11px;
+  right: 6px;
+  bottom: 6px;
 }
 .position-circle-top-left-45{
-  top: 11px;
-  left: 11px;
+  top: 6px;
+  left: 6px;
 }
 .position-circle-top-right-45{
-  top: 11px;
-  right: 11px;
+  top: 6px;
+  right: 6px;
 }
 .chair-position-cube-top-left-0{
-  left:19px;
-  top:3px;
+  left:9px;
+  top:2px;
 }
 .chair-position-cube-top-right-0{
-  right:19px;
-  top:3px;
+  right:9px;
+  top:2px;
 }
 .chair-position-cube-bottom-left-0{
-  left:19px;
-  bottom:3px;
+  left:9px;
+  bottom:2px;
 }
 .chair-position-cube-bottom-right-0{
-  right:19px;
-  bottom:3px;
+  right:9px;
+  bottom:2px;
 }
 .chair-position-cube-left-top-0{
-  left:3px;
-  top:19px;
+  left:2px;
+  top:9px;
 }
 .chair-position-cube-left-bottom-0{
-  left:3px;
-  bottom:19px;
+  left:2px;
+  bottom:9px;
 }
 .chair-position-cube-right-top-0{
-  right:3px;
-  top:19px;
+  right:2px;
+  top:9px;
 }
 .chair-position-cube-right-bottom-0{
-  right:3px;
-  bottom:19px;
+  right:2px;
+  bottom:9px;
 }
 </style>

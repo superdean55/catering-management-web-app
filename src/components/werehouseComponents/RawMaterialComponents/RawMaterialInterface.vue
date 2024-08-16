@@ -1,6 +1,6 @@
 <template>
     <RoundedCard>
-        <div class="flex flex-col">
+        <div class="w- full flex flex-col">
             <p class="font-bold">{{ title }}</p>
             <div class="flex felx-row">
                 <div class="felx felx-col w-full">

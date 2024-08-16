@@ -6,6 +6,8 @@ export interface Table{
     dbId: string,
     name: string,
     shape: TableCircleShapes | TableCubeShapes,
-    cretaionDate: string,
-    lastTimeUsed: string
+    creationDate: string,
+    lastTimeUsed: string,
+    timeDifference: number,
+    backgroundColor: string
 }

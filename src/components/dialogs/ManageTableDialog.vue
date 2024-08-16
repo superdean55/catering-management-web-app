@@ -1,13 +1,13 @@
 <template>
     <CustomDialog background-color="bg-gray-800" :show-dialog="showCustomDialog" @update="onShowDialogUpdate">
-        <div v-if="showMainTableScreen" class="flex flex-row gap-4">
+        <div v-if="showMainTableScreen" class="flex flex-row items-center justify-center gap-4">
             <div class="flex flex-col gap-2 items-center">
                 <div class="flex flex-col items-center">
                     <p class="font-bold text-lg text-white">{{ table.id }}</p>
                     <p class="text-sm text-red-500">{{ shapeErrorMessage }}</p>
                 </div>
                 <div @click="onTableClicked" class="w-24 h-24 cursor-pointer border border-gray-600 hover:bg-gray-300 flex felx-row justify-center items-center">
-                    <TableCard :shape="shape" :name="name"></TableCard>
+                    <TableCard :shape="shape" :name="name" :backgroudColor="backgroudColor"></TableCard>
                 </div>
                 <div class="flex flex-col items-center">
                     <p @click="onTableNameClicked" class="font-bold text-xl text-white cursor-pointer p-1 border border-gray-600 hover:bg-gray-300">{{ name }}</p>
@@ -36,8 +36,8 @@
                 </button>
             </div>
         </div>
-        <div v-if="showTablesScreen">
-            <div class="flex flex-col gap-2 max-w-xl">
+        <div v-else-if="showTablesScreen" :style="{width: screenStore.isSmallScreen ? dialogWidth + 'px' : '576px'}">
+            <div class=" w-full flex flex-col gap-2">
                 <div @click="onArrowBack" class="flex flex-row justify-center items-center rounded-full w-10 h-10 bg-gray-300 hover:bg-gray-500 cursor-pointer"><span class="material-symbols-outlined text-lg text-white">arrow_back</span></div>         
                 <p class="font-bold text-xl">Okrugli stolovi</p>
                 <div class="flex flex-row gap-2 rounded-xl p-2 border border-gray-500 overflow-hidden overflow-x-scroll scrollbar-hide horizontal-scroll bg-gray-800">
@@ -73,7 +73,7 @@
                 </div>
             </div>
         </div>
-        <div v-if="showChangeNameScreen" class="flex flex-col gap-2">
+        <div v-else-if="showChangeNameScreen" class="flex flex-col gap-2">
             <div @click="onArrowBack" class="flex flex-row justify-center items-center rounded-full w-10 h-10 bg-gray-300 hover:bg-gray-500 cursor-pointer">
                 <span class="material-symbols-outlined text-lg text-white">arrow_back</span>
             </div>         
@@ -89,15 +89,16 @@
 import type { Table } from '@/types/Table'
 import CustomDialog from './CustomDialog.vue'
 import TableCard from '../restaurantTables/TableCard.vue'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { TableCircleShapes } from '@/types/TableCircleShapes'
 import { TableCubeShapes } from '@/types/TableCubeShapes'
 import { isSelectionValid } from '@/helpers/isSelectionValid'
 import { useTableStore } from '@/stores/TableStore'
+import { useScreenStore } from '@/stores/ScreenStore'
 
 const props = defineProps<{
     showDialog: boolean,
-    table: Table
+    table: Table,
 }>()
 
 const emit = defineEmits<{
@@ -105,6 +106,7 @@ const emit = defineEmits<{
 }>()
 
 const tableStore = useTableStore()
+const screenStore = useScreenStore()
 
 const showCustomDialog = ref<boolean>(props.showDialog)
 const shape = ref<TableCircleShapes | TableCubeShapes>(props.table.shape)
@@ -115,6 +117,7 @@ const id = ref<string>(props.table.id)
 const showMainTableScreen = ref<boolean>(true)
 const showTablesScreen = ref<boolean>(false)
 const showChangeNameScreen = ref<boolean>(false)
+const backgroudColor = ref<string>(props.table.backgroundColor)
 
 const onShowDialogUpdate = (showDialog: boolean) => {
     showMainTableScreen.value = true
@@ -122,6 +125,9 @@ const onShowDialogUpdate = (showDialog: boolean) => {
     showChangeNameScreen.value = false
     emit('update', showDialog)
 }
+const dialogWidth = computed(() => {
+    return screenStore.screenWidth - 62
+})
 watch(() => props.showDialog, (newValue) => {
     showCustomDialog.value = newValue
 })
@@ -129,6 +135,7 @@ watch(() => props.table, (newTable) => {
     shape.value = newTable.shape
     name.value = newTable.name
     id.value = newTable.id
+    backgroudColor.value = newTable.backgroundColor
 })
 const onTableClicked = () => {
     showMainTableScreen.value = false
@@ -160,8 +167,10 @@ const onUpdateTableClicked = () => {
             dbId: '',
             name: name.value,
             shape: shape.value,
-            cretaionDate: '',
-            lastTimeUsed: ''
+            creationDate: '',
+            lastTimeUsed: '',
+            timeDifference: 0,
+            backgroundColor: ''
         } as Table
         tableStore.updateTable(table)
         onCancelTableDialog()

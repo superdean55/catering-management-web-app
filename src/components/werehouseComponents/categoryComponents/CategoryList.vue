@@ -1,6 +1,6 @@
 <template>
     <div class="w-full grid grid-cols-4 gap-2">
-        <div class="w-full col-span-2">
+        <div class="w-full" :class="screenStore.isSmallScreen ? 'col-span-4' : 'col-spa-2'">
             <RoundedCard>
                 <div class="flex flex-col w-full">
                     <div class="w-full flex flex-row justify-center">
@@ -27,7 +27,7 @@
                 </div>
             </RoundedCard>
         </div>
-        <div class="w-full col-span-2">
+        <div class="w-full" :class="screenStore.isSmallScreen ? 'col-span-4' : 'col-spa-2'">
             <CategoryPreview :category="category"></CategoryPreview>
         </div>
     </div>
@@ -40,8 +40,10 @@ import { useCategoryStore } from '@/stores/CategoryStore'
 import CategoryPreview from './CategoryPreview.vue'
 import type { Category } from '@/types/Category'
 import { ref } from 'vue'
+import { useScreenStore } from '@/stores/ScreenStore'
 
 const categoryStore = useCategoryStore()
+const screenStore = useScreenStore()
 const category = ref<Category>()
 const onCategoryClicked = (selectedCategory: Category) => {
     category.value = selectedCategory

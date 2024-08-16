@@ -1,18 +1,25 @@
 <template>
     <div class="hamburger" @click="toggleMenu">
-        <div :class="{ 'rotate-45': isOpen }"></div>
-        <div :class="{ 'hidden': isOpen }"></div>
-        <div :class="{ '-rotate-45': isOpen }"></div>
+        <div :class="[ { 'rotate-45': isHambOpen }, backgroundColor ? backgroundColor : 'bg-black']"></div>
+        <div :class="[{ 'hidden': isHambOpen },  backgroundColor ? backgroundColor : 'bg-black']"></div>
+        <div :class="[{ '-rotate-45': isHambOpen }, backgroundColor ? backgroundColor : 'bg-black']"></div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
+const props = defineProps<{
+  isOpen: boolean,
+  backgroundColor?: string
+}>()
 const emit = defineEmits<{
     (e:'show', isNavVisible: boolean): void
 }>()
-
+const isHambOpen = ref<boolean>(props.isOpen)
+watch(() => props.isOpen, (newIsOpen) => {
+  isHambOpen.value = newIsOpen
+})
 const isOpen = ref<boolean>(false)
 
 function toggleMenu() {
@@ -27,26 +34,25 @@ function toggleMenu() {
   flex-direction: column;
   justify-content: space-between;
   cursor: pointer;
-  width: 40px;
-  height: 30px;
+  width: 30px;
+  height: 20px;
   transition: all 0.3s ease-in-out;
 }
 
 .hamburger div {
   width: 100%;
-  height: 4px;
-  background-color: black;
+  height: 3px;
   border-radius: 2px;
   transition: all 0.3s ease-in-out;
 }
 
 .rotate-45 {
-  transform: rotate(45deg) translateY(18px);
+  transform: rotate(45deg) translateY(12px);
   
 }
 
 .-rotate-45 {
-  transform: rotate(-45deg) translateY(-18px);
+  transform: rotate(-45deg) translateY(-12px);
 }
 
 .hidden {

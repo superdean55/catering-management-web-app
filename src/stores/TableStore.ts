@@ -8,12 +8,14 @@ const toast = useToast()
 
 export const useTableStore = defineStore('tableStore',{
     state: () => ({
-        tables:[] as Table[]
+        tables:[] as Table[],
+        intervalId: null as number | null
     }),
     actions:{
         async addTable(table: Table){
             try {
-                table.cretaionDate = new Date().toLocaleString()
+                table.creationDate = new Date().toLocaleString()
+                table.lastTimeUsed = new Date().toISOString()
                 const addRef = doc(collection(db, 'tables'))
                 table.dbId = addRef.id
                 await setDoc(addRef, table as Table)
@@ -42,6 +44,23 @@ export const useTableStore = defineStore('tableStore',{
                 toast.error('Podreška prilikom ažuriranja Stola')
             }
         },
+        async tableUsageUpdate(tableId: string){
+            try {
+                console.log('tableId = ', tableId)
+                const oldTabel = this.tables.find(it => it.dbId === tableId)
+                console.log('table = ', oldTabel)
+                if(oldTabel){
+                    const updateRef = doc(db, 'tables', oldTabel.dbId)
+                    await updateDoc(updateRef, {
+                        lastTimeUsed: new Date().toISOString(),
+                    })
+                    console.log('table last time update success')
+                }
+                
+            } catch (e) {
+                console.error("Table usage update error: ", e)
+            }
+        },
         getTableById(id: string){
             return this.tables.find(it => it.id === id) || null
         },
@@ -59,8 +78,10 @@ export const useTableStore = defineStore('tableStore',{
                                 dbId: data.dbId,
                                 name: data.name,
                                 shape: data.shape,
-                                cretaionDate: data.creationDate,
-                                lastTimeUsed: data.lastTimeUsed
+                                creationDate: data.creationDate,
+                                lastTimeUsed: data.lastTimeUsed,
+                                timeDifference: this.calculateTimeDifference(data.lastTimeUsed),
+                                backgroundColor: this.getBackgroundColor(this.calculateTimeDifference(data.lastTimeUsed))
                             }as Table)
                         }
                         console.log("add table: ", change.doc.data())
@@ -75,8 +96,10 @@ export const useTableStore = defineStore('tableStore',{
                                 dbId: data.dbId,
                                 name: data.name,
                                 shape: data.shape,
-                                cretaionDate: data.creationDate,
-                                lastTimeUsed: data.lastTimeUsed
+                                creationDate: data.creationDate,
+                                lastTimeUsed: data.lastTimeUsed,
+                                timeDifference: this.calculateTimeDifference(data.lastTimeUsed),
+                                backgroundColor: this.getBackgroundColor(this.calculateTimeDifference(data.lastTimeUsed))
                             }as Table
                         }
                     }
@@ -105,6 +128,39 @@ export const useTableStore = defineStore('tableStore',{
             }
             
         },
+        calculateTimeDifference(lastTimeUsed: string): number {
+            const lastUsedDate = new Date(lastTimeUsed)
+            const currentDate = new Date()
+            console.log('last used date = ', lastUsedDate)
+            console.log('current date = ', currentDate)
+            const timeDifference = Math.floor((currentDate.getTime() - lastUsedDate.getTime()) / 60000) // u minutama
+            return timeDifference
+        },
+        getBackgroundColor(timeDifference: number): string {
+            if (timeDifference <= 20) {
+                return 'bg-green-500'
+            } else if (timeDifference > 20 && timeDifference <= 40) {
+                return 'bg-yellow-500'
+            } else {
+                return 'bg-red-500'
+            }
+        },
+        startTracking() {
+            this.intervalId = setInterval(() => {
+                this.tables.forEach(table => {
+                    table.timeDifference = this.calculateTimeDifference(table.lastTimeUsed)
+                    table.backgroundColor = this.getBackgroundColor(table.timeDifference)
+                })
+            }, 60000) as unknown as number
+        },
+        stopTracking() {
+            if (this.intervalId) {
+                clearInterval(this.intervalId)
+            }
+        },
+        beforeUnmount() {
+            this.stopTracking()
+        }
 
     }
 })

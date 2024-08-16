@@ -5,23 +5,26 @@
         <div class="w-full flex flex-col gap-2 py-5">
             <RestaurantLayout>
                 <template v-for="slot in tableSlots" :key="slot.id" v-slot:[slot.id]>
-                    <div v-if="slot.name === 'empty'" @click="onEmptySlotClicked(slot.id)"  class="w-20 h-20 flex flex-col justify-center items-center bg-gray-500 cursor-pointer">
-                        <p>{{ slot.id }}</p>
-                        <p>prazan slot</p>
+                    <div v-if="slot.name === 'empty'" @click="onEmptySlotClicked(slot.id)"  class=" flex flex-col justify-center items-center bg-gray-500 cursor-pointer" :class="screenStore.isSmallScreen ? 'w-10 h-10' : 'w-20 h-20'">
+                        <p :class="screenStore.isSmallScreen ? 'slot-text-size-small' : 'slot-text-size'">{{ slot.id }}</p>
+                        <p :class="screenStore.isSmallScreen ? 'slot-text-size-small' : 'slot-text-size'">prazan slot</p>
                     </div>
-                    <TableCard v-else :name="slot.name" :shape="slot.shape" @click="onTableClicked(slot)" class="cursor-pointer"></TableCard>
+                    <TableCardSmall v-else-if="screenStore.isSmallScreen" :name="slot.name" :shape="slot.shape" @click="onTableClicked(slot)" class="cursor-pointer" :backgroudColor="slot.backgroundColor"></TableCardSmall>
+                    <TableCard v-else :name="slot.name" :shape="slot.shape" @click="onTableClicked(slot)" class="cursor-pointer" :backgroudColor="slot.backgroundColor"></TableCard>
+                    
 
                 </template>
                 <template #info>
                     <div class="w-full flex flex-row justify-center items-center">
-                        <span class="material-symbols-outlined text-orange-600">warning</span>
-                        <p class="font-bold truncate text-orange-600">Kliknite na prazan slot za dodavanje stola</p>
+                        <span class="material-symbols-outlined text-orange-600 text-xs md:text-lg">warning</span>
+                        <p class="font-bold truncate text-orange-600 text-xs md:text-lg">Kliknite na prazan slot za dodavanje stola</p>
                     </div>
                 </template>
             </RestaurantLayout>
-            <div class="flex flex-col gap-2 py-5">
-                <div class="flex flex-row gap-4 justify-center">
-                    <div class="flex flex-col gap-2">
+            <div class="w-full flex flex-col gap-2 py-5 justify-center">
+                
+                <div class="flex flex-row gap-4 justify-center" :style="{flexDirection: screenStore.isSmallScreen ? 'column' : 'row'}">
+                    <div class="flex flex-col items-center gap-2">
                         <p class="font-bold text-xl">Dodaj stol</p>
                         <div class="flex flex-col gap-2 items-center w-60 rounded-xl border border-gray-500 p-2 bg-gray-200">
                             <div class="felx flex-col h-7 gap-1">
@@ -51,18 +54,18 @@
                         </div>
                     </div>
                     <div>
-                        <div class="flex flex-col gap-2 max-w-3xl">
+                        <div class="flex flex-col gap-2 max-w-3xl px-2">
                             <div class="h-6"></div>
                             <div class="flex flex-row items-center">
-                                <span class="material-symbols-outlined text-orange-600 text-lg">warning</span>
-                                <p class="font-bold truncate pl-1">Potrebno je kliknuti na neki od stolova</p>
+                                <span class="material-symbols-outlined text-orange-600 text-xs md:text-lg">warning</span>
+                                <p class="font-bold truncate pl-1 text-xs md:text-lg">Potrebno je kliknuti na neki od stolova</p>
                             </div>
-                            <div class="flex felx-row items-center">
-                                <p class="font-bold truncate ">Držite</p>
-                                <span class="material-symbols-outlined text-orange-600 text-lg">shift</span>
-                                <p class="font-bold truncate ">(shift) za horizontalno skrolanje</p>
+                            <div class="flex felx-row items-center" v-if="!screenStore.isSmallScreen">
+                                <p class="font-bold truncate text-xs md:text-lg">Držite</p>
+                                <span class="material-symbols-outlined text-orange-600 text-xs md:text-lg">shift</span>
+                                <p class="font-bold truncate text-xs md:text-lg">(shift) za horizontalno skrolanje</p>
                             </div>
-                            <p class="font-bold text-xl">Okrugli stolovi</p>
+                            <p class="font-bold text-xs md:text-lg">Okrugli stolovi</p>
                             <div class="flex flex-row gap-2 rounded-xl p-2 border border-gray-500 overflow-hidden overflow-x-scroll scrollbar-hide horizontal-scroll bg-gray-800">
                                 <div
                                     v-for="(tableShape, index) in TableCircleShapes"
@@ -115,7 +118,10 @@ import type { Table } from '@/types/Table'
 import { storeToRefs } from 'pinia'
 import { isValidTableId } from '@/helpers/isValidTableId'
 import ManageTableDialog from '../components/dialogs/ManageTableDialog.vue'
+import TableCardSmall from '@/components/restaurantTables/TableCardSmall.vue'
+import { useScreenStore } from '@/stores/ScreenStore'
 
+const screenStore = useScreenStore()
 const selectedTableShape = ref<TableCircleShapes | TableCubeShapes | null>(null)
 const tableName = ref<string>('')
 const nameErrorMessage = ref<string>('')
@@ -146,8 +152,10 @@ const tableSlotsUpdate = () => {
                     id: id,
                     name: 'empty',
                     shape: 'empty' as TableCircleShapes,
-                    cretaionDate: '',
-                    lastTimeUsed: ''
+                    creationDate: '',
+                    lastTimeUsed: '',
+                    timeDifference: 0,
+                    backgroundColor: ''
                 } as Table
             )
         }
@@ -216,8 +224,10 @@ const onAddTableConfirm = () => {
             dbId: '',
             name: tableName.value,
             shape: selectedTableShape.value,
-            cretaionDate: '',
-            lastTimeUsed: ''
+            creationDate: '',
+            lastTimeUsed: '',
+            timeDifference: 0,
+            backgroundColor: ''
         } as Table
         console.log(table)
         tableStore.addTable(table)
@@ -230,5 +240,12 @@ const onAddTableConfirm = () => {
 </script>
 
 <style scoped>
-
+.slot-text-size-small{
+    font-size: 0.5rem;
+    line-height: 0.75rem;
+}
+.slot-text-size{
+    font-size: 0.75rem;
+    line-height: 1rem;
+}
 </style>

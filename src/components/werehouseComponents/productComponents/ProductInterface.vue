@@ -1,6 +1,6 @@
 <template>
-    <div class="grid grid-cols-5 gap-2 max-w-4xl">
-        <div class="w-full col-span-3">
+    <div class="grid  gap-2 max-w-4xl" :class="screenStore.isSmallScreen ? 'grid-cols-1' : 'grid-cols-5'">
+        <div class="w-full" :class="screenStore.isSmallScreen ? 'col-span-1' : 'col-span-3'">
             <RoundedCard>
                 <div class="w-full flex flex-col">
                     <div class="w-full flex flex-row">
@@ -137,7 +137,7 @@
                 </div>
             </RoundedCard>
         </div>
-        <div class="w-full col-span-2">
+        <div class="w-full" :class="screenStore.isSmallScreen ? 'col-span-1' : 'col-span-2'">
             <RoundedCard>
                 <div class="flex flex-col">
                     <div class="flex flex-row justify-center w-full mb-2">
@@ -194,6 +194,9 @@ import { isSelectionValid } from '@/helpers/isSelectionValid'
 import { isTwoDecimalNumber } from '@/helpers/isTwoDecimalNumber'
 import type { Product } from '@/types/Product'
 import type { FieldValue } from 'firebase/firestore'
+import SmallScreenNav from '@/components/phone_nav/SmallScreenNav.vue'
+import type { NavIcon } from '@/types/NavIcon'
+import { useScreenStore } from '@/stores/ScreenStore'
 
 const props = defineProps<{
     product?: Product,
@@ -206,6 +209,7 @@ const emit = defineEmits<{
 
 const articleStore = useArticleStore()
 const productStore = useProductStore()
+const screenStore = useScreenStore()
 
 const productItems = ref<ProductItem[]>([])
 const rawMaterials = ref<RawMaterial[]>([])
@@ -228,6 +232,8 @@ const imageErrorMessage = ref<string>('')
 const productPrice = ref<string>('')
 const productPriceErrorMessage = ref<string>('')
 const searchQuery = ref('')
+
+
 
 if(props.product){
     name.value = props.product.name

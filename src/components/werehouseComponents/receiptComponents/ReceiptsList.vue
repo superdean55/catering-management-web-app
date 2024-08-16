@@ -1,6 +1,6 @@
 <template>
     <div class="max-w-4xl">
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid gap-2" :class="screenStore.isSmallScreen ? 'grid-cols-1' : 'grid-cols-2'">
             <div v-if="!receiptStore.receipts.length" class="col-span-2 flex flex-row justify-center">
                 <p>Ne postoji niti jedna primka</p>
             </div>
@@ -40,9 +40,10 @@
 <script setup lang="ts">
 import { useReceiptStore } from '@/stores/ReceiptStore.ts'
 import RoundedCard from '@/components/cards/RoundedCard.vue'
-import TwoLabelAndDataTagInRow from '@/components/dataTags/TwoLabelAndDataTagInRow.vue';
+import TwoLabelAndDataTagInRow from '@/components/dataTags/TwoLabelAndDataTagInRow.vue'
+import { useScreenStore } from '@/stores/ScreenStore'
 
 const receiptStore = useReceiptStore()
-
+const screenStore = useScreenStore()
 
 </script>

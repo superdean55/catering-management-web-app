@@ -4,9 +4,11 @@
             <div class="flex flex-col gap-2 items-center">
                 <div class="flex flex-col items-center">
                     <p class="font-bold text-lg text-white">{{ table.name }}</p>
+                    <p class="text-xs text-white">Aktivan prije:</p>
+                    <p class="font-bold text-xs text-white">{{ table.timeDifference + ' min'}}</p>
                 </div>
                 <div class="w-24 h-24 flex felx-row justify-center items-center">
-                    <TableCard :shape="selectedTable.shape" :name="selectedTable.name"></TableCard>
+                    <TableCard :shape="selectedTable.shape" :name="selectedTable.name" :backgroud-color="backgroudColor"></TableCard>
                 </div>
             </div>
             <div class="flex flex-col items-center justify-center gap-2 w-28">
@@ -99,6 +101,7 @@ const selectedTable = ref<Table>(props.table)
 const product = ref<Product>()
 const change = ref<number>(0)
 const activeComponent = ref<'ProductSelection' | 'OrderProduct'>('ProductSelection')
+const backgroudColor = ref<string>(props.table.backgroundColor)
 
 const showMainOrderProductScreen = ref<boolean>(true)
 const showOrderProductScreen = ref<boolean>(false)
@@ -128,6 +131,7 @@ watch(() => props.showDialog, (newValue) => {
 })
 watch(() => props.table, (newTable) => {
     selectedTable.value = newTable
+    backgroudColor.value = newTable.backgroundColor
 })
 
 const onProduct = (product_: Product) => {
