@@ -1,7 +1,7 @@
 <template>
     <div class="max-w-4xl">
-        <div class="w-full grid  gap-2" :class="screenStore.isSmallScreen ? 'grid-cols-1' : 'grid-cols-5'" >
-            <div :class="screenStore.isSmallScreen ? 'col-span-1' : 'col-spa-3'">
+        <div class="w-full grid gap-2" :class="screenStore.isSmallScreen ? 'grid-cols-1' : 'grid-cols-5'" >
+            <div :class="screenStore.isSmallScreen ? 'col-span-1' : 'col-span-3'">
                 <RoundedCard>
                     <div class="w-full flex flex-col">
                         <div class="w-full flex flex-row">
@@ -70,7 +70,7 @@
                     </div>
                 </RoundedCard>
             </div>
-            <div :class="screenStore.isSmallScreen ? 'col-span-1' : 'col-spa-2'">
+            <div :class="screenStore.isSmallScreen ? 'col-span-1' : 'col-span-2'">
                 <RoundedCard class="grid grid-cols-1">
                     <div class="w-full flex flex-row justify-center">
                         <p>Svi Proizvodi</p>

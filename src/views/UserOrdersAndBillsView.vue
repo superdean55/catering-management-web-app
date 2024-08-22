@@ -3,7 +3,7 @@
         <div class="h-10 w-full"></div>
         <div class="w-full p-2 md:p-4">
             <RoundedCard class="w-full" :style="{height: cardHeight + 'px'}">
-                <div v-if="isSmallScreen" class="w-full grid grid-cols-1 gap-2">
+                <div v-if="screenStore.isSmallScreen" class="w-full grid grid-cols-1 gap-2">
                     <SmallScreenNav :icons="navIconsRef" :external-change="change" @selected="onIconSelected"></SmallScreenNav>
                     <UserOrderList
                     v-if="selectedIcon === 'Narudžbe'"
@@ -72,15 +72,13 @@ const icons = [
 const navIconsRef = ref<NavIcon[]>(icons)
 
 const cardHeight = computed(() => {
-    if(isSmallScreen){
+    if(screenStore.isSmallScreen){
         return screenStore.screenHeight - 60
     }
     return screenStore.screenHeight - 72
 })
 
-const isSmallScreen = computed(() => {
-    return screenStore.screenWidth < 768
-})
+
 
 const onOrderCard = (order: Order) => {
     selectedItem.value = order

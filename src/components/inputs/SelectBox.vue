@@ -1,17 +1,17 @@
 <template>
     <div class="flex flex-col w-full">
         <div>
-            <label class="inline-block my-1 text-xs text-gray-600">{{ label }}</label>
+            <label class="inline-block my-1 text-xs md:text-sm text-gray-600">{{ label }}</label>
         </div>
         <div>
-            <select :disabled="disabled" v-model="option" @change="$emit('selectedValue', option)" class="iniline-block bg-inherit border-b border-slate-400">
+            <select :disabled="disabled" v-model="option" @change="$emit('selectedValue', option)" class="iniline-block bg-inherit border-b border-slate-400 text-xs md:text-sm">
                 <option v-for="value in Object.values(object)" :key="value" :value="value">
                     {{ value }}
                 </option>
             </select>
         </div>
         <div v-if="error?.length">
-            <p class="text-red-600">{{ error }}</p>
+            <p class="text-red-600 text-xs md:text-sm">{{ error }}</p>
         </div>
         
     </div>

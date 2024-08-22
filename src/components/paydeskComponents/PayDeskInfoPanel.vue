@@ -8,29 +8,30 @@
             @confirm="onDialogConfirm"
             @reject="onDialogReject"
         ></AlertDialog>
-        <div class="flex flex-row items-center">
+        <div class="flex gap-2 items-center" :style="{ flexDirection: screenStore.isSmallScreen ? 'column' : 'row' }">
             <p class="text-2xl font-bold">{{ paydesk.name }}</p>
-            <div class="w-4 mx-auto"></div>
-            <FilledButton 
-                label="Zaključak" 
-                @confirm="onShowConclusionDialog" 
-                :disabled="!paydesk.conclusionItems.length || paydesk.isDisabled ? true : false"
-            >
-                <span class="material-symbols-outlined">done_all</span>
-            </FilledButton>
-            <div class="w-4"></div>
-            <FilledButton 
-                label="Odjava" 
-                @confirm="onShowLogOutDialog" 
-                :disabled="paydesk.conclusionItems.length || paydesk.isDisabled ? true : false"
-            >
-                <span class="material-symbols-outlined">logout</span>
-            </FilledButton>
+            <div class="w-4 mx-auto" v-if="!screenStore.isSmallScreen"></div>
+            <div class="flex flex-row gap-2">
+                <FilledButton
+                    label="Zaključak"
+                    @confirm="onShowConclusionDialog"
+                    :disabled="!paydesk.conclusionItems.length || paydesk.isDisabled ? true : false"
+                >
+                    <span class="material-symbols-outlined">done_all</span>
+                </FilledButton>
+                <FilledButton
+                    label="Odjava"
+                    @confirm="onShowLogOutDialog"
+                    :disabled="paydesk.conclusionItems.length || paydesk.isDisabled ? true : false"
+                >
+                    <span class="material-symbols-outlined">logout</span>
+                </FilledButton>
+            </div>
         </div>
-        <div class="grid grid-cols-3 w-full">
+        <div class="grid gap-2 w-full" :class="screenStore.isSmallScreen ? 'grid-cols-1' : 'grid-cols-3'">
             <OneLabelAndDataTagInRow 
                 class="col-span-1"
-                label="djelatnik:" 
+                label="Djelatnik:" 
                 :data="userStore.getUserById(paydesk.userId)?.firstName + ' ' + userStore.getUserById(paydesk.userId)?.lastName"
             ></OneLabelAndDataTagInRow>
             <OneLabelAndDataTagInRow 
@@ -55,6 +56,7 @@ import { useUserStore } from '@/stores/UserStore'
 import { usePayDeskStore } from '@/stores/payDeskStore'
 import type { PayDesk } from '@/types/PayDesk'
 import { ref, watch } from 'vue'
+import { useScreenStore } from '@/stores/ScreenStore'
 
 const props = defineProps<{
     payDesk: PayDesk
@@ -62,6 +64,7 @@ const props = defineProps<{
 
 const userStore = useUserStore()
 const payDeskStore = usePayDeskStore()
+const screenStore = useScreenStore()
 
 const paydesk = ref<PayDesk>(props.payDesk)
 const isVisible = ref<boolean>(false)

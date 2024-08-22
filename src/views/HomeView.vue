@@ -7,7 +7,7 @@
       <div class="inline-block h-36 overflow-hidden">
         <RouterLink :to="{ name: 'PriceListView'}">
           <div class="flex flex-row justify-center p-4 bg-gray-900 font-merienda text-gray-200 rounded-lg">
-                <p class="text-5xl">Cijenik</p>
+                <p class="text-5xl">Cjenik</p>
           </div>
         </RouterLink>
       </div>

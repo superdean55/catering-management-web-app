@@ -1,7 +1,7 @@
 <template>
     <main class="w-full h-screen bg-slate-300 p-0">
         <div class="h-10"></div>
-        <div class="mx-auto max-w-xl mt-10">
+        <div class="mx-auto max-w-xl mt-10 px-2">
             <RoundedCard v-if="userStore.user">
                 <div class="flex justify-center">
                     <img @click="performClick" v-if="selectedImageUrl" class="rounded-lg max-h-40" :src="selectedImageUrl">

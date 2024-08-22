@@ -17,14 +17,14 @@ const emit = defineEmits<{
     (e:'show', isNavVisible: boolean): void
 }>()
 const isHambOpen = ref<boolean>(props.isOpen)
+
 watch(() => props.isOpen, (newIsOpen) => {
   isHambOpen.value = newIsOpen
 })
-const isOpen = ref<boolean>(false)
 
 function toggleMenu() {
-  isOpen.value = !isOpen.value
-  emit('show', isOpen.value)
+  isHambOpen.value = !isHambOpen.value
+  emit('show', isHambOpen.value)
 }
 </script>
 

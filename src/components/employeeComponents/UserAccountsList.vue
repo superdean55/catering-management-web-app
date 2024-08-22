@@ -16,15 +16,15 @@
                     <div class="mx-4 flex flex-row gap-4 items-center">
                         <label class="flex items-center space-x-2">
                             <input type="radio" name="option" value="option1" v-model="selectedOption" class="form-radio text-blue-600">
-                            <span>Employees</span>
+                            <span>Zaposlenici</span>
                         </label>
                         <label class="flex items-center space-x-2">
                             <input type="radio" name="option" value="option2" v-model="selectedOption" class="form-radio text-blue-600">
-                            <span>Users</span>
+                            <span>Korisnici</span>
                         </label>
                         <label class="flex items-center space-x-2">
                             <input type="radio" name="option" value="option3" v-model="selectedOption" class="form-radio text-blue-600">
-                            <span>All</span>
+                            <span>Svi</span>
                         </label>
                     </div>
                     <RoundedCard v-if="userStore.users" class="border border-gray-300 w-full" >

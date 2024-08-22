@@ -14,7 +14,7 @@
 <script setup lang="ts">
 import type { RawMaterial } from '@/types/RawMaterial';
 import RawMaterialInterface from './RawMaterialInterface.vue'
-import { useArticleStore } from '@/stores/ArticleStor';
+import { useArticleStore } from '@/stores/ArticleStore';
 
 const articleStore = useArticleStore()
 const onConfirm = (name: string, unit: string, code: string, oldRawMaterial: RawMaterial | undefined) => {

@@ -1,6 +1,6 @@
 <template>
-    <div class="flex flex-row gap-2 font-merienda">
-        <div class="w-full max-w-lg">
+    <div class="flex gap-2 font-merienda" :style="{ flexDirection: screenStore.isSmallScreen ? 'column' : 'row' }">
+        <div :class="screenStore.isSmallScreen ? 'w-full' : 'max-w-lg w-full'">
             <RoundedCard>
                 <div v-if="selectedPaydesk" class="w-full grid grid-cols-1">
                     <div class="col-span-1">
@@ -9,7 +9,7 @@
                 </div>
             </RoundedCard>
         </div>
-        <div class="w-full max-w-xs">
+        <div :class="screenStore.isSmallScreen ? 'w-full' : 'max-w-xs w-full'">
             <div class="w-full grid grid-cols-1">
                 <div class="col-span-1">
                     <PayDeskList @paydesk="onPayDeskSelected"></PayDeskList>
@@ -26,7 +26,11 @@ import PayDeskList from './PayDeskList.vue'
 import { usePayDeskStore } from '@/stores/payDeskStore'
 import { ref, watch } from 'vue'
 import type { PayDesk } from '@/types/PayDesk'
+import { useScreenStore } from '@/stores/ScreenStore'
+
 const payDeskStore = usePayDeskStore()
+const screenStore = useScreenStore()
+
 const selectedPaydesk = ref<PayDesk | null>(null)
 
 if(payDeskStore.payDesks){

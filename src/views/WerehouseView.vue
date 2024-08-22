@@ -1,7 +1,7 @@
 <template>
     <main class="w-full min-h-screen bg-slate-300 p-0">
-    <div class="fixed right-0 top-0 z-50 w-12" v-if="screenStore.isSmallScreen">
-            <div class="w-full flex flex-row justify-end pr-2 h-12 items-center">
+    <div class="fixed top-0 z-50 w-12" v-if="screenStore.isSmallScreen" :class="isSubHamburgerOpen ? 'right-36' : 'right-0'">
+            <div class="w-full flex flex-row justify-end pr-2 h-10 items-center">
                 <Hamburger :is-open="isSubHamburgerOpen" @show="onChangeSubHamburgerVisibiliti" background-color="bg-orange-700"></Hamburger>
             </div>
     </div>

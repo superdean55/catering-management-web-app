@@ -17,7 +17,6 @@
                     ></ProductSelectionInterface>
                     <BillItemsInterface
                         v-else-if="selectedIcon === 'Ispis'"
-                        :product="product"
                         :order="order"
                         :productListHeight="productInterfaceHeight"
                         :user="user"
@@ -46,7 +45,6 @@
                     <PayDeskInfoPanel class="col-span-7" :payDesk="paydesk"></PayDeskInfoPanel>
                     <ProductSelectionInterface class="col-span-3 overflow-hidden" @product="onProduct" :style="{height: interfaceHeight + 'px'}"></ProductSelectionInterface>
                     <BillItemsInterface
-                        :product="product"
                         :order="order"
                         :productListHeight="productInterfaceHeight"
                         :user="user"
@@ -66,7 +64,7 @@
                     <p>Obratite se administratoru</p>
                 </div>
             </RoundedCard>
-            <RoundedCard v-else class="col-span-5">
+            <RoundedCard v-else :class="screenStore.isSmallScreen ? 'col-span-7' : 'col-span-5'">
                 <PayDeskLogIn @logIn="onLogIn"></PayDeskLogIn>
             </RoundedCard>
             <RoundedCard class="col-span-2" v-if="isUserLoggedInPayDesk && !screenStore.isSmallScreen && paydesk && user" :style="{height: adjustedHeight + 'px'}">
@@ -94,7 +92,7 @@ import type { Table } from '@/types/Table'
 import type { Bill } from '@/types/Bill'
 import { useProductStore } from '@/stores/ProductStore'
 import type { SupplyItem } from '@/types/SupplyItem'
-import { useArticleStore } from '@/stores/ArticleStor'
+import { useArticleStore } from '@/stores/ArticleStore'
 import { useSuppliesStore } from '@/stores/SuppliesStore'
 import ListOfOrders from '@/components/paydeskComponents/ListOfOrders.vue'
 import { useOrderStore } from '@/stores/OrderStore'
@@ -103,6 +101,8 @@ import type { Order } from '@/types/Order'
 import type { NavIcon } from '@/types/NavIcon'
 import { useTableStore } from '@/stores/TableStore'
 import { table } from 'console'
+import { generateId } from '@/helpers/generateId'
+import type { BillItem } from '@/types/BillItem'
 
 const userStore = useUserStore()
 const suppliesStore = useSuppliesStore()
@@ -180,6 +180,9 @@ const interfaceHeight = computed(() => {
 })
 
 const productInterfaceHeight = computed(() => {
+    if(screenStore.isSmallScreen){
+        return smallInterfaceHeight.value -129
+    }
       return interfaceHeight.value - 141
 })
 
@@ -191,9 +194,18 @@ watch(payDeskStore.payDesks, () => {
     checkIsUserLoggdInPayDesk()
 })
 
-const onProduct = (_product: Product) => {
-    product.value = _product
+const onProduct = (product_: Product) => {
+    product.value = product_
     change.value ++
+    const price = isNaN(parseFloat(product_.price)) ?  0 : parseFloat(product_.price)
+    const billItem = {
+        id: generateId(),
+        productId: product_.id,
+        productName: product_.name,
+        quantity: 1,
+        price: price,
+    }as BillItem
+    payDeskStore.addBillItem(billItem)
 }
 const onLogIn = (payDeskId: string) => {
     if(userStore.user){
@@ -213,7 +225,6 @@ const onIconSelected = (selectedIcon_: string) =>{
     selectedIcon.value = selectedIcon_
 }
 const onBillPrinting = (bill: Bill) => {
-    console.log('billPrinting: ', bill)
     const supplyItems: SupplyItem [] = []
     bill.billItems.forEach(billItem => {
         const product = productStore.getProductById(billItem.productId)
@@ -234,17 +245,13 @@ const onBillPrinting = (bill: Bill) => {
                     } as SupplyItem)
         })
     })
-
-    console.log('supply items = ',supplyItems)
     if(user.value && paydesk.value){
         payDeskStore.addBill(bill)
         const documentName = bill.paydeskName + ' Rč.br.:' + bill.number.toString()
         suppliesStore.updateSuppliesByBill(user.value, documentName, supplyItems)
         
     }
-    console.log('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
     if(selectedTable.value){
-        console.log('table selected, store function call')
         tableStore.tableUsageUpdate(selectedTable.value?.dbId)
         selectedTable.value = null
     }

@@ -88,6 +88,8 @@ export const useUserStore = defineStore('userStore',{
               this.user = null
               this.notLoggedInVisibility = true
               this.loggedInVisibility = false
+              this.orders = []
+              this.bills = []
               console.log(`onAuthState: user is not logged in`)
             }
           })

@@ -1,7 +1,7 @@
 <template>
   <main class="w-full h-screen bg-slate-300 p-0">
     <div class="h-10"></div>
-    <div class="max-w-xl mx-auto mt-10">
+    <div class="max-w-xl mx-auto mt-10 px-2">
         <RoundedCard v-if="userStore.user">
             <div class="flex justify-center">
                 <img ref="userAccountImage" class="rounded-lg h-40" src="../assets/blank_profile_picture.jpg">
@@ -46,8 +46,10 @@ import { useUserStore } from '@/stores/UserStore';
 import router from '@/router';
 import { onMounted, ref } from 'vue';
 import { watch } from 'vue';
+import { useOrderStore } from '@/stores/OrderStore';
 
 const userStore = useUserStore()
+const orderStore = useOrderStore()
 const userAccountImage = ref<HTMLImageElement | null>(null);
 
 watch(userAccountImage, (newValue, oldValue) => {
@@ -59,6 +61,9 @@ watch(userAccountImage, (newValue, oldValue) => {
 const signOut = () => {
     userStore.signOut()
     
+    orderStore.orders = []
+    orderStore.billItems = []
+    orderStore.approvedOrders = []
 }
 const toEditUser = () => {
     console.log('toEditUSer')

@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import RoundedCard from '@/components/cards/RoundedCard.vue'
-import { useArticleStore } from '@/stores/ArticleStor';
+import { useArticleStore } from '@/stores/ArticleStore';
 
 const articleStore = useArticleStore()
 const rawMaterials = articleStore.rawMaterials

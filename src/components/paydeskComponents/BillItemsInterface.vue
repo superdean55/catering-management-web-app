@@ -8,7 +8,7 @@
             <div class="w-full flex flex-col gap-1 ">
                 <div
                     @click="displayQuantityInput(false)"
-                    v-for="(item, index) in billItems" :key="item.id"
+                    v-for="(item, index) in payDeskStore.paydeskBillItems" :key="item.id"
                     class="h-16 rounded-xl flex flex-row gap-2  bg-gray-300 hover:bg-gray-400 cursor-pointer  transition duration-300 ease-in-out hover:brightness-70"
                 >
                     <div class="h-16 w-16 overflow-hidden">
@@ -72,7 +72,7 @@
                 backgroundColor="bg-orange-700"
                 hoverColor="hover:bg-orange-900"
                 textColor="text-white"
-                :disabled="paydesk.isDisabled || billItems.length === 0 || tableSelected === null"
+                :disabled="paydesk.isDisabled || payDeskStore.paydeskBillItems.length === 0 || tableSelected === null"
                 @confirm="onCreateBill"
             >
                 <span class="material-symbols-outlined text-xl">receipt</span>
@@ -99,7 +99,6 @@ import { useTableStore } from '@/stores/TableStore'
 
 
 const props = defineProps<{
-    product?: Product,
     order: Order | null,
     productListHeight: number,
     user: User,
@@ -115,7 +114,7 @@ const productStore = useProductStore()
 const payDeskStore = usePayDeskStore()
 const tableStore = useTableStore()
 
-const billItems = ref<BillItem[]>([])
+
 const paydesk = ref<PayDesk>(props.payDesk)
 const tableSelected = ref<Table | null>(props.table)
 
@@ -126,22 +125,42 @@ const totalProductItems = ref<string>('0')
 const productInterfaceHeight = ref<number>(props.productListHeight)
 const order = ref<Order | null>(props.order)
 
+const changeTotal = () => {
+    totalBillItems.value = payDeskStore.paydeskBillItems.length.toString()
+    var priceTotal = 0
+    var productItemsTotal = 0
+    payDeskStore.paydeskBillItems.forEach(item => {
+        priceTotal += item.quantity * item.price
+        productItemsTotal += item.quantity
+    })
+    totalPrice.value = priceTotal.toFixed(2)
+    totalProductItems.value = productItemsTotal.toString()
+}
+
 watch(() => props.payDesk,(newPayDesk) => {
     paydesk.value = newPayDesk
 })
 
+if(props.order){
+    order.value = props.order
+    payDeskStore.paydeskBillItems = order.value.billItems
+    tableSelected.value = tableStore.getTableById(order.value.tableId)
+    changeTotal()
+}
+
 watch(() => props.order,(newOrder) => {
     order.value = newOrder
     if(order.value){
-        billItems.value = order.value.billItems
+        payDeskStore.paydeskBillItems = order.value.billItems
         tableSelected.value = tableStore.getTableById(order.value.tableId)
         changeTotal()
     }
 })
+
 watch(() => props.table,(newTable) =>{
     tableSelected.value = newTable
 })
-watch([() => props.product, () => props.change],([newProduct, newChange]) => {
+/*watch([() => props.product, () => props.change],([newProduct, newChange]) => {
     if(newProduct){
         const price = isNaN(parseFloat(newProduct.price)) ?  0 : parseFloat(newProduct.price)
         billItems.value.push({
@@ -153,7 +172,7 @@ watch([() => props.product, () => props.change],([newProduct, newChange]) => {
         }as BillItem)
         changeTotal()
     }
-})
+})*/
 watch(() => props.productListHeight, (newHeight) => {
     productInterfaceHeight.value = newHeight
 })
@@ -177,7 +196,7 @@ const onArrowDownClicked = (item: BillItem) => {
     changeTotal()
 }
 const onRemoveClicked = (index: number) => {
-    billItems.value.splice(index, 1)
+    payDeskStore.removeBillItem(index)
     changeTotal()
 }
 const displayQuantityInput = (value: boolean) => {
@@ -191,27 +210,19 @@ const onQuantityChanged = (item: BillItem) => {
     
     changeTotal()
 }
-const changeTotal = () => {
-    totalBillItems.value = billItems.value.length.toString()
-    var priceTotal = 0
-    var productItemsTotal = 0
-    billItems.value.forEach(item => {
-        priceTotal += item.quantity * item.price
-        productItemsTotal += item.quantity
-    })
-    totalPrice.value = priceTotal.toFixed(2)
-    totalProductItems.value = productItemsTotal.toString()
-}
+
+changeTotal()
+
 const onCreateBill = () => {
 
-    if(billItems.value.length && tableSelected.value){
+    if(payDeskStore.paydeskBillItems.length && tableSelected.value){
         const bill = {
             id: '',
             number: paydesk.value.billNumber,
             tableId: tableSelected.value.id,
             Date: '',
             Time: '',
-            billItems: billItems.value,
+            billItems: payDeskStore.paydeskBillItems,
             totalCash: (Math.round(parseFloat(totalPrice.value) * 100) / 100),
             JIR: '',
             ZKI: '',
@@ -222,10 +233,17 @@ const onCreateBill = () => {
             uid: order.value ? order.value.uid : ''
         } as Bill
         emit('bill', bill)
-        billItems.value = []
+        payDeskStore.paydeskBillItems = []
+        order.value = null
         totalPrice.value = '0.00'
         totalBillItems.value = '0'
         totalProductItems.value = '0'
     }
 }
 </script>
+<style scoped>
+.text-size-xxs{
+    font-size: 0.65rem;
+    line-height: 0.9rem;
+}
+</style>

@@ -230,38 +230,11 @@ const router = createRouter({
       ]
     },
     {
-      path: '/tables',
-      name: 'TablesView',
-      component: () => import('../views/TablesView.vue'),
-      meta: { requiresAuth: true, requiresRole: [Role.admin] }
-    },
-    {
       path: '/price_list',
       name: 'PriceListView',
       component: () => import('../views/PriceListView.vue'),
     },
-    {
-      path: '/employees',
-      name: 'EmployeesView',
-      component: () => import('../views/EmployeeManagementViews/EmployeesView.vue'),
-      meta: { requiresAuth: true, requiresRole: [Role.admin] },
-      children:[
-        {
-          path: '/add_new_employee',
-          name: 'AddNewEmployeeView',
-          components:{
-            interface: () => import('../views/EmployeeManagementViews/AddNewEmployeeView.vue')
-          }
-        },
-        {
-          path: '/update_role',
-          name: 'UpdateRoleView',
-          components:{
-            interface: () => import('../views/EmployeeManagementViews/UpdateRoleView.vue')
-          }
-        }
-      ]
-    },
+    
     {
       path: '/management',
       name: 'RestaurantManagementView',
@@ -297,7 +270,33 @@ const router = createRouter({
               }
             }
           ]
-        }
+        },
+        {
+          path: 'employees',
+          name: 'EmployeesView',
+          components:{ management: () => import('../views/EmployeeManagementViews/EmployeesView.vue')},
+          children:[
+            {
+              path: 'add_new_employee',
+              name: 'AddNewEmployeeView',
+              components:{
+                interface: () => import('../views/EmployeeManagementViews/AddNewEmployeeView.vue')
+              }
+            },
+            {
+              path: 'update_role',
+              name: 'UpdateRoleView',
+              components:{
+                interface: () => import('../views/EmployeeManagementViews/UpdateRoleView.vue')
+              }
+            }
+          ]
+        },
+        {
+          path: '/tables',
+          name: 'TablesView',
+          components:{ management: () => import('../views/TablesView.vue')},
+        },
       ]
     },
     {
@@ -313,14 +312,13 @@ router.beforeEach(async (to, from, next) => {
   const loadingStore = useLoadingStore()
   loadingStore.setLoadingState(true)
   const auth = getAuth()
-  console.log('router')
   await new Promise((resolve) => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       unsubscribe()
       resolve(user)
     })
   })
-  const currentUser = auth.currentUser;
+  const currentUser = auth.currentUser
 
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (currentUser) {
@@ -335,7 +333,7 @@ router.beforeEach(async (to, from, next) => {
           next({ name: 'HomeView', query: { redirect: to.fullPath } })
         }
       } else {
-        next();
+        next()
       }
     } else {
       next({ name: 'HomeView', query: { redirect: to.fullPath } })

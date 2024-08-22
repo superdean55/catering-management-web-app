@@ -21,7 +21,7 @@
                         :disabled="paydesk.conclusionItems.length || paydesk.isDisabled ? true : false"
                         @confirm="onLogOut"
                     ></FilledButton>
-                    <FilledButton label="Zaključak" :disabled="!paydesk.conclusionItems.length || paydesk.isDisabled ? true : false"></FilledButton>
+                    <FilledButton label="Zaključak" :disabled="!paydesk.conclusionItems.length || paydesk.isDisabled ? true : false" @confirm="onConclusion"></FilledButton>
                 </div>
             </div>
             <div class="w-full flex flex-col gap-1 py-2">
@@ -82,12 +82,9 @@ const isPayDeskDisabled = ref<boolean>(prop.payDesk.isDisabled)
 const user = ref<User | null>(userStore.getUserById(prop.payDesk.userId))
 console.log('user je',user.value)
 watch(() => prop.payDesk,(newPayDesk) => {
-    console.log('PayDeskManagementInterface => watch : current paydesk is changed')
     paydesk.value = newPayDesk
     isPayDeskDisabled.value = newPayDesk.isDisabled
     user.value = userStore.getUserById(prop.payDesk.userId)
-    console.log('userId = ' + paydesk.value.userId)
-    console.log(user.value)
 })
 watch(payDeskStore.payDesks, () => {
     const paydesk_ = payDeskStore.getPayDeskById(paydesk.value.id)
@@ -98,14 +95,16 @@ watch(payDeskStore.payDesks, () => {
     }
 })
 const onPayDeskDisabledUpdate = (value: boolean) => {
-    console.log('disabled', value)
     payDeskStore.disablePayDesk(paydesk.value.id, value)
 }
 const onLogOut = () => {
     if(userStore.user?.role === Role.admin && !paydesk.value.conclusionItems.length){
         payDeskStore.logOutFromPayDesk(paydesk.value.id)
-    }else if(paydesk.value.conclusionItems.length){
-        
+    }
+}
+const onConclusion = () => {
+    if(userStore.user?.role === Role.admin && paydesk.value.conclusionItems.length && user.value){
+        payDeskStore.conclusion(paydesk.value, user.value)
     }
 }
 </script>

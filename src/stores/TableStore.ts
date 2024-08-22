@@ -65,7 +65,7 @@ export const useTableStore = defineStore('tableStore',{
             return this.tables.find(it => it.id === id) || null
         },
         async getTables(){
-            const collectionRef = collection(db, "tables");
+            const collectionRef = collection(db, "tables")
 
             const unsubscribe = onSnapshot(collectionRef, (snapshot) => {
                 snapshot.docChanges().forEach((change) => {

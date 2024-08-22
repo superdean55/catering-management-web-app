@@ -1,8 +1,8 @@
 <template>
-    <main class="w-full min-h-screen bg-slate-300 p-0">
+    
         <div class="h-10 w-full"></div>
         <ManageTableDialog v-if="tableClicked" :showDialog="showTableDialog" :table="tableClicked" @update="onTableDialogUpdate"></ManageTableDialog>
-        <div class="w-full flex flex-col gap-2 py-5">
+        <div class="w-full flex flex-col gap-2 py-5" :class="screenStore.isSmallScreen ? '' : 'pl-56'">
             <RestaurantLayout>
                 <template v-for="slot in tableSlots" :key="slot.id" v-slot:[slot.id]>
                     <div v-if="slot.name === 'empty'" @click="onEmptySlotClicked(slot.id)"  class=" flex flex-col justify-center items-center bg-gray-500 cursor-pointer" :class="screenStore.isSmallScreen ? 'w-10 h-10' : 'w-20 h-20'">
@@ -102,7 +102,7 @@
         </div>
         
       
-    </main>
+    
 </template>
   
 <script setup lang="ts">

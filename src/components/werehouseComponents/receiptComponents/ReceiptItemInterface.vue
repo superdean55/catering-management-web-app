@@ -107,9 +107,9 @@ import RoundedCard from '@/components/cards/RoundedCard.vue';
 import ConfirmButton from '@/components/buttons/ConfirmButton.vue';
 import { ArticleUnit } from '@/types/ArticleUnit';
 import { computed, ref, watch } from 'vue';
-import { useArticleStore } from '@/stores/ArticleStor';
+import { useArticleStore } from '@/stores/ArticleStore';
 import { isTwoDecimalNumber } from '@/helpers/isTwoDecimalNumber';
-import { ReceiptItem } from '@/types/ReceiptItem';
+import type{ ReceiptItem } from '@/types/ReceiptItem';
 import { generateId } from '@/helpers/generateId';
 
 const props = defineProps<{

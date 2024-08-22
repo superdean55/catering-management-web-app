@@ -1,15 +1,15 @@
 <template>
     <div class="w-full">
-        <label class="inline-block uppercase my-2 text-xs text-gray-600">{{ name }}</label>
+        <label class="inline-block uppercase my-2 text-xs md:text-sm text-gray-600">{{ name }}</label>
         <input  v-if="type"
-            class="block w-full py-1 px-2 box-border border-b border-slate-300 bg-inherit"
+            class="block w-full py-1 px-2 box-border border-b border-slate-300 bg-inherit text-xs md:text-sm"
             :type="type"
             :value="value"
             @input="onValueChange"
             :required="required"
         >
         <div v-if="error?.length">
-            <p class="text-red-600 text-xs">{{ error }}</p>
+            <p class="text-red-600 text-xs md:text-sm">{{ error }}</p>
         </div>
         
     </div>

@@ -16,6 +16,7 @@ import { generateZKI } from "@/helpers/generateZKI"
 import type { ConclusionItem } from "@/types/ConclusionItem"
 import { generateId } from "@/helpers/generateId"
 import type { Conclusion } from "@/types/Conclusion"
+import type { BillItem } from "@/types/BillItem"
 
 const toast = useToast()
 const payDeskCollection = 'payDesks'
@@ -28,9 +29,16 @@ export const usePayDeskStore = defineStore('payDeskStore',{
         payDesks:[] as PayDesk [],
         isLoading: false,
         bills:[] as Bill [],
-        conclusions:[] as Conclusion []
+        conclusions:[] as Conclusion [],
+        paydeskBillItems: [] as BillItem []
     }),
     actions: {
+        addBillItem(billItem: BillItem){
+            this.paydeskBillItems.push(billItem)
+        },
+        removeBillItem(index: number){
+            this.paydeskBillItems.splice(index, 1)
+        },
         async addPayDesk(paydesk: PayDesk){
             try {
                 paydesk.timestamp = serverTimestamp()

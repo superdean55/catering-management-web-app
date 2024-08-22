@@ -3,7 +3,7 @@ import { useUserStore } from '@/stores/UserStore'
 import router from "@/router"
 import { computed, onMounted, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useArticleStore } from '@/stores/ArticleStor'
+import { useArticleStore } from '@/stores/ArticleStore'
 import { useReceiptStore } from '@/stores/ReceiptStore'
 import { useSuppliesStore } from '@/stores/SuppliesStore'
 import { useProductStore } from '@/stores/ProductStore'
@@ -85,6 +85,7 @@ onMounted(() => {
 })
 const toUserAccount = () => {
   router.push({ name: 'UserAccount'})
+  isHamburgerOpen.value = false
 }
 const isSmallScreen = computed(() => {
       return screenStore.screenWidth < 768
@@ -102,7 +103,7 @@ const changeHamburgerVisibiliti = () => {
 
 <template>
     <div class="fixed z-50 w-48" v-if="isSmallScreen">
-          <div class="w-full flex flex-row pl-2 h-12 items-center" :style="{justifyContent: isHamburgerOpen ? 'flex-end': 'flex-start'}">
+          <div class="w-full flex flex-row pl-2 h-10 items-center" :style="{justifyContent: isHamburgerOpen ? 'flex-end': 'flex-start'}">
             <Hamburger @show="onChangeHamburgerVisibiliti" :isOpen="isHamburgerOpen" ></Hamburger>
           </div>
     </div>
@@ -118,10 +119,7 @@ const changeHamburgerVisibiliti = () => {
         <div class="h-12" v-if="isSmallScreen"></div>
         
         <div class="hover:bg-orange-800">
-          <RouterLink :to="{ name: 'HomeView' }" class="flex items-center px-5 h-10" @click="changeHamburgerVisibiliti"><p>Home</p></RouterLink>
-        </div>
-        <div class="hover:bg-orange-800">
-          <RouterLink :to="{ name: 'AboutView'}" class="flex items-center px-5 h-10" @click="changeHamburgerVisibiliti">About</RouterLink>
+          <RouterLink :to="{ name: 'HomeView' }" class="flex items-center px-5 h-10" @click="changeHamburgerVisibiliti"><p>Početna</p></RouterLink>
         </div>
         <div v-if="userStore.loggedInVisibility && (userStore.user?.role === Role.admin || userStore.user?.role === Role.manager)" class="hover:bg-orange-800">
           <RouterLink :to="{ name: 'AddProduct'}" class="flex items-center px-5 h-10" @click="changeHamburgerVisibiliti">Skladište</RouterLink>
@@ -129,21 +127,18 @@ const changeHamburgerVisibiliti = () => {
         <div v-if="userStore.loggedInVisibility && (userStore.user?.role === Role.admin || userStore.user?.role === Role.manager || userStore.user?.role === Role.staff)" class="hover:bg-orange-800">
           <RouterLink :to="{ name: 'BillInterfaceView'}" class="flex items-center px-5 h-10" @click="changeHamburgerVisibiliti">Blagajna</RouterLink>
         </div>
-        <div v-if="userStore.loggedInVisibility && (userStore.user?.role === Role.admin)" class="hover:bg-orange-800">
-          <RouterLink :to="{ name: 'TablesView'}" class="flex items-center px-5 h-10" @click="changeHamburgerVisibiliti">Stolovi</RouterLink>
-        </div>
-        <div v-if="userStore.loggedInVisibility && (userStore.user?.role === Role.admin)" class="hover:bg-orange-800">
-          <RouterLink :to="{ name: 'AddNewEmployeeView'}" class="flex items-center px-5 h-10" @click="changeHamburgerVisibiliti">Zaposlenici</RouterLink>
-        </div>
         <div v-if="userStore.loggedInVisibility && (userStore.user?.role === Role.admin)" class="hover:bg-orange-800" @click="changeHamburgerVisibiliti">
-          <RouterLink :to="{ name: 'RestaurantManagementView'}" class="flex items-center px-5 h-10">Upravljanje</RouterLink>
+          <RouterLink :to="{ name: 'PayDeskDashboard'}" class="flex items-center px-5 h-10">Upravljanje</RouterLink>
         </div>
         <div v-if="userStore.loggedInVisibility && (userStore.user?.role === Role.admin || userStore.user?.role === Role.manager || userStore.user?.role === Role.staff || userStore.user?.role === Role.user)" class="hover:bg-orange-800">
           <RouterLink :to="{ name: 'UserOrdersAndBillsView'}" class="flex items-center px-5 h-10" @click="changeHamburgerVisibiliti">Narudžbe i Računi</RouterLink>
         </div>
+        <div class="hover:bg-orange-800">
+          <RouterLink :to="{ name: 'AboutView'}" class="flex items-center px-5 h-10" @click="changeHamburgerVisibiliti">O Aplikaciji</RouterLink>
+        </div>
         <div class="ml-auto"></div>
         <div v-if="userStore.notLoggedInVisibility" class="hover:bg-orange-800">
-          <RouterLink :to="{ name: 'SignInView'}" class="flex items-center px-5 h-10" @click="changeHamburgerVisibiliti">Sign In</RouterLink>
+          <RouterLink :to="{ name: 'SignInView'}" class="flex items-center px-5 h-10" @click="changeHamburgerVisibiliti">Prijavi se</RouterLink>
         </div>
         <div v-if="userStore.loggedInVisibility" class="flex flex-row items-center justify-center h-10 w-10 ">
           <div class="w-8 h-8">

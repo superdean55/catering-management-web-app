@@ -64,7 +64,7 @@ import { isValidNumber } from '@/helpers/isValidNumber';
 import { isSelectionValid } from '@/helpers/isSelectionValid';
 import type { RawMaterial } from '@/types/RawMaterial';
 import { isValidCode } from '@/helpers/isValidCode';
-import { useArticleStore } from '@/stores/ArticleStor';
+import { useArticleStore } from '@/stores/ArticleStore';
 
 const props = defineProps<{
     deleteButtonLabel?: string,

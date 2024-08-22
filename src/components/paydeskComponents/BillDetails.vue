@@ -14,11 +14,11 @@
         <div class="mb-2"><strong>Rč.Br:</strong> {{ bill.number }}</div>
         <div class="mb-2"><strong>Datum:</strong> {{ bill.Date }}</div>
         <div class="mb-2"><strong>Vrijeme:</strong> {{ bill.Time }}</div>
-        <div class="mb-2"><strong>Table ID:</strong> {{ bill.tableId }}</div>
+        <div class="mb-2"><strong>Stol:</strong> {{ bill.tableId }}</div>
         <div class="mb-2"><strong>User:</strong> {{ bill.user }}</div>
         <div class="mb-2"><strong>Blagajna:</strong> {{ bill.paydeskName }}</div>
         
-        <div class="mb-4"><strong>Cancelled:</strong> {{ bill.isCancelled ? 'Yes' : 'No' }}</div>
+        <div class="mb-4"><strong>Storniran:</strong> {{ bill.isCancelled ? 'Da' : 'Ne' }}</div>
         
         <h3 class="text-lg font-semibold mb-2">Proizvodi</h3>
         <table class="w-full mb-4 border-collapse">

@@ -91,7 +91,7 @@ import { computed } from 'vue'
 
 const screenStore = useScreenStore()
 const isMedimuScreen = computed(() => {
-  return screenStore.screenWidth < 1024
+  return screenStore.screenWidth < 1286
 })
 </script>
 

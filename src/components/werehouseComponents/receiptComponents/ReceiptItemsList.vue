@@ -77,12 +77,12 @@
 </template>
 
 <script setup lang="ts">
+import { useArticleStore } from '@/stores/ArticleStore'
 import type { ReceiptItem } from '@/types/ReceiptItem'
-import { useArticleStore } from '@/stores/ArticleStor'
+
 import { defineProps, withDefaults } from 'vue'
 
 const articleStore = useArticleStore()
-
 const props = withDefaults(defineProps<{
     receiptItems: ReceiptItem[]
     preview?: boolean

@@ -1,6 +1,6 @@
 <template>
-    <main class="w-full min-h-screen bg-slate-300 p-0">
-    <div class="h-10"></div>
+    
+    
         <div class="w-full">
             <nav class="w-full m-2 fixed">
                 <ul class="flex flex-row gap-2 w-full">
@@ -16,10 +16,10 @@
                     </li>
                 </ul>
             </nav>
-            <div class="h-20"></div>
-            <RouterView name="interface" class="w-full"></RouterView>
+            <div class="h-12"></div>
+            <RouterView name="interface" class="w-full px-2 overflow-y-scroll scrollbar-hide" :style="{height: componentHeight + 'px'}"></RouterView>
         </div>
-  </main>
+  
 </template>
 
 <script setup lang="ts">
@@ -27,4 +27,12 @@ import { useUserStore } from '@/stores/UserStore'
 
 const userStore = useUserStore()
 userStore.getUsers()
+import { useScreenStore } from '@/stores/ScreenStore'
+import { computed } from 'vue'
+
+const screenStore = useScreenStore()
+
+const componentHeight = computed(() => {
+    return screenStore.screenHeight - 96
+})
 </script>

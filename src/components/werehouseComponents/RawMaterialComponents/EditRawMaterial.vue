@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import type { RawMaterial } from '@/types/RawMaterial';
 import RawMaterialInterface from './RawMaterialInterface.vue'
-import { useArticleStore } from '@/stores/ArticleStor';
+import { useArticleStore } from '@/stores/ArticleStore';
 import { useRoute } from 'vue-router';
 import { watch, ref } from 'vue';
 import router from '@/router';

@@ -18,12 +18,7 @@
                         <span class="material-symbols-outlined text-lg text-white">shopping_cart_checkout</span>
                     </div>
                 </button>
-                <button @click="onTableReservationClicked" class=" w-full py-1 rounded bg-orange-600 hover:bg-orange-800">
-                    <div class="w-full flex flex-row justify-center gap-1">
-                        <p class="font-bold text-white text-lg">Rezerviraj</p>
-                        <span class="material-symbols-outlined text-lg text-white">grading</span>
-                    </div>
-                </button>
+                
                 <div class="m-auto"></div>
                 <button @click="onCancelTableDialog" class="w-full py-1 rounded bg-orange-600 hover:bg-orange-800">
                     <div class="w-full flex flex-row justify-center gap-1">

@@ -12,12 +12,19 @@
                 </RouterLink>
             </div>
         </div>
-        <div class="w-full pl-2">
+        <div class="w-full px-2 overflow-y-scroll scrollbar-hide" :style="{ height: componentHeight + 'px'}">
             <RouterView name="interface"></RouterView>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import { useScreenStore } from '@/stores/ScreenStore'
+import { computed } from 'vue'
 
+const screenStore = useScreenStore()
+
+const componentHeight = computed(() => {
+    return screenStore.screenHeight - 96
+})
 </script>
